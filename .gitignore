@@ -1,0 +1,11 @@
+# Local database data (if you have a local folder mapped)
+.db_data/
+docker/db/data/
+
+# Files system and event configuration
+.env
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log

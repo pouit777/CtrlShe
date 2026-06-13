@@ -1,0 +1,9 @@
+Account Admin
+
+email : admin@quiz.fr
+password : MonSuperMotDePasse123!
+
+Account User 
+
+email : student@school.com
+password : MonSuperMotDePasse123!

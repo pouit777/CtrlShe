@@ -1,0 +1,42 @@
+# docker-compose.yml
+
+services:
+  # Service Base de Données (MySQL)
+  db:
+    image: mysql:8.0
+    container_name: brainskwiz_mysql_db
+    restart: always
+    environment:
+      MYSQL_DATABASE: brainskwiz_db
+      MYSQL_ROOT_PASSWORD: root_password_super_secure
+      MYSQL_USER: brainskwiz_user
+      MYSQL_PASSWORD: brainskwiz_password_123
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      # Auto-seeding : Tout script .sql mis dans ce dossier est exécuté au premier lancement
+      - ./docker/db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - brainskwiz_network
+
+  # Service Serveur Web (PHP + Apache)
+  web:
+    build: .
+    container_name: brainskwiz_php_web
+    restart: always
+    ports:
+      - "8080:80"
+    volumes:
+      - ./src:/var/www/html
+    depends_on:
+      - db
+    networks:
+      - brainskwiz_network
+
+volumes:
+  db_data:
+
+networks:
+  brainskwiz_network:
+    driver: bridge
