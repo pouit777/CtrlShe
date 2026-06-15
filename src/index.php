@@ -29,7 +29,7 @@ $categories = $pdo->query('SELECT * FROM categories')->fetchAll(PDO::FETCH_ASSOC
     </div>
     <div class="flex items-center gap-4">
         <?php if(isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
-            <a href="/admin_dashboard.php" class="bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-600 hover:to-amber-700 text-gray-950 font-bold py-2 px-4 rounded-lg shadow-md transition transform hover:-translate-y-0.5 text-sm">⚙️ Admin Panel</a>
+            <a href="/admin_dashboard.php" class="bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-600 hover:to-amber-700 text-gray-950 font-bold py-2 px-4 rounded-lg shadow-md transition transform hover:-translate-y-0.5 text-sm">Admin Panel</a>
         <?php endif; ?>
         
         <?php if(isset($_SESSION['user_id'])): ?>
@@ -42,7 +42,7 @@ $categories = $pdo->query('SELECT * FROM categories')->fetchAll(PDO::FETCH_ASSOC
 
 <div class="flex justify-center mb-8">
     <a href="/game.php" id="play-btn" class="w-full text-center bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-gray-950 font-extrabold text-lg px-8 py-4 rounded-xl shadow-lg transition transform hover:-translate-y-1 flex items-center justify-center gap-2">
-        Lancer un SKwiz !
+        Play a SKwiz !
     </a>
 </div>
 
@@ -94,7 +94,7 @@ $categories = $pdo->query('SELECT * FROM categories')->fetchAll(PDO::FETCH_ASSOC
     function loadQuestions() {
         const searchValue = searchInput.value;
         const categoryValue = categorySelect.value;
-        const url = `/api/search_questions.php?search=${encodeURIComponent(searchValue)}&category=${categoryValue}`;
+        const url = `/api/questions/search_questions.php?search=${encodeURIComponent(searchValue)}&category=${categoryValue}`;
 
         // Visual feedback indicator: dim grid container opacity while request completes
         questionsGrid.style.opacity = "0.6";
@@ -174,10 +174,10 @@ $categories = $pdo->query('SELECT * FROM categories')->fetchAll(PDO::FETCH_ASSOC
     categorySelect.addEventListener('change', () => {
         if (categorySelect.value) {
             playBtn.href = `/game.php?category=${categorySelect.value}`;
-            playBtn.innerText = `Jouer la catégorie : ${categorySelect.options[categorySelect.selectedIndex].text}`;
+            playBtn.innerText = `Play the category : ${categorySelect.options[categorySelect.selectedIndex].text}`;
         } else {
             playBtn.href = '/game.php';
-            playBtn.innerText = 'Lancer un SKwiz !';
+            playBtn.innerText = 'Play a SKwiz !';
         }
         loadQuestions();
     });

@@ -1,5 +1,5 @@
 <?php
-// src/api/delete_question.php
+// src/api/questions/delete_question.php
 session_start();
 header('Content-Type: application/json');
 
@@ -9,7 +9,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     exit;
 }
 
-require_once __DIR__ . '/../config/db.php';
+require_once __DIR__ . '/../../config/db.php';
 
 $input = json_decode(file_get_contents('php://input'), true);
 $question_id = isset($input['id']) ? intval($input['id']) : 0;

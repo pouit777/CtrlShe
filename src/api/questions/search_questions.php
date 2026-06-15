@@ -1,9 +1,9 @@
 <?php
-// src/api/search_questions.php
+// src/api/questions/search_questions.php
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 
-require_once __DIR__ . '/../config/db.php';
+require_once __DIR__ . '/../../config/db.php';
 
 try {
     $search = isset($_GET['search']) ? trim($_GET['search']) : '';

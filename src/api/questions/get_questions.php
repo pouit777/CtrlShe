@@ -1,10 +1,10 @@
 <?php
-// src/api/get_questions.php
+// src/api/questions/get_questions.php
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *'); 
 
 // Relying on core global connection instantiation file to bypass code redundancy
-require_once __DIR__ . '/../config/db.php';
+require_once __DIR__ . '/../../config/db.php';
 
 try {
     // Combine queries to extract base item structure alongside associated choices within a unified operation

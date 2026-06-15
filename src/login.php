@@ -58,7 +58,7 @@
             submitBtn.innerText = "Signing in...";
 
             // Send structured validation payload to the authentication processing pipeline
-            fetch('/api/login_process.php', {
+            fetch('/api/account/login_process.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password, csrf_token: csrfToken })

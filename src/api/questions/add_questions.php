@@ -1,5 +1,5 @@
 <?php
-// src/api/add_question.php
+// src/api/questions/add_question.php
 session_start();
 header('Content-Type: application/json');
 
@@ -13,7 +13,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
 }
 
 // 2. Import database layer configuration
-require_once __DIR__ . '/../config/db.php';
+require_once __DIR__ . '/../../config/db.php';
 
 // 3. Fetch incoming payload sent via HTTP POST Request (JS Fetch Content)
 $input = json_decode(file_get_contents('php://input'), true);

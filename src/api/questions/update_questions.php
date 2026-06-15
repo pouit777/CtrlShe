@@ -1,5 +1,5 @@
 <?php
-// src/api/update_questions.php
+// src/api/questions/update_questions.php
 session_start();
 header('Content-Type: application/json');
 
@@ -9,7 +9,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     exit;
 }
 
-require_once __DIR__ . '/../config/db.php';
+require_once __DIR__ . '/../../config/db.php';
 
 // Fetch incoming payload sent via HTTP POST Request
 $input = json_decode(file_get_contents('php://input'), true);

@@ -330,7 +330,7 @@ require_once __DIR__ . '/components/header.php';
             }
             const correctIndex = parseInt(checkedRadio.value);
 
-            fetch('/api/update_questions.php', {
+            fetch('/api/questions/update_questions.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ id, question_text: questionText, category_id: categoryId, difficulty, answers, correct_index: correctIndex })
@@ -356,7 +356,7 @@ require_once __DIR__ . '/components/header.php';
         }
 
         function executeDelete(id) {
-            fetch('/api/delete_questions.php', {
+            fetch('/api/questions/delete_questions.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ id: id })
@@ -390,7 +390,7 @@ require_once __DIR__ . '/components/header.php';
             const checkedRadio = document.querySelector('input[name="correct_answer"]:checked');
             const correctIndex = checkedRadio ? parseInt(checkedRadio.value) : 0;
 
-            fetch('/api/add_questions.php', {
+            fetch('/api/questions/add_questions.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ question_text: questionText, category_id: categoryId, difficulty, answers, correct_index: correctIndex })
