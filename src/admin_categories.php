@@ -1,5 +1,7 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     header('Location: /login.php');
@@ -29,36 +31,35 @@ $page_title = "brainSKwiz - Admin Categories";
 require_once __DIR__ . '/components/header.php';
 ?>
 
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8 bg-gray-800 p-6 rounded-xl border border-gray-700 shadow-lg">
+        <div class="flex flex-col sm:flex-row justify-between items-center text-center sm:text-left gap-4 mb-8 bg-gray-800 p-4 md:p-6 rounded-xl border border-gray-700 shadow-lg">
             <div>
-                <h1 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-400 drop-shadow-sm">Question category management</h1>
-                <p class="text-sm text-gray-400 mt-1">
+                <h1 class="text-2xl md:text-3xl mb-5 md:mb-3 font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-400 drop-shadow-sm">Question category management</h1>
+                <p class="text-xs md:text-sm mb-3 md:mb-0 text-gray-400 mt-1">
                     Logged in as : <strong class="text-cyan-400"><?php echo htmlspecialchars($_SESSION['username'] ?? 'Admin', ENT_QUOTES, 'UTF-8'); ?> (<?php echo htmlspecialchars($_SESSION['role'], ENT_QUOTES, 'UTF-8'); ?>)</strong>
                 </p>
             </div>
-            <div class="flex items-center gap-3 w-full md:w-auto justify-end">
-                <button id="open-modal-btn" class="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-gray-950 font-bold py-2 px-4 rounded-lg shadow-md transition transform hover:-translate-y-0.5">
+            <div class="w-full sm:w-auto flex justify-center sm:justify-end">
+                <button id="open-modal-btn" class="w-full sm:w-auto bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-gray-950 font-bold py-2 px-4 rounded-lg shadow-md transition transform hover:-translate-y-0.5 text-sm md:text-base">
                     + Add New Category
                 </button>
-                <a href="/logout.php" class="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-lg font-medium transition text-center">Logout</a>
             </div>
         </div>
 
         <div class="bg-gray-800 rounded-xl border border-gray-700 shadow-xl overflow-hidden overflow-x-auto">
-            <table class="w-full text-left border-collapse">
+            <table class="w-full text-left border-collapse min-w-[550px]">
                 <thead>
                     <tr class="bg-gray-700/50 text-gray-400 uppercase text-xs font-mono border-b border-gray-700">
-                        <th class="p-4">ID</th>
+                        <th class="p-4 w-20">ID</th>
                         <th class="p-4">Label</th>
-                        <th class="p-4 text-center">Total</th>
-                        <th class="p-4 text-center">Actions</th>
+                        <th class="p-4 w-32 text-center">Total</th>
+                        <th class="p-4 w-36 text-center">Actions</th>
                     </tr>
                 </thead>
                 <tbody id="categories-table-body">
                     <?php foreach($categories as $cat): ?>
                         <tr id="category-row-<?php echo $cat['id']; ?>" class="border-b border-gray-700/50 hover:bg-gray-700/30 transition">
                             <td class="p-4 font-mono text-cyan-400">#<?php echo $cat['id']; ?></td>
-                            <td class="p-4 text-gray-200 font-medium">
+                            <td class="p-4 text-gray-200 font-medium text-sm md:text-base">
                                 <span class="bg-gray-900 px-3 py-1 rounded text-sm text-gray-300 border border-gray-700">
                                     <?php echo htmlspecialchars($cat['label'], ENT_QUOTES, 'UTF-8'); ?>
                                 </span>
@@ -73,8 +74,8 @@ require_once __DIR__ . '/components/header.php';
                                     data-id="<?php echo $cat['id']; ?>"
                                     data-label="<?php echo htmlspecialchars($cat['label'], ENT_QUOTES, 'UTF-8'); ?>"
                                     onclick="initManageQuestionsModal(this)"
-                                    class="inline-flex items-center gap-1 bg-teal-900/30 hover:bg-teal-600 border border-teal-800 hover:border-teal-500 text-teal-300 hover:text-white px-2.5 py-1.5 rounded-lg text-xs font-semibold transition duration-150 shadow-sm">
-                                    Add Question
+                                    title="Add Questions"
+                                    class="inline-flex items-center justify-center bg-teal-900/30 hover:bg-teal-600 border border-teal-800 hover:border-teal-500 text-teal-300 hover:text-white p-2 rounded-lg transition duration-150 shadow-sm">
                                     <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                                     </svg>
@@ -83,14 +84,16 @@ require_once __DIR__ . '/components/header.php';
                                     data-id="<?php echo $cat['id']; ?>"
                                     data-label="<?php echo htmlspecialchars($cat['label'], ENT_QUOTES, 'UTF-8'); ?>"
                                     onclick="initEditModal(this)"
-                                    class="inline-flex items-center gap-1 bg-blue-900/30 hover:bg-blue-600 border border-blue-800 hover:border-blue-500 text-blue-300 hover:text-white px-2.5 py-1.5 rounded-lg text-xs font-semibold transition duration-150 shadow-sm">
-                                    Edit
+                                    title="Edit Category"
+                                    class="inline-flex items-center justify-center bg-blue-900/30 hover:bg-blue-600 border border-blue-800 hover:border-blue-500 text-blue-300 hover:text-white p-2 rounded-lg transition duration-150 shadow-sm">
                                     <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                                     </svg>
                                 </button>
-                                <button onclick="confirmDeleteCategory(<?php echo $cat['id']; ?>)" class="inline-flex items-center gap-1 bg-red-900/30 hover:bg-red-600 border border-red-800 hover:border-red-500 text-red-300 hover:text-white px-2.5 py-1.5 rounded-lg text-xs font-semibold transition duration-150 shadow-sm">
-                                    Delete
+                                <button 
+                                    onclick="confirmDeleteCategory(<?php echo $cat['id']; ?>)" 
+                                    title="Delete Category"
+                                    class="inline-flex items-center justify-center bg-red-900/30 hover:bg-red-600 border border-red-800 hover:border-red-500 text-red-300 hover:text-white p-2 rounded-lg transition duration-150 shadow-sm">
                                     <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                     </svg>
@@ -169,7 +172,7 @@ require_once __DIR__ . '/components/header.php';
                                             Actuel : <?php echo htmlspecialchars($orphan['current_category_label'] ?? 'Aucune', ENT_QUOTES, 'UTF-8'); ?>
                                         </span>
                                     </div>
-                                    <p class="text-gray-200"><?php echo htmlspecialchars($orphan['question_text'], ENT_QUOTES, 'UTF-8'); ?></p>
+                                    <p class="text-gray-200 text-sm md:text-base"><?php echo htmlspecialchars($orphan['question_text'], ENT_QUOTES, 'UTF-8'); ?></p>
                                 </div>
                             </label>
                         <?php endforeach; ?>
@@ -263,12 +266,12 @@ require_once __DIR__ . '/components/header.php';
                 }
             });
 
-            // CORRECTION : Si aucune question n'est disponible après filtrage
+            // Si aucune question n'est disponible après filtrage
             if (visibleCount === 0) {
                 const noDataParagraph = document.createElement('p');
                 noDataParagraph.id = 'js-no-questions-msg';
                 noDataParagraph.className = 'text-sm text-gray-400 text-center py-6';
-                noDataParagraph.innerText = 'No questions available to link to this category.';
+                noDataParagraph.innerText = '🚫 No questions available to link to this category.';
                 questionsContainer.appendChild(noDataParagraph);
                 
                 // Désactiver le bouton de validation car il n'y a rien à faire
