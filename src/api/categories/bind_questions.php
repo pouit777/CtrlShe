@@ -27,7 +27,6 @@ try {
     $query = "UPDATE questions SET category_id = ? WHERE id IN ($placeholders)";
     $stmt = $pdo->prepare($query);
     
-    // Fusionne l'ID de la catégorie et les IDs des questions pour exécuter la requête d'un coup
     $params = array_merge([$category_id], $question_ids);
     $stmt->execute($params);
 

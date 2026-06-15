@@ -8,7 +8,6 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
 
 require_once __DIR__ . '/config/db.php';
 
-// CORRECTION SQL : Récupération des catégories AVEC le nombre de questions associées
 $query = '
     SELECT c.*, COUNT(q.id) AS total_questions 
     FROM categories c
@@ -26,7 +25,7 @@ $orphan_questions = $pdo->query($orphan_query)->fetchAll();
 
 $categories = $pdo->query($query)->fetchAll();
 
-$page_title = "brainSKwiz - Admin Catégories";
+$page_title = "brainSKwiz - Admin Categories";
 require_once __DIR__ . '/components/header.php';
 ?>
 
@@ -155,7 +154,7 @@ require_once __DIR__ . '/components/header.php';
             <form id="manage-questions-form" class="flex flex-col flex-grow overflow-hidden">
                 <input type="hidden" id="manage-category-id">
                 
-                <div class="overflow-y-auto pr-1 my-4 space-y-2 flex-grow max-h-[50vh] border border-gray-700/50 rounded-xl p-3 bg-gray-900/40">
+                <div id="questions-list-container" class="overflow-y-auto pr-1 my-4 space-y-2 flex-grow max-h-[50vh] border border-gray-700/50 rounded-xl p-3 bg-gray-900/40">
                     <?php if (empty($orphan_questions)): ?>
                         <p class="text-sm text-gray-400 text-center py-6">🎉 No questions available!</p>
                     <?php else: ?>
@@ -166,7 +165,6 @@ require_once __DIR__ . '/components/header.php';
                                     <div class="flex flex-wrap items-center gap-1.5 mb-1">
                                         <span class="text-xs font-mono px-1.5 py-0.5 rounded bg-gray-800 text-cyan-400">#<?php echo $orphan['id']; ?></span>
                                         <span class="text-xs uppercase px-1 rounded bg-gray-900 text-gray-400 border border-gray-800"><?php echo $orphan['difficulty']; ?></span>
-                                        
                                         <span class="text-[11px] px-1.5 py-0.5 rounded <?php echo $orphan['category_id'] ? 'bg-blue-950 text-blue-400 border border-blue-900' : 'bg-amber-950 text-amber-400 border border-amber-900'; ?> border">
                                             Actuel : <?php echo htmlspecialchars($orphan['current_category_label'] ?? 'Aucune', ENT_QUOTES, 'UTF-8'); ?>
                                         </span>
@@ -180,7 +178,7 @@ require_once __DIR__ . '/components/header.php';
 
                 <div class="flex justify-end gap-3 pt-2 border-t border-gray-700/50 flex-shrink-0">
                     <button type="button" id="cancel-manage-modal-btn" class="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-lg font-medium transition text-sm">Cancel</button>
-                    <button type="submit" <?php echo empty($orphan_questions) ? 'disabled' : ''; ?> class="bg-teal-500 hover:bg-teal-600 disabled:opacity-50 disabled:hover:bg-teal-500 text-gray-950 font-bold px-4 py-2 rounded-lg transition text-sm">Link Selected Questions</button>
+                    <button type="submit" id="submit-manage-btn" class="bg-teal-500 hover:bg-teal-600 disabled:opacity-40 disabled:hover:bg-teal-500 text-gray-950 font-bold px-4 py-2 rounded-lg transition text-sm">Link Selected Questions</button>
                 </div>
             </form>
         </div>
@@ -229,13 +227,15 @@ require_once __DIR__ . '/components/header.php';
         const closeManageModalBtn = document.getElementById('close-manage-modal-btn');
         const cancelManageModalBtn = document.getElementById('cancel-manage-modal-btn');
         const manageForm = document.getElementById('manage-questions-form');
+        const questionsContainer = document.getElementById('questions-list-container');
+        const submitManageBtn = document.getElementById('submit-manage-btn');
 
         const hideManageModal = () => manageModal.classList.add('hidden');
         closeManageModalBtn.addEventListener('click', hideManageModal);
         cancelManageModalBtn.addEventListener('click', hideManageModal);
 
         function initManageQuestionsModal(button) {
-            const id = parseInt(button.dataset.id); // ID de la catégorie sur laquelle on a cliqué
+            const id = parseInt(button.dataset.id);
             const label = button.dataset.label;
 
             document.getElementById('manage-category-id').value = id;
@@ -244,19 +244,38 @@ require_once __DIR__ . '/components/header.php';
             // Décocher toutes les cases
             manageForm.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
 
+            // Retirer un éventuel message d'erreur précédent
+            const existingNoDataMsg = document.getElementById('js-no-questions-msg');
+            if (existingNoDataMsg) existingNoDataMsg.remove();
+
             // Filtrer dynamiquement les questions affichées
             const questionItems = manageForm.querySelectorAll('.question-item');
+            let visibleCount = 0;
+
             questionItems.forEach(item => {
                 const itemCatId = parseInt(item.dataset.currentCatId);
                 
                 if (itemCatId === id) {
-                    // Si la question est déjà dans cette catégorie, on la cache
                     item.classList.add('hidden');
                 } else {
-                    // Sinon, on l'affiche
                     item.classList.remove('hidden');
+                    visibleCount++;
                 }
             });
+
+            // CORRECTION : Si aucune question n'est disponible après filtrage
+            if (visibleCount === 0) {
+                const noDataParagraph = document.createElement('p');
+                noDataParagraph.id = 'js-no-questions-msg';
+                noDataParagraph.className = 'text-sm text-gray-400 text-center py-6';
+                noDataParagraph.innerText = 'No questions available to link to this category.';
+                questionsContainer.appendChild(noDataParagraph);
+                
+                // Désactiver le bouton de validation car il n'y a rien à faire
+                submitManageBtn.disabled = true;
+            } else {
+                submitManageBtn.disabled = false;
+            }
 
             manageModal.classList.remove('hidden');
         }
@@ -322,7 +341,6 @@ require_once __DIR__ . '/components/header.php';
             editModal.classList.remove('hidden');
         }
 
-        // CORRECTION ICI : Remplacement de "update_categories.php" par "update_category.php"
         editForm.addEventListener('submit', function(e) {
             e.preventDefault();
             const id = document.getElementById('edit-category-id').value;
@@ -394,35 +412,34 @@ require_once __DIR__ . '/components/header.php';
         });
 
         manageForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        const category_id = document.getElementById('manage-category-id').value;
-        
-        // Récupère les ID de toutes les questions cochées
-        const checkedBoxes = manageForm.querySelectorAll('input[name="questions_ids[]"]:checked');
-        const question_ids = Array.from(checkedBoxes).map(cb => parseInt(cb.value));
+            e.preventDefault();
+            const category_id = document.getElementById('manage-category-id').value;
+            
+            const checkedBoxes = manageForm.querySelectorAll('input[name="questions_ids[]"]:checked');
+            const question_ids = Array.from(checkedBoxes).map(cb => parseInt(cb.value));
 
-        if (question_ids.length === 0) {
-            showNotification('error', 'Please select at least one question.');
-            return;
-        }
-
-        fetch('/api/categories/bind_questions.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ category_id, question_ids })
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.status === 'success') {
-                hideManageModal();
-                showNotification('success_update', 'Questions successfully assigned to the category!');
-                setTimeout(() => location.reload(), 1500);
-            } else {
-                showNotification('error', data.message || 'Error occurred during processing.');
+            if (question_ids.length === 0) {
+                showNotification('error', 'Please select at least one question.');
+                return;
             }
-        })
-        .catch(() => showNotification('error', 'An unexpected error occurred.'));
-    });
+
+            fetch('/api/categories/bind_questions.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ category_id, question_ids })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    hideManageModal();
+                    showNotification('success_update', 'Questions successfully assigned to the category!');
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    showNotification('error', data.message || 'Error occurred during processing.');
+                }
+            })
+            .catch(() => showNotification('error', 'An unexpected error occurred.'));
+        });
     </script>
 
 <?php require_once __DIR__ . '/components/footer.php'; ?>

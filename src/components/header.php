@@ -25,7 +25,7 @@ require_once __DIR__ . '/../config/db.php';
                     Questions
                 </a>
                 <a href="/admin_categories.php" class="px-3 py-1.5 rounded-lg text-sm font-semibold transition <?php echo strpos($_SERVER['SCRIPT_NAME'], 'admin_categories') !== false ? 'bg-blue-600 text-white shadow' : 'text-gray-300 hover:bg-gray-700'; ?>">
-                    Catégories
+                    Categories
                 </a>
             </div>
         </div>
