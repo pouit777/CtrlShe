@@ -70,7 +70,7 @@
             .then(data => {
                 if (data.status === 'success') {
                     // Routing Logic: Redirect target viewport location matching identity configurations
-                    window.location.href = data.role === 'admin' ? '/admin_dashboard.php' : '/index.php';
+                    window.location.href = data.role === 'admin' ? '/admin_questions.php' : '/index.php';
                 } else {
                     // Execution failure scenario: Render validation alert messages to client
                     errorDiv.textContent = data.message || "Invalid credentials.";

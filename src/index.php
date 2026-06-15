@@ -29,7 +29,7 @@ $categories = $pdo->query('SELECT * FROM categories')->fetchAll(PDO::FETCH_ASSOC
     </div>
     <div class="flex items-center gap-4">
         <?php if(isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
-            <a href="/admin_dashboard.php" class="bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-600 hover:to-amber-700 text-gray-950 font-bold py-2 px-4 rounded-lg shadow-md transition transform hover:-translate-y-0.5 text-sm">Admin Panel</a>
+            <a href="/admin_questions.php" class="bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-600 hover:to-amber-700 text-gray-950 font-bold py-2 px-4 rounded-lg shadow-md transition transform hover:-translate-y-0.5 text-sm">Admin Panel</a>
         <?php endif; ?>
         
         <?php if(isset($_SESSION['user_id'])): ?>

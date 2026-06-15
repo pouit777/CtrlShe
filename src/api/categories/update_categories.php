@@ -1,5 +1,5 @@
 <?php
-// src/api/categories/update_category.php
+// src/api/categories/update_categories.php
 session_start();
 header('Content-Type: application/json');
 

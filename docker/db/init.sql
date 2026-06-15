@@ -20,11 +20,11 @@ CREATE TABLE IF NOT EXISTS users (
 -- Create the questions management table with relation to categories
 CREATE TABLE IF NOT EXISTS questions (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    category_id INT NOT NULL,
+    category_id INT NULL,
     question_text TEXT NOT NULL,
     difficulty ENUM('easy', 'medium', 'hard') DEFAULT 'medium',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE
+    FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Create the answers multiple-choice options table with relation to questions

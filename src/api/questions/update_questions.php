@@ -16,7 +16,7 @@ $input = json_decode(file_get_contents('php://input'), true);
 
 $question_id   = isset($input['id']) ? intval($input['id']) : 0;
 $question_text = isset($input['question_text']) ? trim($input['question_text']) : '';
-$category_id   = isset($input['category_id']) ? intval($input['category_id']) : 0;
+$category_id = isset($input['category_id']) && intval($input['category_id']) > 0 ? intval($input['category_id']) : null;
 $difficulty    = isset($input['difficulty']) ? trim($input['difficulty']) : '';
 $answers       = isset($input['answers']) ? $input['answers'] : [];
 $correct_index = isset($input['correct_index']) ? intval($input['correct_index']) : -1;
