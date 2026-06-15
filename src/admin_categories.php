@@ -75,7 +75,8 @@ require_once __DIR__ . '/components/header.php';
                                     data-label="<?php echo htmlspecialchars($cat['label'], ENT_QUOTES, 'UTF-8'); ?>"
                                     onclick="initManageQuestionsModal(this)"
                                     title="Add Questions"
-                                    class="inline-flex items-center justify-center bg-teal-900/30 hover:bg-teal-600 border border-teal-800 hover:border-teal-500 text-teal-300 hover:text-white p-2 rounded-lg transition duration-150 shadow-sm">
+                                    class="inline-flex items-center gap-1 bg-teal-900/30 hover:bg-teal-600 border border-teal-800 hover:border-teal-500 text-teal-300 hover:text-white px-2.5 py-1.5 rounded-lg text-xs font-semibold transition duration-150 shadow-sm">
+                                    Add questions
                                     <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                                     </svg>
@@ -85,7 +86,8 @@ require_once __DIR__ . '/components/header.php';
                                     data-label="<?php echo htmlspecialchars($cat['label'], ENT_QUOTES, 'UTF-8'); ?>"
                                     onclick="initEditModal(this)"
                                     title="Edit Category"
-                                    class="inline-flex items-center justify-center bg-blue-900/30 hover:bg-blue-600 border border-blue-800 hover:border-blue-500 text-blue-300 hover:text-white p-2 rounded-lg transition duration-150 shadow-sm">
+                                    class="inline-flex items-center gap-1 bg-blue-900/30 hover:bg-blue-600 border border-blue-800 hover:border-blue-500 text-blue-300 hover:text-white px-2.5 py-1.5 rounded-lg text-xs font-semibold transition duration-150 shadow-sm">
+                                    Edit
                                     <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                                     </svg>
@@ -93,7 +95,8 @@ require_once __DIR__ . '/components/header.php';
                                 <button 
                                     onclick="confirmDeleteCategory(<?php echo $cat['id']; ?>)" 
                                     title="Delete Category"
-                                    class="inline-flex items-center justify-center bg-red-900/30 hover:bg-red-600 border border-red-800 hover:border-red-500 text-red-300 hover:text-white p-2 rounded-lg transition duration-150 shadow-sm">
+                                    class="inline-flex items-center gap-1 bg-red-900/30 hover:bg-red-600 border border-red-800 hover:border-red-500 text-red-300 hover:text-white px-2.5 py-1.5 rounded-lg text-xs font-semibold transition duration-150 shadow-sm">
+                                    Delete
                                     <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                     </svg>
@@ -159,7 +162,7 @@ require_once __DIR__ . '/components/header.php';
                 
                 <div id="questions-list-container" class="overflow-y-auto pr-1 my-4 space-y-2 flex-grow max-h-[50vh] border border-gray-700/50 rounded-xl p-3 bg-gray-900/40">
                     <?php if (empty($orphan_questions)): ?>
-                        <p class="text-sm text-gray-400 text-center py-6">🎉 No questions available!</p>
+                        <p class="text-sm text-gray-400 text-center py-6">No questions available!</p>
                     <?php else: ?>
                         <?php foreach($orphan_questions as $orphan): ?>
                             <label data-current-cat-id="<?php echo $orphan['category_id'] ?? 0; ?>" class="question-item flex items-start gap-3 p-2.5 bg-gray-700/30 hover:bg-gray-700/60 rounded-lg cursor-pointer transition border border-gray-700/40 select-none">
@@ -169,7 +172,7 @@ require_once __DIR__ . '/components/header.php';
                                         <span class="text-xs font-mono px-1.5 py-0.5 rounded bg-gray-800 text-cyan-400">#<?php echo $orphan['id']; ?></span>
                                         <span class="text-xs uppercase px-1 rounded bg-gray-900 text-gray-400 border border-gray-800"><?php echo $orphan['difficulty']; ?></span>
                                         <span class="text-[11px] px-1.5 py-0.5 rounded <?php echo $orphan['category_id'] ? 'bg-blue-950 text-blue-400 border border-blue-900' : 'bg-amber-950 text-amber-400 border border-amber-900'; ?> border">
-                                            Actuel : <?php echo htmlspecialchars($orphan['current_category_label'] ?? 'Aucune', ENT_QUOTES, 'UTF-8'); ?>
+                                            Current : <?php echo htmlspecialchars($orphan['current_category_label'] ?? 'Aucune', ENT_QUOTES, 'UTF-8'); ?>
                                         </span>
                                     </div>
                                     <p class="text-gray-200 text-sm md:text-base"><?php echo htmlspecialchars($orphan['question_text'], ENT_QUOTES, 'UTF-8'); ?></p>
@@ -271,7 +274,7 @@ require_once __DIR__ . '/components/header.php';
                 const noDataParagraph = document.createElement('p');
                 noDataParagraph.id = 'js-no-questions-msg';
                 noDataParagraph.className = 'text-sm text-gray-400 text-center py-6';
-                noDataParagraph.innerText = '🚫 No questions available to link to this category.';
+                noDataParagraph.innerText = 'No questions available to link to this category.';
                 questionsContainer.appendChild(noDataParagraph);
                 
                 // Désactiver le bouton de validation car il n'y a rien à faire

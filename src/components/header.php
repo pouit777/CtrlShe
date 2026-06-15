@@ -19,7 +19,7 @@ require_once __DIR__ . '/../config/db.php';
     <nav class="bg-gray-800 border-b border-gray-700 px-4 py-3 shadow-md relative z-50 flex-shrink-0">
         <div class="max-w-5xl mx-auto flex justify-between items-center">
             <a href="/index.php" class="block transition hover:opacity-90">
-                <img src="/src/public/logo.png" alt="brainSKwiz Logo" class="h-8 w-auto">
+                <img src="../public/logo-white.png" alt="brainSKwiz Logo" class="h-12 w-auto">
             </a>
             
             <div class="hidden md:flex items-center gap-4">
@@ -58,6 +58,9 @@ require_once __DIR__ . '/../config/db.php';
             </a>
             <a href="/admin_categories.php" class="px-4 py-2.5 rounded-xl text-base font-semibold transition <?php echo strpos($_SERVER['SCRIPT_NAME'], 'admin_categories') !== false ? 'bg-blue-600 text-white shadow' : 'text-gray-300 hover:bg-gray-700/60'; ?>">
                 Categories
+            </a>
+            <a href="/admin_dashboard.php" class="px-4 py-2.5 rounded-xl text-base font-semibold transition <?php echo strpos($_SERVER['SCRIPT_NAME'], 'admin_categories') !== false ? 'bg-blue-600 text-white shadow' : 'text-gray-300 hover:bg-gray-700/60'; ?>">
+                Quiz Dashboard
             </a>
             <hr class="border-gray-700 my-1">
             <a href="/logout.php" class="px-4 py-2.5 rounded-xl text-base font-semibold text-red-400 hover:bg-red-500/10 transition flex items-center gap-2">
