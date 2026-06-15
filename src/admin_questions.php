@@ -127,15 +127,11 @@ require_once __DIR__ . '/components/header.php';
                 </div>
                 <hr class="border-gray-700 my-2">
                 <div>
-                    <label class="block text-sm font-medium text-emerald-400 mb-2">Answers Options (Select the correct one)</label>
-                    <div class="space-y-3">
-                        <?php for($i = 0; $i < 3; $i++): ?>
-                        <div class="flex items-center gap-3">
-                            <input type="radio" name="correct_answer" value="<?php echo $i; ?>" <?php echo $i === 0 ? 'checked' : ''; ?> class="w-4 h-4 text-emerald-500 bg-gray-700 border-gray-600 focus:ring-emerald-500">
-                            <input type="text" id="answer-<?php echo $i; ?>" required placeholder="Answer option <?php echo $i+1; ?>" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-1.5 text-white focus:outline-none focus:border-emerald-500 transition">
-                        </div>
-                        <?php endfor; ?>
+                    <div class="flex justify-between items-center mb-2">
+                        <label class="block text-sm font-medium text-emerald-400">Answers Options (Select the correct one)</label>
+                        <button type="button" onclick="addAnswerField('add-answers-container', 'correct_answer')" class="text-xs bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500 hover:text-gray-950 px-2 py-1 rounded font-bold transition">+ Add Option</button>
                     </div>
+                    <div id="add-answers-container" class="space-y-3"></div>
                 </div>
                 <div class="flex justify-end gap-3 pt-2">
                     <button type="button" id="cancel-modal-btn" class="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-lg font-medium transition">Cancel</button>
@@ -177,15 +173,11 @@ require_once __DIR__ . '/components/header.php';
                 </div>
                 <hr class="border-gray-700 my-2">
                 <div>
-                    <label class="block text-sm font-medium text-blue-400 mb-2">Answers Options (Check the correct one)</label>
-                    <div class="space-y-3">
-                        <?php for($i = 0; $i < 3; $i++): ?>
-                        <div class="flex items-center gap-3">
-                            <input type="radio" name="edit_correct_answer" value="<?php echo $i; ?>" id="edit-radio-<?php echo $i; ?>" class="w-4 h-4 text-blue-500 bg-gray-700 border-gray-600 focus:ring-blue-500">
-                            <input type="text" id="edit-answer-<?php echo $i; ?>" required class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-1.5 text-white focus:outline-none focus:border-blue-500 transition">
-                        </div>
-                        <?php endfor; ?>
+                    <div class="flex justify-between items-center mb-2">
+                        <label class="block text-sm font-medium text-blue-400">Answers Options (Check the correct one)</label>
+                        <button type="button" onclick="addAnswerField('edit-answers-container', 'edit_correct_answer')" class="text-xs bg-blue-500/20 text-blue-400 hover:bg-blue-500 hover:text-white px-2 py-1 rounded font-bold transition">+ Add Option</button>
                     </div>
+                    <div id="edit-answers-container" class="space-y-3"></div>
                 </div>
                 <div class="flex justify-end gap-3 pt-2">
                     <button type="button" id="cancel-edit-modal-btn" class="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-lg font-medium transition">Cancel</button>
@@ -212,11 +204,61 @@ require_once __DIR__ . '/components/header.php';
         const closeModalBtn = document.getElementById('close-modal-btn');
         const cancelModalBtn = document.getElementById('cancel-modal-btn');
         const addForm = document.getElementById('add-question-form');
+        const addAnswersContainer = document.getElementById('add-answers-container');
+        const editAnswersContainer = document.getElementById('edit-answers-container');
 
+        // --- FONCTION DE GESTION DYNAMIQUE DES CHAMPS (MIN 2, MAX 7) ---
+        function createAnswerRowHtml(radioName, textValue = '', isCorrect = false) {
+            const div = document.createElement('div');
+            div.className = "flex items-center gap-3 answer-row";
+            
+            const isChecked = isCorrect ? 'checked' : '';
+            
+            div.innerHTML = `
+                <input type="radio" name="${radioName}" ${isChecked} class="w-4 h-4 text-emerald-500 bg-gray-700 border-gray-600 focus:ring-emerald-500 input-radio-target">
+                <input type="text" required value="${textValue.replace(/"/g, '&quot;')}" placeholder="Answer option" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-1.5 text-white focus:outline-none focus:border-emerald-500 transition input-text-target">
+                <button type="button" onclick="removeAnswerField(this)" class="text-gray-500 hover:text-red-400 font-bold px-2 text-lg transition" title="Remove option">&times;</button>
+            `;
+            return div;
+        }
+
+        function addAnswerField(containerId, radioName, textValue = '', isCorrect = false) {
+            const container = document.getElementById(containerId);
+            if (container.children.length >= 7) {
+                showNotification('error', 'Maximum 7 options allowed.');
+                return;
+            }
+            container.appendChild(createAnswerRowHtml(radioName, textValue, isCorrect));
+            updateRadioValues(container);
+        }
+
+        function removeAnswerField(button) {
+            const container = button.parentElement.parentElement;
+            if (container.children.length <= 2) {
+                showNotification('error', 'Minimum 2 options are required.');
+                return;
+            }
+            button.parentElement.remove();
+            updateRadioValues(container);
+        }
+
+        function updateRadioValues(container) {
+            // Assigne l'index dynamique aux boutons radio (0, 1, 2, ...)
+            Array.from(container.children).forEach((row, idx) => {
+                const radio = row.querySelector('.input-radio-target');
+                if(radio) radio.value = idx;
+            });
+        }
+
+        // Initialisation de la modale d'ajout avec 2 champs vides
         openModalBtn.addEventListener('click', () => {
             addForm.reset(); 
+            addAnswersContainer.innerHTML = '';
+            addAnswerField('add-answers-container', 'correct_answer', '', true);
+            addAnswerField('add-answers-container', 'correct_answer', '', false);
             modal.classList.remove('hidden');
         });
+
         const hideModal = () => modal.classList.add('hidden');
         closeModalBtn.addEventListener('click', hideModal);
         cancelModalBtn.addEventListener('click', hideModal);
@@ -298,17 +340,21 @@ require_once __DIR__ . '/components/header.php';
             document.getElementById('edit-modal-category').value = catId;
             document.getElementById('edit-modal-difficulty').value = difficulty;
 
-            if(Array.isArray(answers)) {
-                answers.forEach((ans, index) => {
-                    const inputAns = document.getElementById(`edit-answer-${index}`);
-                    const radioAns = document.getElementById(`edit-radio-${index}`);
-                    if (inputAns) inputAns.value = ans.text;
-                    if (radioAns) radioAns.checked = (parseInt(ans.is_correct) === 1);
+            // Remplissage dynamique des réponses existantes
+            editAnswersContainer.innerHTML = '';
+            if(Array.isArray(answers) && answers.length > 0) {
+                answers.forEach((ans) => {
+                    addAnswerField('edit-answers-container', 'edit_correct_answer', ans.text, parseInt(ans.is_correct) === 1);
                 });
+            } else {
+                // Secours si aucune réponse trouvée
+                addAnswerField('edit-answers-container', 'edit_correct_answer', '', true);
+                addAnswerField('edit-answers-container', 'edit_correct_answer', '', false);
             }
             editModal.classList.remove('hidden');
         }
 
+        // --- ENVOI ÉDITION ---
         editForm.addEventListener('submit', function(e) {
             e.preventDefault();
             const id = document.getElementById('edit-question-id').value;
@@ -316,13 +362,11 @@ require_once __DIR__ . '/components/header.php';
             const categoryId = document.getElementById('edit-modal-category').value;
             const difficulty = document.getElementById('edit-modal-difficulty').value;
 
-            const answers = [
-                document.getElementById('edit-answer-0').value,
-                document.getElementById('edit-answer-1').value,
-                document.getElementById('edit-answer-2').value
-            ];
+            // Collecte dynamique de toutes les valeurs textes présentes
+            const textInputs = editAnswersContainer.querySelectorAll('.input-text-target');
+            const answers = Array.from(textInputs).map(input => input.value);
             
-            const checkedRadio = document.querySelector('input[name="edit_correct_answer"]:checked');
+            const checkedRadio = editAnswersContainer.querySelector('input[name="edit_correct_answer"]:checked');
             if(!checkedRadio) {
                 showNotification('error', 'Please select a correct answer.');
                 return;
@@ -372,20 +416,23 @@ require_once __DIR__ . '/components/header.php';
             .catch(() => showNotification('error', 'An error occurred during deletion.'));
         }
 
+        // --- ENVOI CRÉATION ---
         addForm.addEventListener('submit', function(e) {
             e.preventDefault();
             const questionText = document.getElementById('modal-question-text').value;
             const categoryId = document.getElementById('modal-category').value;
             const difficulty = document.getElementById('modal-difficulty').value;
 
-            const answers = [
-                document.getElementById('answer-0').value,
-                document.getElementById('answer-1').value,
-                document.getElementById('answer-2').value
-            ];
+            // Collecte dynamique de toutes les valeurs textes présentes
+            const textInputs = addAnswersContainer.querySelectorAll('.input-text-target');
+            const answers = Array.from(textInputs).map(input => input.value);
             
-            const checkedRadio = document.querySelector('input[name="correct_answer"]:checked');
-            const correctIndex = checkedRadio ? parseInt(checkedRadio.value) : 0;
+            const checkedRadio = addAnswersContainer.querySelector('input[name="correct_answer"]:checked');
+            if(!checkedRadio) {
+                showNotification('error', 'Please select a correct answer.');
+                return;
+            }
+            const correctIndex = parseInt(checkedRadio.value);
 
             fetch('/api/questions/add_questions.php', {
                 method: 'POST',

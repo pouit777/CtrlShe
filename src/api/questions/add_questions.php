@@ -3,7 +3,7 @@
 session_start();
 header('Content-Type: application/json');
 
-// 1. API Protection Guard: Only authenticated administrators are allowed to create items
+// API Protection Guard: Only authenticated administrators are allowed to create items
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     echo json_encode([
         'status' => 'error',
@@ -12,23 +12,34 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     exit;
 }
 
-// 2. Import database layer configuration
+// Import database layer configuration
 require_once __DIR__ . '/../../config/db.php';
 
-// 3. Fetch incoming payload sent via HTTP POST Request (JS Fetch Content)
+// Fetch incoming payload sent via HTTP POST Request (JS Fetch Content)
 $input = json_decode(file_get_contents('php://input'), true);
 
 $question_text = isset($input['question_text']) ? trim($input['question_text']) : '';
-$category_id = isset($input['category_id']) && intval($input['category_id']) > 0 ? intval($input['category_id']) : null;
+$category_id   = isset($input['category_id']) && intval($input['category_id']) > 0 ? intval($input['category_id']) : null;
 $difficulty    = isset($input['difficulty']) ? trim($input['difficulty']) : '';
 $answers       = isset($input['answers']) ? $input['answers'] : [];
 $correct_index = isset($input['correct_index']) ? intval($input['correct_index']) : 0;
 
-// 4. Global request validation checking required schema integrity
-if (empty($question_text) || empty($category_id) || empty($difficulty) || empty($answers) || count($answers) < 3) {
+$total_answers = count($answers);
+
+// Global request validation checking dynamic schema integrity (Min 2, Max 7)
+if (empty($question_text) || empty($category_id) || empty($difficulty) || $total_answers < 2 || $total_answers > 7) {
     echo json_encode([
         'status' => 'error',
-        'message' => 'All fields, including 3 answers options, are required.'
+        'message' => 'All fields are required, with a minimum of 2 and maximum of 7 answers options.'
+    ]);
+    exit;
+}
+
+// Ensure the correct_index falls within the bounds of the provided answers array
+if ($correct_index < 0 || $correct_index >= $total_answers) {
+    echo json_encode([
+        'status' => 'error',
+        'message' => 'The selected correct answer index is out of bounds.'
     ]);
     exit;
 }
@@ -44,7 +55,7 @@ if (!in_array($difficulty, $allowed_difficulties)) {
 }
 
 try {
-    // 5. Initiate Atomic Transaction block to maintain state consistency
+    // Initiate Atomic Transaction block to maintain state consistency
     $pdo->beginTransaction();
 
     // Prepare and insert the core question object
@@ -67,7 +78,7 @@ try {
     $stmtAnswer = $pdo->prepare($sqlAnswer);
 
     foreach ($answers as $index => $answer_text) {
-        // Evaluate if current sequence maps to the selected target valid position (0, 1, or 2)
+        // Dynamically maps to the selected target position (from 0 up to 6)
         $is_correct = ($index === $correct_index) ? 1 : 0;
 
         $stmtAnswer->execute([
