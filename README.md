@@ -44,4 +44,12 @@ Make sure you have [Docker Desktop](https://www.docker.com/products/docker-deskt
 
 1. Open your terminal at the root directory of the project (where `docker-compose.yml` resides).
 2. Fire up the configuration stack by executing the automatic build routine:
->> docker-compose up --build
+> docker-compose up --build
+
+### Data Management (Persistence)
+
+To close the application while preserving your changes :
+> docker-compose down
+
+To completely reset the application and reload the initial test data :
+> docker-compose down -v && docker-compose up -d
