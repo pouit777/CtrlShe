@@ -27,6 +27,31 @@ CREATE TABLE IF NOT EXISTS questions (
     FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- Create the quizzes management table 
+CREATE TABLE IF NOT EXISTS quizzes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    difficulty ENUM('easy','medium','hard') DEFAULT 'medium',
+    question_count INT DEFAULT NULL,
+    allow_custom_question_count TINYINT(1) DEFAULT 0,
+    is_active TINYINT(1) DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Create the quiz_categories join table to establish many-to-many relationship between quizzes and categories
+CREATE TABLE IF NOT EXISTS quiz_categories (
+    quiz_id INT NOT NULL,
+    category_id INT NOT NULL,
+    PRIMARY KEY (quiz_id, category_id),
+    FOREIGN KEY (quiz_id)
+        REFERENCES quizzes(id)
+        ON DELETE CASCADE,
+    FOREIGN KEY (category_id)
+        REFERENCES categories(id)
+        ON DELETE CASCADE
+);
+
 -- Create the answers multiple-choice options table with relation to questions
 CREATE TABLE IF NOT EXISTS answers (
     id INT AUTO_INCREMENT PRIMARY KEY,
