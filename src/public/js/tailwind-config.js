@@ -4,13 +4,22 @@ tailwind.config = {
         extend: {
             colors: {
                 //bleu très foncé (textes importants, titres, ou navbar)
-                primary: '#27187E',
+                primary: {
+                    DEFAULT: '#27187E',
+                    hover: '#211467' // version légèrement plus sombre automatique pour le survol
+                },
                 
                 // bleu électrique / moderne (boutons principaux, liens actifs)
-                secondary: '#758BFD',
+                secondary: {
+                    DEFAULT: '#758BFD',
+                    hover: '#5e71cc' // version légèrement plus sombre automatique pour le survol
+                },
                 
                 // bleu doux / pastel (badges, fonds de composants, bordures)
-                lightBlue: '#AEB8FE',
+                lightBlue: {
+                    DEFAULT: '#AEB8FE',
+                    hover: '#8c93c8' // version légèrement plus sombre automatique pour le survol
+                },
                 
                 // blanc / gris très clair (Idéal pour le fond du site ou des cartes en mode clair)
                 surface: '#F1F2F6',

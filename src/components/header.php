@@ -15,7 +15,7 @@ require_once __DIR__ . '/../config/db.php';
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="/public/js/tailwind-config.js"></script>
 </head>
-<body class="bg-lightBlue text-white h-screen overflow-hidden font-sans grid grid-rows-[auto_1fr_auto]">
+<body class="bg-surface text-white h-screen overflow-hidden font-sans grid grid-rows-[auto_1fr_auto]">
     
     <?php if(isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
     <nav class="bg-primary border-b border-primary px-4 py-3 shadow-md relative z-50 flex-shrink-0">
@@ -26,20 +26,20 @@ require_once __DIR__ . '/../config/db.php';
             
             <div class="hidden md:flex items-center gap-4">
                 <div class="flex items-center gap-2">
-                    <a href="/admin_questions.php" class="px-3 py-1.5 rounded-lg text-sm font-semibold transition <?php echo strpos($_SERVER['SCRIPT_NAME'], 'admin_questions') !== false ? 'bg-lightBlue text-primary shadow' : 'text-white hover:bg-secondary'; ?>">
+                    <a href="/admin_questions.php" class="px-3 py-1.5 rounded-lg text-sm font-semibold transition <?php echo strpos($_SERVER['SCRIPT_NAME'], 'admin_questions') !== false ? 'bg-secondary text-white shadow' : 'text-white hover:bg-lightBlue/30'; ?>">
                         Questions
                     </a>
-                    <a href="/admin_categories.php" class="px-3 py-1.5 rounded-lg text-sm font-semibold transition <?php echo strpos($_SERVER['SCRIPT_NAME'], 'admin_categories') !== false ? 'bg-lightBlue text-primary shadow' : 'text-white hover:bg-secondary'; ?>">
+                    <a href="/admin_categories.php" class="px-3 py-1.5 rounded-lg text-sm font-semibold transition <?php echo strpos($_SERVER['SCRIPT_NAME'], 'admin_categories') !== false ? 'bg-secondary text-white shadow' : 'text-white hover:bg-lightBlue/30'; ?>">
                         Categories
                     </a>
-                    <a href="/admin_dashboard.php" class="px-3 py-1.5 rounded-lg text-sm font-semibold transition <?php echo strpos($_SERVER['SCRIPT_NAME'], 'admin_categories') !== false ? 'bg-lightBlue text-primary shadow' : 'text-white hover:bg-secondary'; ?>">
+                    <a href="/admin_dashboard.php" class="px-3 py-1.5 rounded-lg text-sm font-semibold transition <?php echo strpos($_SERVER['SCRIPT_NAME'], 'admin_dashboard') !== false ? 'bg-secondary text-white shadow' : 'text-white hover:bg-lightBlue/30'; ?>">
                         Quiz Dashboard
                     </a>
                 </div>
                 
                 <span class="h-5 w-[1px] bg-gray-700"></span>
 
-                <a href="/logout.php" title="Log out" class="text-gray-400 gap-1 hover:text-red-400 hover:bg-red-500/10 p-2 rounded-lg transition duration-150 flex items-center justify-center">
+                <a href="/logout.php" title="Log out" class="text-gray-400 gap-2 hover:text-red-400 hover:bg-red-500/10 p-2 rounded-lg transition duration-150 flex items-center justify-center">
                     Logout
                     <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -54,14 +54,14 @@ require_once __DIR__ . '/../config/db.php';
             </button>
         </div>
 
-        <div id="mobile-menu" class="hidden absolute top-full left-0 w-full bg-gray-800 border-b border-gray-700 shadow-xl flex flex-col p-4 space-y-3 md:hidden transition-all duration-200 opacity-0 transform -translate-y-2">
-            <a href="/admin_questions.php" class="px-4 py-2.5 rounded-xl text-base font-semibold transition <?php echo strpos($_SERVER['SCRIPT_NAME'], 'admin_questions') !== false ? 'bg-blue-600 text-white shadow' : 'text-gray-300 hover:bg-gray-700/60'; ?>">
+        <div id="mobile-menu" class="bg-primary hidden absolute top-full left-0 w-full bg-gray-800 border-b border-gray-700 shadow-xl flex flex-col p-4 space-y-3 md:hidden transition-all duration-200 opacity-0 transform -translate-y-2">
+            <a href="/admin_questions.php" class="px-4 py-2.5 rounded-xl text-base font-semibold transition <?php echo strpos($_SERVER['SCRIPT_NAME'], 'admin_questions') !== false ? 'bg-secondary text-white shadow' : 'text-white hover:bg-lightBlue/30'; ?>">
                 Questions
             </a>
-            <a href="/admin_categories.php" class="px-4 py-2.5 rounded-xl text-base font-semibold transition <?php echo strpos($_SERVER['SCRIPT_NAME'], 'admin_categories') !== false ? 'bg-blue-600 text-white shadow' : 'text-gray-300 hover:bg-gray-700/60'; ?>">
+            <a href="/admin_categories.php" class="px-4 py-2.5 rounded-xl text-base font-semibold transition <?php echo strpos($_SERVER['SCRIPT_NAME'], 'admin_categories') !== false ? 'bg-secondary text-white shadow' : 'text-white hover:bg-lightBlue/30'; ?>">
                 Categories
             </a>
-            <a href="/admin_dashboard.php" class="px-4 py-2.5 rounded-xl text-base font-semibold transition <?php echo strpos($_SERVER['SCRIPT_NAME'], 'admin_categories') !== false ? 'bg-blue-600 text-white shadow' : 'text-gray-300 hover:bg-gray-700/60'; ?>">
+            <a href="/admin_dashboard.php" class="px-4 py-2.5 rounded-xl text-base font-semibold transition <?php echo strpos($_SERVER['SCRIPT_NAME'], 'admin_dashboard') !== false ? 'bg-secondary text-white shadow' : 'text-white hover:bg-lightBlue/30'; ?>">
                 Quiz Dashboard
             </a>
             <hr class="border-gray-700 my-1">
