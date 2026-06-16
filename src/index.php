@@ -194,56 +194,55 @@ $categories = $pdo->query('SELECT * FROM categories')->fetchAll(PDO::FETCH_ASSOC
 
     // Bootstrapping phase: Retrieve the baseline dataset once document elements are available
     document.addEventListener('DOMContentLoaded', loadQuestions);
-</script>
 
-<?php require_once __DIR__ . '/components/footer.php'; ?>cument.createElement('div');
-                        card.className = "bg-gray-800 p-5 rounded-xl border border-gray-700 hover:border-cyan-500/50 transition duration-200 flex flex-col justify-between shadow-md";
+    document.createElement('div');
+        card.className = "bg-gray-800 p-5 rounded-xl border border-gray-700 hover:border-cyan-500/50 transition duration-200 flex flex-col justify-between shadow-md";
                         
-                        // Select styling tags matching defined difficulty parameters
-                        let diffClass = "bg-yellow-950 text-yellow-400 border-yellow-900";
-                        if(question.difficulty === 'easy') diffClass = "bg-green-950 text-green-400 border-green-900";
-                        if(question.difficulty === 'hard') diffClass = "bg-red-950 text-red-400 border-red-900";
+        // Select styling tags matching defined difficulty parameters
+        let diffClass = "bg-yellow-950 text-yellow-400 border-yellow-900";
+        if(question.difficulty === 'easy') diffClass = "bg-green-950 text-green-400 border-green-900";
+        if(question.difficulty === 'hard') diffClass = "bg-red-950 text-red-400 border-red-900";
 
-                        // Build inner associative loops rendering nested options
-                        let answersHTML = '<div class="mt-4 space-y-2">';
-                        if(question.answers && question.answers.length > 0) {
-                            question.answers.forEach(ans => {
-                                answersHTML += `
-                                    <div class="p-2.5 rounded bg-gray-700/40 border border-gray-600/60 text-sm text-gray-200">
-                                        ${escapeHTML(ans.text)}
-                                    </div>
-                                `;
-                            });
-                        } else {
-                            answersHTML += `<p class="text-xs text-gray-500 italic">No options available for this question.</p>`;
-                        }
-                        answersHTML += '</div>';
-
-                        // Set the dynamic HTML payload safely with custom configurations inside template blocks
-                        card.innerHTML = `
-                            <div>
-                                <span class="text-xs font-mono px-2 py-0.5 rounded uppercase border ${diffClass}">
-                                    ${escapeHTML(question.difficulty)}
-                                </span>
-                                <p class="text-gray-100 text-lg font-medium mt-3">${escapeHTML(question.question_text)}</p>
-                                ${answersHTML}
-                            </div>
-                            <div class="text-xs text-gray-500 mt-4 font-mono pt-3 border-t border-gray-700/50 flex justify-between">
-                                <span>ID: #${parseInt(question.id, 10)}</span>
-                                <span>Category ID: ${parseInt(question.category_id, 10)}</span>
-                            </div>
-                        `;
-                        questionsGrid.appendChild(card);
-                    });
-                }
-            })
-            .catch(err => {
-                // Error boundary fallback logic to notify client gracefully
-                questionsGrid.style.opacity = "1";
-                questionsGrid.innerHTML = `<p class="text-red-400 italic col-span-1 md:col-span-2 text-center py-8">Failed to sync data from API. Please try again.</p>`;
-                console.error("Error fetching data:", err);
+        // Build inner associative loops rendering nested options
+        let answersHTML = '<div class="mt-4 space-y-2">';
+        if(question.answers && question.answers.length > 0) {
+            question.answers.forEach(ans => {
+                answersHTML += `
+                    <div class="p-2.5 rounded bg-gray-700/40 border border-gray-600/60 text-sm text-gray-200">
+                        ${escapeHTML(ans.text)}
+                    </div>
+                `;
             });
-    }
+        } else {
+            answersHTML += `<p class="text-xs text-gray-500 italic">No options available for this question.</p>`;
+        }
+        answersHTML += '</div>';
+
+        // Set the dynamic HTML payload safely with custom configurations inside template blocks
+        card.innerHTML = `
+            <div>
+                <span class="text-xs font-mono px-2 py-0.5 rounded uppercase border ${diffClass}">
+                    ${escapeHTML(question.difficulty)}
+                </span>
+                <p class="text-gray-100 text-lg font-medium mt-3">${escapeHTML(question.question_text)}</p>
+                ${answersHTML}
+            </div>
+            <div class="text-xs text-gray-500 mt-4 font-mono pt-3 border-t border-gray-700/50 flex justify-between">
+                <span>ID: #${parseInt(question.id, 10)}</span>
+                <span>Category ID: ${parseInt(question.category_id, 10)}</span>
+            </div>
+        `;
+        questionsGrid.appendChild(card);
+            //         });
+            //     }
+            // })
+            // .catch(err => {
+            //     // Error boundary fallback logic to notify client gracefully
+            //     questionsGrid.style.opacity = "1";
+            //     questionsGrid.innerHTML = `<p class="text-red-400 italic col-span-1 md:col-span-2 text-center py-8">Failed to sync data from API. Please try again.</p>`;
+            //     console.error("Error fetching data:", err);
+            // });
+    // }
 
     /**
      * Event Listener: Watches for category mutations.
