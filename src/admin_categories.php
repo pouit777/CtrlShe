@@ -69,38 +69,40 @@ require_once __DIR__ . '/components/header.php';
                                     <?php echo $cat['total_questions'] . ' ' . ($cat['total_questions'] > 1 ? 'questions' : 'question'); ?>
                                 </span>
                             </td>
-                            <td class="p-4 flex justify-center gap-2 h-full min-h-[40px] items-center">
-                                <button 
-                                    data-id="<?php echo $cat['id']; ?>"
-                                    data-label="<?php echo htmlspecialchars($cat['label'], ENT_QUOTES, 'UTF-8'); ?>"
-                                    onclick="initManageQuestionsModal(this)"
-                                    title="Add Questions"
-                                    class="flex items-center justify-center gap-1 bg-teal-900/30 hover:bg-teal-600 whitespace-nowrap border border-teal-800 hover:border-teal-500 text-teal-300 hover:text-white px-2.5 py-1.5 rounded-lg text-xs font-semibold transition duration-150 shadow-sm">
-                                    Add questions
-                                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                                    </svg>
-                                </button>
-                                <button 
-                                    data-id="<?php echo $cat['id']; ?>"
-                                    data-label="<?php echo htmlspecialchars($cat['label'], ENT_QUOTES, 'UTF-8'); ?>"
-                                    onclick="initEditModal(this)"
-                                    title="Edit Category"
-                                    class="flex items-center justify-center gap-1 bg-blue-900/30 hover:bg-blue-600 border border-blue-800 hover:border-blue-500 text-blue-300 hover:text-white px-2.5 py-1.5 rounded-lg text-xs font-semibold transition duration-150 shadow-sm">
-                                    Edit
-                                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                                    </svg>
-                                </button>
-                                <button 
-                                    onclick="confirmDeleteCategory(<?php echo $cat['id']; ?>)" 
-                                    title="Delete Category"
-                                    class="flex items-center justify-center gap-1 bg-red-900/30 hover:bg-red-600 border border-red-800 hover:border-red-500 text-red-300 hover:text-white px-2.5 py-1.5 rounded-lg text-xs font-semibold transition duration-150 shadow-sm">
-                                    Delete
-                                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                    </svg>
-                                </button>
+                            <td class="p-4 align-middle text-center">
+                                <div class="flex justify-center items-center gap-2 w-full h-full">
+                                    <button 
+                                        data-id="<?php echo $cat['id']; ?>"
+                                        data-label="<?php echo htmlspecialchars($cat['label'], ENT_QUOTES, 'UTF-8'); ?>"
+                                        onclick="initManageQuestionsModal(this)"
+                                        title="Add Questions"
+                                        class="flex items-center justify-center gap-1 bg-teal-900/30 hover:bg-teal-600 whitespace-nowrap border border-teal-800 hover:border-teal-500 text-teal-300 hover:text-white px-2.5 py-1.5 rounded-lg text-xs font-semibold transition duration-150 shadow-sm">
+                                        Add questions
+                                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                        </svg>
+                                    </button>
+                                    <button 
+                                        data-id="<?php echo $cat['id']; ?>"
+                                        data-label="<?php echo htmlspecialchars($cat['label'], ENT_QUOTES, 'UTF-8'); ?>"
+                                        onclick="initEditModal(this)"
+                                        title="Edit Category"
+                                        class="gap-1 whitespace-nowrap flex bg-blue-900/30 hover:bg-blue-600 border border-blue-800 hover:border-blue-500 text-blue-300 hover:text-white px-2.5 py-1.5 rounded-lg text-xs font-semibold transition duration-150 shadow-sm">
+                                        Edit
+                                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                        </svg>
+                                    </button>
+                                    <button 
+                                        onclick="confirmDeleteCategory(<?php echo $cat['id']; ?>)" 
+                                        title="Delete Category"
+                                        class="gap-1 whitespace-nowrap flex bg-red-900/30 hover:bg-red-600 border border-red-800 hover:border-red-500 text-red-300 hover:text-white px-2.5 py-1.5 rounded-lg text-xs font-semibold transition duration-150 shadow-sm">
+                                        Delete
+                                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                        </svg>
+                                    </button>
+                                </div>
                             </td>
                         </tr>
                     <?php endforeach; ?>
@@ -172,7 +174,7 @@ require_once __DIR__ . '/components/header.php';
                                         <span class="text-xs font-mono px-1.5 py-0.5 rounded bg-gray-800 text-cyan-400">#<?php echo $orphan['id']; ?></span>
                                         <span class="text-xs uppercase px-1 rounded bg-gray-900 text-gray-400 border border-gray-800"><?php echo $orphan['difficulty']; ?></span>
                                         <span class="text-[11px] px-1.5 py-0.5 rounded <?php echo $orphan['category_id'] ? 'bg-blue-950 text-blue-400 border border-blue-900' : 'bg-amber-950 text-amber-400 border border-amber-900'; ?> border">
-                                            Current : <?php echo htmlspecialchars($orphan['current_category_label'] ?? 'Aucune', ENT_QUOTES, 'UTF-8'); ?>
+                                            Current : <?php echo htmlspecialchars($orphan['current_category_label'] ?? 'No category', ENT_QUOTES, 'UTF-8'); ?>
                                         </span>
                                     </div>
                                     <p class="text-gray-200 text-sm md:text-base"><?php echo htmlspecialchars($orphan['question_text'], ENT_QUOTES, 'UTF-8'); ?></p>
