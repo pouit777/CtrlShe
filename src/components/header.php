@@ -13,11 +13,12 @@ require_once __DIR__ . '/../config/db.php';
     <link rel="icon" type="image/png" href="/public/logo-icon.ico">
     <link rel="shortcut icon" type="image/x-icon" href="/logo-icon.ico">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/public/js/tailwind-config.js"></script>
 </head>
-<body class="bg-gray-900 text-white h-screen overflow-hidden font-sans grid grid-rows-[auto_1fr_auto]">
+<body class="bg-lightBlue text-white h-screen overflow-hidden font-sans grid grid-rows-[auto_1fr_auto]">
     
     <?php if(isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
-    <nav class="bg-gray-800 border-b border-gray-700 px-4 py-3 shadow-md relative z-50 flex-shrink-0">
+    <nav class="bg-primary border-b border-primary px-4 py-3 shadow-md relative z-50 flex-shrink-0">
         <div class="max-w-5xl mx-auto flex justify-between items-center">
             <a href="/index.php" class="block transition hover:opacity-90">
                 <img src="../public/logo-white.png" alt="brainSKwiz Logo" class="h-12 w-auto">
@@ -25,13 +26,13 @@ require_once __DIR__ . '/../config/db.php';
             
             <div class="hidden md:flex items-center gap-4">
                 <div class="flex items-center gap-2">
-                    <a href="/admin_questions.php" class="px-3 py-1.5 rounded-lg text-sm font-semibold transition <?php echo strpos($_SERVER['SCRIPT_NAME'], 'admin_questions') !== false ? 'bg-blue-600 text-white shadow' : 'text-gray-300 hover:bg-gray-700'; ?>">
+                    <a href="/admin_questions.php" class="px-3 py-1.5 rounded-lg text-sm font-semibold transition <?php echo strpos($_SERVER['SCRIPT_NAME'], 'admin_questions') !== false ? 'bg-lightBlue text-primary shadow' : 'text-white hover:bg-secondary'; ?>">
                         Questions
                     </a>
-                    <a href="/admin_categories.php" class="px-3 py-1.5 rounded-lg text-sm font-semibold transition <?php echo strpos($_SERVER['SCRIPT_NAME'], 'admin_categories') !== false ? 'bg-blue-600 text-white shadow' : 'text-gray-300 hover:bg-gray-700'; ?>">
+                    <a href="/admin_categories.php" class="px-3 py-1.5 rounded-lg text-sm font-semibold transition <?php echo strpos($_SERVER['SCRIPT_NAME'], 'admin_categories') !== false ? 'bg-lightBlue text-primary shadow' : 'text-white hover:bg-secondary'; ?>">
                         Categories
                     </a>
-                    <a href="/admin_dashboard.php" class="px-3 py-1.5 rounded-lg text-sm font-semibold transition <?php echo strpos($_SERVER['SCRIPT_NAME'], 'admin_categories') !== false ? 'bg-blue-600 text-white shadow' : 'text-gray-300 hover:bg-gray-700'; ?>">
+                    <a href="/admin_dashboard.php" class="px-3 py-1.5 rounded-lg text-sm font-semibold transition <?php echo strpos($_SERVER['SCRIPT_NAME'], 'admin_categories') !== false ? 'bg-lightBlue text-primary shadow' : 'text-white hover:bg-secondary'; ?>">
                         Quiz Dashboard
                     </a>
                 </div>
