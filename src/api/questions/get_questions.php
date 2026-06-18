@@ -3,6 +3,15 @@
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *'); 
 
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
+    http_response_code(403);
+    echo json_encode(['status' => 'error', 'message' => 'Unauthorized access. Admins only.']);
+    exit;
+}
+
 // Relying on core global connection instantiation file to bypass code redundancy
 require_once __DIR__ . '/../../config/db.php';
 

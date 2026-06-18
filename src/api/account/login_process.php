@@ -23,6 +23,8 @@ try {
     // SECURITY REQUISITE: Enforcing secure algorithmic runtime using password_verify (no hardcoded matches)
     if ($userAccount && password_verify($password, $userAccount['password'])) {
         
+        // Generate new session ID to prevent session fixation attacks
+        session_regenerate_id(true);
         // Define runtime session context mapping
         $_SESSION['user_id'] = $userAccount['id'];
         $_SESSION['username'] = $userAccount['username'];

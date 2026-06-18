@@ -29,7 +29,7 @@ require_once __DIR__ . '/components/header.php';
             <div>
                 <h1 class="text-2xl md:text-3xl mb-5 md:mb-3 font-extrabold text-transparent bg-clip-text bg-white drop-shadow-sm">Question management</h1>
                 <p class="text-xs md:text-sm mb-3 md:mb-0 text-white mt-1">
-                    Logged in as : <strong class="text-white bg-white-500"><?php echo htmlspecialchars($_SESSION['username'] ?? 'Admin', ENT_QUOTES, 'UTF-8'); ?> (<?php echo htmlspecialchars($_SESSION['role'], ENT_QUOTES, 'UTF-8'); ?>)</strong>
+                    Logged in as : <strong class="text-white bg-white-500 "><?php echo htmlspecialchars($_SESSION['username'] ?? 'Admin', ENT_QUOTES, 'UTF-8'); ?> (<span class="uppercase"><?php echo htmlspecialchars($_SESSION['role'], ENT_QUOTES, 'UTF-8'); ?></span>)</strong>
                 </p>
             </div>
             <div class="w-full sm:w-auto flex justify-end">

@@ -7,7 +7,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     exit;
 }
 
-require_once __DIR__ . '/../../config/db.php'; // Ajuste le chemin vers ton db.php si nécessaire
+require_once __DIR__ . '/../../config/db.php';
 
 $data = json_decode(file_get_contents('php://input'), true);
 
@@ -20,8 +20,8 @@ if ($category_id <= 0 || empty($question_ids)) {
 }
 
 try {
-    // Prépare une requête pour mettre à jour la catégorie des questions sélectionnées
-    // Génère des '?' dynamiquement selon le nombre d'IDs : (?, ?, ?)
+    // Prepare the SQL statement with placeholders for the question IDs
+    // Generate a string of placeholders for the question IDs
     $placeholders = implode(',', array_fill(0, count($question_ids), '?'));
     
     $query = "UPDATE questions SET category_id = ? WHERE id IN ($placeholders)";

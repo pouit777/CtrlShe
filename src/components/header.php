@@ -35,6 +35,9 @@ require_once __DIR__ . '/../config/db.php';
                     <a href="/admin_dashboard.php" class="px-3 py-1.5 rounded-lg text-sm font-semibold transition <?php echo strpos($_SERVER['SCRIPT_NAME'], 'admin_dashboard') !== false ? 'bg-secondary text-white shadow' : 'text-white hover:bg-lightBlue/30'; ?>">
                         Quiz Dashboard
                     </a>
+                    <a href="/admin_users.php" class="px-3 py-1.5 rounded-lg text-sm font-semibold transition <?php echo strpos($_SERVER['SCRIPT_NAME'], 'admin_users') !== false ? 'bg-secondary text-white shadow' : 'text-white hover:bg-lightBlue/30'; ?>">
+                        Users
+                    </a>
                 </div>
                 
                 <span class="h-5 w-[1px] bg-gray-700"></span>
@@ -54,7 +57,7 @@ require_once __DIR__ . '/../config/db.php';
             </button>
         </div>
 
-        <div id="mobile-menu" class="bg-primary hidden absolute top-full left-0 w-full bg-gray-800 border-b border-gray-700 shadow-xl flex flex-col p-4 space-y-3 md:hidden transition-all duration-200 opacity-0 transform -translate-y-2">
+        <div id="mobile-menu" class="bg-primary hidden absolute top-full left-0 w-full border-b border-primary shadow-xl flex flex-col p-4 space-y-3 md:hidden transition-all duration-200 opacity-0 transform -translate-y-2">
             <a href="/admin_questions.php" class="px-4 py-2.5 rounded-xl text-base font-semibold transition <?php echo strpos($_SERVER['SCRIPT_NAME'], 'admin_questions') !== false ? 'bg-secondary text-white shadow' : 'text-white hover:bg-lightBlue/30'; ?>">
                 Questions
             </a>
@@ -63,6 +66,9 @@ require_once __DIR__ . '/../config/db.php';
             </a>
             <a href="/admin_dashboard.php" class="px-4 py-2.5 rounded-xl text-base font-semibold transition <?php echo strpos($_SERVER['SCRIPT_NAME'], 'admin_dashboard') !== false ? 'bg-secondary text-white shadow' : 'text-white hover:bg-lightBlue/30'; ?>">
                 Quiz Dashboard
+            </a>
+            <a href="/admin_users.php" class="px-4 py-2.5 rounded-xl text-base font-semibold transition <?php echo strpos($_SERVER['SCRIPT_NAME'], 'admin_users') !== false ? 'bg-secondary text-white shadow' : 'text-white hover:bg-lightBlue/30'; ?>">
+                Users
             </a>
             <hr class="border-gray-700 my-1">
             <a href="/logout.php" class="px-4 py-2.5 rounded-xl text-base font-semibold text-red-400 hover:bg-red-500/10 transition flex items-center gap-2">
