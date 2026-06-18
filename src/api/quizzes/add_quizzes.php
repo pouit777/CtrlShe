@@ -18,7 +18,6 @@ require_once __DIR__ . '/../../config/db.php';
 try {
 
     $raw = file_get_contents('php://input');
-
     $data = json_decode($raw, true);
 
     if (json_last_error() !== JSON_ERROR_NONE) {
@@ -30,6 +29,7 @@ try {
     $difficulty = $data['difficulty'] ?? 'medium';
 
     $categories = $data['categories'] ?? [];
+    $questions = $data['questions'] ?? []; // ✅ AJOUT IMPORTANT
 
     $allowCustom = !empty($data['allow_custom_question_count']) ? 1 : 0;
 
@@ -51,6 +51,9 @@ try {
 
     $pdo->beginTransaction();
 
+    /* =========================
+       1. CREATE QUIZ
+    ========================= */
     $stmt = $pdo->prepare("
         INSERT INTO quizzes (
             name,
@@ -80,6 +83,9 @@ try {
 
     $quizId = $pdo->lastInsertId();
 
+    /* =========================
+       2. LINK CATEGORIES
+    ========================= */
     $stmtCat = $pdo->prepare("
         INSERT INTO quiz_categories (
             quiz_id,
@@ -92,11 +98,34 @@ try {
     ");
 
     foreach ($categories as $catId) {
-
         $stmtCat->execute([
             ':quiz_id' => $quizId,
             ':category_id' => (int)$catId
         ]);
+    }
+
+    /* =========================
+       3. LINK QUESTIONS (NEW)
+    ========================= */
+    if (!empty($questions)) {
+
+        $stmtQ = $pdo->prepare("
+            INSERT INTO quiz_questions (
+                quiz_id,
+                question_id
+            )
+            VALUES (
+                :quiz_id,
+                :question_id
+            )
+        ");
+
+        foreach ($questions as $qId) {
+            $stmtQ->execute([
+                ':quiz_id' => $quizId,
+                ':question_id' => (int)$qId
+            ]);
+        }
     }
 
     $pdo->commit();

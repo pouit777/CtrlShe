@@ -30,16 +30,19 @@ if (!$quiz) {
 /* Questions du quiz */
 
 $stmt = $pdo->prepare("
-    SELECT DISTINCT q.*
+    SELECT q.*
     FROM questions q
-    INNER JOIN quiz_categories qc
-        ON qc.category_id = q.category_id
-    WHERE qc.quiz_id = ?
+    INNER JOIN quiz_questions qq
+        ON qq.question_id = q.id
+    WHERE qq.quiz_id = ?
 ");
-
 $stmt->execute([$quiz_id]);
 
 $questions = $stmt->fetchAll();
+
+if (empty($questions)) {
+    die("DEBUG: quiz_id=$quiz_id a 0 questions dans quiz_questions");
+}
 
 /* Réponses */
 

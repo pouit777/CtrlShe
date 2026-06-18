@@ -39,6 +39,14 @@ CREATE TABLE IF NOT EXISTS quizzes (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE quiz_questions (
+    quiz_id INT NOT NULL,
+    question_id INT NOT NULL,
+    PRIMARY KEY (quiz_id, question_id),
+    FOREIGN KEY (quiz_id) REFERENCES quizzes(id) ON DELETE CASCADE,
+    FOREIGN KEY (question_id) REFERENCES questions(id) ON DELETE CASCADE
+);
+
 -- Create the quiz_categories join table to establish many-to-many relationship between quizzes and categories
 CREATE TABLE IF NOT EXISTS quiz_categories (
     quiz_id INT NOT NULL,
@@ -76,6 +84,19 @@ INSERT INTO categories (id, label) VALUES
 (2, 'General Knowledge'),
 (3, 'Sciences');
 
+-- Categories
+INSERT IGNORE INTO categories (id, label) VALUES
+(1, 'Computer Science & Web'),
+(2, 'General Knowledge'),
+(3, 'Sciences');
+
+-- only seed categories (ok)
+INSERT INTO categories (id, label) VALUES 
+(1, 'Computer Science & Web'),
+(2, 'General Knowledge'),
+(3, 'Sciences')
+ON DUPLICATE KEY UPDATE label = VALUES(label);
+
 -- Test Accounts (password: admin123 hashed using PASSWORD_BCRYPT)
 INSERT INTO users (username, email, password, role) VALUES 
 ('admin', 'admin@quiz.fr', '$2y$10$K9R7MrgYvPcdQdAsLdP1fuAFMVhTvVui5JHa8hg/BfB4fyjtmFX5m', 'admin'),
@@ -85,6 +106,16 @@ INSERT INTO users (username, email, password, role) VALUES
 INSERT INTO questions (id, category_id, question_text, difficulty) VALUES 
 (1, 1, 'What does the acronym CSS stand for?', 'easy'),
 (2, 1, 'Which protocol features encrypted data transmission for web browsing?', 'easy');
+
+-- Seed quizzes (IMPORTANT)
+INSERT INTO quizzes (id, name, description, difficulty, question_count, is_active)
+VALUES (1, ?, ?, ?, 2, 1);
+
+$quizId = $pdo->lastInsertId();
+
+-- Link quiz → categories
+INSERT INTO quiz_categories (quiz_id, category_id)
+VALUES (?, ?);
 
 -- Seed options for the test questions above
 INSERT INTO answers (question_id, answer_text, is_correct) VALUES 

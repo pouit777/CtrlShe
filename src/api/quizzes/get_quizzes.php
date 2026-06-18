@@ -13,6 +13,7 @@ if ($quizId <= 0) {
     exit;
 }
 
+/* 1. Quiz */
 $stmt = $pdo->prepare("
     SELECT *
     FROM quizzes
@@ -21,8 +22,7 @@ $stmt = $pdo->prepare("
 ");
 
 $stmt->execute([$quizId]);
-
-$quiz = $stmt->fetch();
+$quiz = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$quiz) {
     echo json_encode([
@@ -32,30 +32,29 @@ if (!$quiz) {
     exit;
 }
 
+/* 2. Questions du quiz (IMPORTANT FIX) */
 $stmt = $pdo->prepare("
-    SELECT DISTINCT q.*
+    SELECT q.*
     FROM questions q
-    INNER JOIN quiz_categories qc
-        ON qc.category_id = q.category_id
-    WHERE qc.quiz_id = ?
+    INNER JOIN quiz_questions qq ON qq.question_id = q.id
+    WHERE qq.quiz_id = ?
 ");
 
 $stmt->execute([$quizId]);
+$questions = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-$questions = $stmt->fetchAll();
-
+/* 3. Answers */
 foreach ($questions as &$question) {
 
     $stmtAnswers = $pdo->prepare("
-        SELECT id, answer_text
+        SELECT id, answer_text, is_correct
         FROM answers
         WHERE question_id = ?
         ORDER BY id ASC
     ");
 
     $stmtAnswers->execute([$question['id']]);
-
-    $question['answers'] = $stmtAnswers->fetchAll();
+    $question['answers'] = $stmtAnswers->fetchAll(PDO::FETCH_ASSOC);
 }
 
 $quiz['questions'] = $questions;
