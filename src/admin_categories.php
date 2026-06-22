@@ -31,75 +31,65 @@ $page_title = "brainSKwiz - Admin Categories";
 require_once __DIR__ . '/components/header.php';
 ?>
 
-        <div class="flex flex-col sm:flex-row justify-between items-center text-center sm:text-left gap-4 mb-8 bg-gray-800 p-4 md:p-6 rounded-xl border border-gray-700 shadow-lg">
+        <div class="titleBox">
             <div>
-                <h1 class="text-2xl md:text-3xl mb-5 md:mb-3 font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-400 drop-shadow-sm">Question category management</h1>
-                <p class="text-xs md:text-sm mb-3 md:mb-0 text-gray-400 mt-1">
-                    Logged in as : <strong class="text-white bg-white-500 "><?php echo htmlspecialchars($_SESSION['username'] ?? 'Admin', ENT_QUOTES, 'UTF-8'); ?> (<span class="uppercase"><?php echo htmlspecialchars($_SESSION['role'], ENT_QUOTES, 'UTF-8'); ?></span>)</strong>                </p>
-            </div>
-            <div class="w-full sm:w-auto flex justify-center sm:justify-end">
-                <button id="open-modal-btn" class="w-full sm:w-auto bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-gray-950 font-bold py-2 px-4 rounded-lg shadow-md transition transform hover:-translate-y-0.5 text-sm md:text-base">
+                <h1 class="titleText">Question category management</h1>
+                <p class="subTitle">
+                    Logged in as : <strong><?php echo htmlspecialchars($_SESSION['username'] ?? 'Admin', ENT_QUOTES, 'UTF-8'); ?> (<span class="uppercase"><?php echo htmlspecialchars($_SESSION['role'], ENT_QUOTES, 'UTF-8'); ?></span>)</strong>
+                </p>
+                <button id="open-modal-btn" class="btn">
                     + Add New Category
                 </button>
             </div>
         </div>
 
-        <div class="bg-gray-800 rounded-xl border border-gray-700 shadow-xl overflow-hidden overflow-x-auto">
-            <table class="w-full text-left border-collapse min-w-[550px]">
-                <thead>
-                    <tr class="bg-gray-700/50 text-gray-400 uppercase text-xs font-mono border-b border-gray-700">
-                        <th class="p-4 w-20">ID</th>
-                        <th class="p-4">Label</th>
-                        <th class="p-4 w-32 text-center">Total</th>
-                        <th class="p-4 w-36 text-center">Actions</th>
+        <div class="table">
+            <table>
+                <thead class="tableTitle">
+                    <tr>
+                        <th>ID</th>
+                        <th>Label</th>
+                        <th>Total</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody id="categories-table-body">
                     <?php foreach($categories as $cat): ?>
-                        <tr id="category-row-<?php echo $cat['id']; ?>" class="border-b border-gray-700/50 hover:bg-gray-700/30 transition">
-                            <td class="p-4 font-mono text-cyan-400 items-center">#<?php echo $cat['id']; ?></td>
-                            <td class="p-4 text-gray-200 items-center font-medium text-sm md:text-base">
-                                <span class="bg-gray-900 px-3 py-1 rounded text-sm text-gray-300 border border-gray-700">
+                        <tr id="category-row-<?php echo $cat['id']; ?>">
+                            <td>#<?php echo $cat['id']; ?></td>
+                            <td>
+                                <span>
                                     <?php echo htmlspecialchars($cat['label'], ENT_QUOTES, 'UTF-8'); ?>
                                 </span>
                             </td>
-                            <td class="p-4 text-center items-center">
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <?php echo $cat['total_questions'] > 0 ? 'bg-teal-900/50 text-teal-300 border border-teal-800' : 'bg-gray-700 text-gray-400'; ?>">
+                            <td>
+                                <span>
                                     <?php echo $cat['total_questions'] . ' ' . ($cat['total_questions'] > 1 ? 'questions' : 'question'); ?>
                                 </span>
                             </td>
-                            <td class="p-4 align-middle text-center">
-                                <div class="flex justify-center items-center gap-2 w-full h-full">
+                            <td>
+                                <div>
                                     <button 
                                         data-id="<?php echo $cat['id']; ?>"
                                         data-label="<?php echo htmlspecialchars($cat['label'], ENT_QUOTES, 'UTF-8'); ?>"
                                         onclick="initManageQuestionsModal(this)"
                                         title="Add Questions"
-                                        class="flex items-center justify-center gap-1 bg-teal-900/30 hover:bg-teal-600 whitespace-nowrap border border-teal-800 hover:border-teal-500 text-teal-300 hover:text-white px-2.5 py-1.5 rounded-lg text-xs font-semibold transition duration-150 shadow-sm">
-                                        Add questions
-                                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                                        </svg>
+                                        class="addBtn">
+                                        <span class="material-icons">add</span>
                                     </button>
                                     <button 
                                         data-id="<?php echo $cat['id']; ?>"
                                         data-label="<?php echo htmlspecialchars($cat['label'], ENT_QUOTES, 'UTF-8'); ?>"
                                         onclick="initEditModal(this)"
                                         title="Edit Category"
-                                        class="gap-1 whitespace-nowrap flex bg-blue-900/30 hover:bg-blue-600 border border-blue-800 hover:border-blue-500 text-blue-300 hover:text-white px-2.5 py-1.5 rounded-lg text-xs font-semibold transition duration-150 shadow-sm">
-                                        Edit
-                                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                                        </svg>
+                                        class="editBtn">
+                                        <span class="material-icons">edit</span>
                                     </button>
                                     <button 
                                         onclick="confirmDeleteCategory(<?php echo $cat['id']; ?>)" 
                                         title="Delete Category"
-                                        class="gap-1 whitespace-nowrap flex bg-red-900/30 hover:bg-red-600 border border-red-800 hover:border-red-500 text-red-300 hover:text-white px-2.5 py-1.5 rounded-lg text-xs font-semibold transition duration-150 shadow-sm">
-                                        Delete
-                                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                        </svg>
+                                        class="deleteBtn">
+                                        <span class="material-icons">delete</span>
                                     </button>
                                 </div>
                             </td>
@@ -109,40 +99,40 @@ require_once __DIR__ . '/components/header.php';
             </table>
         </div>
 
-    <div id="category-modal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-        <div class="bg-gray-800 max-w-md w-full rounded-2xl border border-gray-700 p-6 shadow-2xl">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-bold text-emerald-400">Add a New Category</h3>
-                <button id="close-modal-btn" class="text-gray-400 hover:text-white text-2xl font-bold">&times;</button>
+    <div id="category-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="titleText modal-header">
+                <h3>Add a New Category</h3>
+                <button id="close-modal-btn" class="closeBtn">&times;</button>
             </div>
-            <form id="add-category-form" class="space-y-4">
+            <form id="add-category-form">
                 <div>
-                    <label class="block text-sm font-medium text-gray-400 mb-1">Category Label</label>
-                    <input type="text" id="modal-category-label" required placeholder="Ex: Histoire, Informatique..." class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-emerald-500 transition">
+                    <label>Category Label</label>
+                    <input type="text" id="modal-category-label" required placeholder="Ex: Histoire, Informatique..." class="inputField">
                 </div>
-                <div class="flex justify-end gap-3 pt-2">
-                    <button type="button" id="cancel-modal-btn" class="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-lg font-medium transition">Cancel</button>
-                    <button type="submit" class="bg-emerald-500 hover:bg-emerald-600 text-gray-950 font-bold px-4 py-2 rounded-lg transition">Save Category</button>
+                <div class="modal-btn">
+                    <button type="button" id="cancel-modal-btn" class="inputField">Cancel</button>
+                    <button type="submit" class="btn">Save Category</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <div id="edit-category-modal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-        <div class="bg-gray-800 max-w-md w-full rounded-2xl border border-gray-700 p-6 shadow-2xl">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-bold text-blue-400">Edit Category Detail</h3>
-                <button id="close-edit-modal-btn" class="text-gray-400 hover:text-white text-2xl font-bold">&times;</button>
+    <div id="edit-category-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="titleText modal-header">
+                <h3>Edit Category Detail</h3>
+                <button id="close-edit-modal-btn" class="closeBtn">&times;</button>
             </div>
-            <form id="edit-category-form" class="space-y-4">
+            <form id="edit-category-form">
                 <input type="hidden" id="edit-category-id">
                 <div>
-                    <label class="block text-sm font-medium text-gray-400 mb-1">Category Label</label>
-                    <input type="text" id="edit-modal-category-label" required class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500 transition">
+                    <label>Category Label</label>
+                    <input type="text" id="edit-modal-category-label" required class="inputField">
                 </div>
-                <div class="flex justify-end gap-3 pt-2">
-                    <button type="button" id="cancel-edit-modal-btn" class="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-lg font-medium transition">Cancel</button>
-                    <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold px-4 py-2 rounded-lg transition">Update Category</button>
+                <div class="modal-btn">
+                    <button type="button" id="cancel-edit-modal-btn" class="inputField">Cancel</button>
+                    <button type="submit" class="btn">Update Category</button>
                 </div>
             </form>
         </div>

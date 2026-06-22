@@ -11,109 +11,72 @@ require_once __DIR__ . '/../config/db.php';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $page_title ?? 'brainSKwiz'; ?></title>
     <link rel="icon" type="image/png" href="/public/logo-icon.ico">
-    <link rel="shortcut icon" type="image/x-icon" href="/logo-icon.ico">
+    <link rel="shortcut icon" type="image/x-icon" href="/public/logo-icon.ico">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="/public/js/tailwind-config.js"></script>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&display=swap" rel="stylesheet">
 </head>
-<body class="bg-surface text-white h-screen overflow-hidden font-sans grid grid-rows-[auto_1fr_auto]">
-    
-    <?php if(isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
-    <nav class="bg-primary border-b border-primary px-4 py-3 shadow-md relative z-50 flex-shrink-0">
-        <div class="max-w-5xl mx-auto flex justify-between items-center">
-            <a href="/index.php" class="block transition hover:opacity-90">
-                <img src="../public/logo-white.png" alt="brainSKwiz Logo" class="h-12 w-auto">
-            </a>
-            
-            <div class="hidden md:flex items-center gap-4">
-                <div class="flex items-center gap-2">
-                    <a href="/admin_questions.php" class="px-3 py-1.5 rounded-lg text-sm font-semibold transition <?php echo strpos($_SERVER['SCRIPT_NAME'], 'admin_questions') !== false ? 'bg-secondary text-white shadow' : 'text-white hover:bg-lightBlue/30'; ?>">
-                        Questions
-                    </a>
-                    <a href="/admin_categories.php" class="px-3 py-1.5 rounded-lg text-sm font-semibold transition <?php echo strpos($_SERVER['SCRIPT_NAME'], 'admin_categories') !== false ? 'bg-secondary text-white shadow' : 'text-white hover:bg-lightBlue/30'; ?>">
-                        Categories
-                    </a>
-                    <a href="/admin_dashboard.php" class="px-3 py-1.5 rounded-lg text-sm font-semibold transition <?php echo strpos($_SERVER['SCRIPT_NAME'], 'admin_dashboard') !== false ? 'bg-secondary text-white shadow' : 'text-white hover:bg-lightBlue/30'; ?>">
-                        Quiz Dashboard
-                    </a>
-                    <a href="/admin_users.php" class="px-3 py-1.5 rounded-lg text-sm font-semibold transition <?php echo strpos($_SERVER['SCRIPT_NAME'], 'admin_users') !== false ? 'bg-secondary text-white shadow' : 'text-white hover:bg-lightBlue/30'; ?>">
-                        Users
-                    </a>
-                </div>
-                
-                <span class="h-5 w-[1px] bg-gray-700"></span>
 
-                <a href="/logout.php" title="Log out" class="text-gray-400 gap-2 hover:text-red-400 hover:bg-red-500/10 p-2 rounded-lg transition duration-150 flex items-center justify-center">
-                    Logout
-                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                    </svg>
-                </a>
+<body>
+    <nav class="navbar">
+        <button class="hamburger" id="hamburger">
+            <span class="material-icons">menu</span>
+        </button>
+
+        <ul class="nav-menu" id="nav-menu">
+            <li><a href="index.php"><img src="/public/logo.png" alt="Logo" id="logoNavBar"></a></li>
+            <li><a href="/admin_questions.php">Questions</a></li>
+            <li><a href="/admin_categories.php">Categories</a></li>
+            <li><a href="/admin_dashboard.php">Quiz Dashboard</a>
+            <div class="right">
+                <li><a href="/admin_users.php">Users</a>
+                <li><a href="login.php">Login</a></li>
+                <li><a href="register.php">Register</a></li>
+                <li>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle">
+                        <span class="slider round">
+                            <span id="theme-icon" class="material-icons">sunny</span>
+                        </span>
+                    </label>
+                </li>
             </div>
-
-            <button id="burger-menu-btn" class="block md:hidden text-gray-400 hover:text-white p-2 rounded-lg transition focus:outline-none" aria-label="Toggle Menu">
-                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-            </button>
-        </div>
-
-        <div id="mobile-menu" class="bg-primary hidden absolute top-full left-0 w-full border-b border-primary shadow-xl flex flex-col p-4 space-y-3 md:hidden transition-all duration-200 opacity-0 transform -translate-y-2">
-            <a href="/admin_questions.php" class="px-4 py-2.5 rounded-xl text-base font-semibold transition <?php echo strpos($_SERVER['SCRIPT_NAME'], 'admin_questions') !== false ? 'bg-secondary text-white shadow' : 'text-white hover:bg-lightBlue/30'; ?>">
-                Questions
-            </a>
-            <a href="/admin_categories.php" class="px-4 py-2.5 rounded-xl text-base font-semibold transition <?php echo strpos($_SERVER['SCRIPT_NAME'], 'admin_categories') !== false ? 'bg-secondary text-white shadow' : 'text-white hover:bg-lightBlue/30'; ?>">
-                Categories
-            </a>
-            <a href="/admin_dashboard.php" class="px-4 py-2.5 rounded-xl text-base font-semibold transition <?php echo strpos($_SERVER['SCRIPT_NAME'], 'admin_dashboard') !== false ? 'bg-secondary text-white shadow' : 'text-white hover:bg-lightBlue/30'; ?>">
-                Quiz Dashboard
-            </a>
-            <a href="/admin_users.php" class="px-4 py-2.5 rounded-xl text-base font-semibold transition <?php echo strpos($_SERVER['SCRIPT_NAME'], 'admin_users') !== false ? 'bg-secondary text-white shadow' : 'text-white hover:bg-lightBlue/30'; ?>">
-                Users
-            </a>
-            <hr class="border-gray-700 my-1">
-            <a href="/logout.php" class="px-4 py-2.5 rounded-xl text-base font-semibold text-red-400 hover:bg-red-500/10 transition flex items-center gap-2">
-                Logout
-                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                </svg>
-            </a>
-        </div>
+        </ul>
     </nav>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const burgerBtn = document.getElementById('burger-menu-btn');
-            const mobileMenu = document.getElementById('mobile-menu');
+        const toggle = document.getElementById('theme-toggle');
+        const icon = document.getElementById('theme-icon');
 
-            if (burgerBtn && mobileMenu) {
-                burgerBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const isHidden = mobileMenu.classList.contains('hidden');
-                    
-                    if (isHidden) {
-                        mobileMenu.classList.remove('hidden');
-                        setTimeout(() => {
-                            mobileMenu.classList.remove('opacity-0', '-translate-y-2');
-                        }, 10);
-                    } else {
-                        mobileMenu.classList.add('opacity-0', '-translate-y-2');
-                        mobileMenu.addEventListener('transitionend', function handler() {
-                            mobileMenu.classList.add('hidden');
-                            mobileMenu.removeEventListener('transitionend', handler);
-                        });
-                    }
-                });
+        const savedTheme = localStorage.getItem('theme') || 'light';
 
-                document.addEventListener('click', () => {
-                    if (!mobileMenu.classList.contains('hidden')) {
-                        mobileMenu.classList.add('opacity-0', '-translate-y-2');
-                        mobileMenu.classList.add('hidden');
-                    }
-                });
-            }
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        toggle.checked = savedTheme === 'dark';
+
+        updateIcon(savedTheme);
+
+        toggle.addEventListener('change', () => {
+            const theme = toggle.checked ? 'dark' : 'light';
+
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+
+            updateIcon(theme);
+        });
+
+        function updateIcon(theme) {
+            icon.textContent = theme === 'dark'
+                ? 'dark_mode'
+                : 'sunny';
+        }
+
+        //navBar script
+        const hamburger = document.getElementById('hamburger');
+        const navMenu = document.getElementById('nav-menu');
+
+        hamburger.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
         });
     </script>
-    <?php endif; ?>
-
-    <main class="w-full overflow-y-auto p-4 md:p-6">
-        <div class="max-w-5xl w-full mx-auto">

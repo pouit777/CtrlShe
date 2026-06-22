@@ -25,102 +25,95 @@ $page_title = "brainSKwiz - Admin Questions";
 require_once __DIR__ . '/components/header.php';
 ?>
 
-        <div class="flex flex-col sm:flex-row justify-between items-center text-center sm:text-left gap-4 mb-8 bg-primary p-4 md:p-6 rounded-xl border border-secondary shadow-lg">
-            <div>
-                <h1 class="text-2xl md:text-3xl mb-5 md:mb-3 font-extrabold text-transparent bg-clip-text bg-white drop-shadow-sm">Question management</h1>
-                <p class="text-xs md:text-sm mb-3 md:mb-0 text-white mt-1">
-                    Logged in as : <strong class="text-white bg-white-500 "><?php echo htmlspecialchars($_SESSION['username'] ?? 'Admin', ENT_QUOTES, 'UTF-8'); ?> (<span class="uppercase"><?php echo htmlspecialchars($_SESSION['role'], ENT_QUOTES, 'UTF-8'); ?></span>)</strong>
-                </p>
-            </div>
-            <div class="w-full sm:w-auto flex justify-end">
-                <button id="open-modal-btn" class="w-full sm:w-auto bg-gradient-to-r bg-accent hover:bg-accent-hover text-primary font-bold py-2 px-4 rounded-lg shadow-md transition transform hover:-translate-y-0.5 text-sm md:text-base">
-                    + Add New Question
-                </button>
-            </div>
+    <div class="titleBox">
+        <div>
+            <h1 class="titleText">Question management</h1>
+            <p class="subTitle">
+                Logged in as : <strong><?php echo htmlspecialchars($_SESSION['username'] ?? 'Admin', ENT_QUOTES, 'UTF-8'); ?> (<span class="uppercase"><?php echo htmlspecialchars($_SESSION['role'], ENT_QUOTES, 'UTF-8'); ?></span>)</strong>
+            </p>
+            <button id="open-modal-btn" class="btn">
+                + Add New Question
+            </button>
         </div>
+    </div>
 
-        <div class="bg-secondary rounded-xl border border-primary shadow-xl overflow-hidden overflow-x-auto">
-            <table class="w-full text-left border-collapse min-w-[600px]">
-                <thead>
-                    <tr class="bg-primary text-white uppercase text-xs font-mono border-b border-primary">
-                        <th class="p-4 w-20">ID</th>
-                        <th class="p-4">Question Text</th>
-                        <th class="p-4 w-40">Category</th>
-                        <th class="p-4 w-32">Difficulty</th>
-                        <th class="p-4 w-28 text-center">Actions</th>
+    <div class="table">
+        <table>
+            <thead class="tableTitle">
+                <tr>
+                    <th>ID</th>
+                    <th>Question Text</th>
+                    <th>Category</th>
+                    <th>Difficulty</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="questions-table-body">
+                <?php foreach($questions as $q): ?>
+                    <tr id="question-row-<?php echo $q['id']; ?>">
+                        <td>#<?php echo $q['id']; ?></td>
+                        <td><?php echo htmlspecialchars($q['question_text'], ENT_QUOTES, 'UTF-8'); ?></td>
+                        <td>
+                            <span>
+                                <?php echo htmlspecialchars($q['category_label'] ?? 'No category', ENT_QUOTES, 'UTF-8'); ?>
+                            </span>
+                        </td>
+                        <td>
+                            <span class="<?php echo $q['difficulty']?>">
+                                <?php echo htmlspecialchars($q['difficulty'], ENT_QUOTES, 'UTF-8'); ?>
+                            </span>
+                        </td>
+                        <td>
+                            <div>
+                                <button 
+                                    data-id="<?php echo $q['id']; ?>"
+                                    data-category="<?php echo $q['category_id']; ?>"
+                                    data-difficulty="<?php echo htmlspecialchars($q['difficulty'], ENT_QUOTES, 'UTF-8'); ?>"
+                                    data-text="<?php echo htmlspecialchars($q['question_text'], ENT_QUOTES, 'UTF-8'); ?>"
+                                    data-answers="<?php echo htmlspecialchars($q['answers_json'] ?? '[]', ENT_QUOTES, 'UTF-8'); ?>"
+                                    onclick="initEditModal(this)"
+                                    title="Edit Question"
+                                    class="editBtn">
+                                    <span class="material-icons">edit</span>
+                                </button>
+                                <button 
+                                    onclick="confirmDeleteQuestion(<?php echo $q['id']; ?>)" 
+                                    title="Delete Question"
+                                    class="deleteBtn">
+                                    <span class="material-icons">delete</span>
+                                </button>
+                            </div>
+                        </td>
                     </tr>
-                </thead>
-                <tbody id="questions-table-body">
-                    <?php foreach($questions as $q): ?>
-                        <tr id="question-row-<?php echo $q['id']; ?>" class="border-b border-gray-700/50 hover:bg-gray-700/30 transition">
-                            <td class="p-4 font-mono text-primary">#<?php echo $q['id']; ?></td>
-                            <td class="p-4 text-primary font-medium text-sm md:text-base"><?php echo htmlspecialchars($q['question_text'], ENT_QUOTES, 'UTF-8'); ?></td>
-                            <td class="p-4">
-                                <span class="bg-gray-900 px-2 py-1 rounded text-xs text-gray-400 border border-gray-700 whitespace-nowrap">
-                                    <?php echo htmlspecialchars($q['category_label'] ?? 'No category', ENT_QUOTES, 'UTF-8'); ?>
-                                </span>
-                            </td>
-                            <td class="p-4">
-                                <span class="text-xs font-mono uppercase px-2 py-0.5 rounded <?php echo $q['difficulty'] === 'easy' ? 'bg-green-950 text-green-400 border border-green-900' : ($q['difficulty'] === 'medium' ? 'bg-yellow-950 text-yellow-400 border border-yellow-900' : 'bg-red-950 text-red-400 border border-red-900'); ?> border">
-                                    <?php echo htmlspecialchars($q['difficulty'], ENT_QUOTES, 'UTF-8'); ?>
-                                </span>
-                            </td>
-                            <td class="p-4 align-middle text-center">
-                                <div class="flex justify-center items-center gap-2 w-full h-full">
-                                    <button 
-                                        data-id="<?php echo $q['id']; ?>"
-                                        data-category="<?php echo $q['category_id']; ?>"
-                                        data-difficulty="<?php echo htmlspecialchars($q['difficulty'], ENT_QUOTES, 'UTF-8'); ?>"
-                                        data-text="<?php echo htmlspecialchars($q['question_text'], ENT_QUOTES, 'UTF-8'); ?>"
-                                        data-answers="<?php echo htmlspecialchars($q['answers_json'] ?? '[]', ENT_QUOTES, 'UTF-8'); ?>"
-                                        onclick="initEditModal(this)"
-                                        title="Edit Question"
-                                        class="flex items-center gap-1 bg-blue-600 hover:bg-blue-600/50 border border-blue-500 hover:border-blue-800 text-white px-2.5 py-1.5 rounded-lg text-xs font-semibold transition duration-150 shadow-sm">
-                                        Edit
-                                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                                        </svg>
-                                    </button>
-                                    <button 
-                                        onclick="confirmDeleteQuestion(<?php echo $q['id']; ?>)" 
-                                        title="Delete Question"
-                                        class="flex items-center gap-1 bg-red-600 hover:bg-red-600/50 border border-red-500 hover:border-red-800 text-white px-2.5 py-1.5 rounded-lg text-xs font-semibold transition duration-150 shadow-sm">
-                                        Delete
-                                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                        </svg>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        </div>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
 
-    <div id="question-modal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-        <div class="bg-gray-800 max-w-lg w-full rounded-2xl border border-gray-700 p-6 shadow-2xl overflow-y-auto max-h-[90vh]">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-bold text-emerald-400">Add a New Question</h3>
-                <button id="close-modal-btn" class="text-gray-400 hover:text-white text-2xl font-bold">&times;</button>
+    <!-- Modal New Question -->
+    <div id="question-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="titleText modal-header">
+                <h3>Add a New Question</h3>
+                <button class="closeBtn" id="close-modal-btn">&times;</button>
             </div>
-            <form id="add-question-form" class="space-y-4">
+            <form id="add-question-form">
                 <div>
-                    <label class="block text-sm font-medium text-gray-400 mb-1">Question Text</label>
-                    <textarea id="modal-question-text" required rows="2" placeholder="Ex: What does CSS stand for?" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-emerald-500 transition"></textarea>
+                    <label>Question Text</label>
+                    <textarea id="modal-question-text" required rows="2" placeholder="Ex: What does CSS stand for?" class="inputField"></textarea>
                 </div>
-                <div class="grid grid-cols-2 gap-4">
+                <div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-400 mb-1">Category</label>
-                        <select id="modal-category" required class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-emerald-500 transition">
+                        <label>Category</label>
+                        <select id="modal-category" required class="inputField">
                             <?php foreach($categories as $cat): ?>
                                 <option value="<?php echo $cat['id']; ?>"><?php echo htmlspecialchars($cat['label'], ENT_QUOTES, 'UTF-8'); ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-400 mb-1">Difficulty</label>
-                        <select id="modal-difficulty" required class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-emerald-500 transition">
+                        <label>Difficulty</label>
+                        <select id="modal-difficulty" required class="inputField">
                             <option value="easy">Easy</option>
                             <option value="medium" selected>Medium</option>
                             <option value="hard">Hard</option>
@@ -129,44 +122,45 @@ require_once __DIR__ . '/components/header.php';
                 </div>
                 <hr class="border-gray-700 my-2">
                 <div>
-                    <div class="flex justify-between items-center mb-2">
-                        <label class="block text-sm font-medium text-emerald-400">Answers Options (Select the correct one)</label>
-                        <button type="button" onclick="addAnswerField('add-answers-container', 'correct_answer')" class="text-xs bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500 hover:text-gray-950 px-2 py-1 rounded font-bold transition">+ Add Option</button>
+                    <div style="margin: 1rem">
+                        <label>Answers Options (Select the correct one)</label>
+                        <button class="btn" type="button" onclick="addAnswerField('add-answers-container', 'correct_answer')">+ Add Option</button>
                     </div>
                     <div id="add-answers-container" class="space-y-3"></div>
                 </div>
-                <div class="flex justify-end gap-3 pt-2">
-                    <button type="button" id="cancel-modal-btn" class="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-lg font-medium transition">Cancel</button>
-                    <button type="submit" class="bg-emerald-500 hover:bg-emerald-600 text-gray-950 font-bold px-4 py-2 rounded-lg transition">Save Question</button>
+                <div class="modal-btn">
+                    <button type="button" class="inputField" id="cancel-modal-btn">Cancel</button>
+                    <button type="submit" class="btn">Save Question</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <div id="edit-question-modal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-        <div class="bg-gray-800 max-w-lg w-full rounded-2xl border border-gray-700 p-6 shadow-2xl overflow-y-auto max-h-[90vh]">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-bold text-blue-400">Edit Question Detail</h3>
-                <button id="close-edit-modal-btn" class="text-gray-400 hover:text-white text-2xl font-bold">&times;</button>
+    <!-- Modal New Question -->
+    <div id="edit-question-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="titleText modal-header">
+                <h3>Edit Question Detail</h3>
+                <button id="close-edit-modal-btn" class="closeBtn">&times;</button>
             </div>
-            <form id="edit-question-form" class="space-y-4">
+            <form id="edit-question-form" >
                 <input type="hidden" id="edit-question-id">
                 <div>
-                    <label class="block text-sm font-medium text-gray-400 mb-1">Question Text</label>
-                    <textarea id="edit-modal-question-text" required rows="2" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500 transition"></textarea>
+                    <label>Question Text</label>
+                    <textarea id="edit-modal-question-text" required rows="2" class="inputField"></textarea>
                 </div>
-                <div class="grid grid-cols-2 gap-4">
+                <div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-400 mb-1">Category</label>
-                        <select id="edit-modal-category" required class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500 transition">
+                        <label>Category</label>
+                        <select id="edit-modal-category" required class="inputField">
                             <?php foreach($categories as $cat): ?>
                                 <option value="<?php echo $cat['id']; ?>"><?php echo htmlspecialchars($cat['label'], ENT_QUOTES, 'UTF-8'); ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-400 mb-1">Difficulty</label>
-                        <select id="edit-modal-difficulty" required class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500 transition">
+                        <label>Difficulty</label>
+                        <select id="edit-modal-difficulty" required class="inputField">
                             <option value="easy">Easy</option>
                             <option value="medium">Medium</option>
                             <option value="hard">Hard</option>
@@ -175,15 +169,15 @@ require_once __DIR__ . '/components/header.php';
                 </div>
                 <hr class="border-gray-700 my-2">
                 <div>
-                    <div class="flex justify-between items-center mb-2">
-                        <label class="block text-sm font-medium text-blue-400">Answers Options (Check the correct one)</label>
-                        <button type="button" onclick="addAnswerField('edit-answers-container', 'edit_correct_answer')" class="text-xs bg-blue-500/20 text-blue-400 hover:bg-blue-500 hover:text-white px-2 py-1 rounded font-bold transition">+ Add Option</button>
+                    <div style="margin: 1rem">
+                        <label>Answers Options (Check the correct one)</label>
+                        <button type="button" class="btn" onclick="addAnswerField('edit-answers-container', 'edit_correct_answer')" class="text-xs bg-blue-500/20 text-blue-400 hover:bg-blue-500 hover:text-white px-2 py-1 rounded font-bold transition">+ Add Option</button>
                     </div>
                     <div id="edit-answers-container" class="space-y-3"></div>
                 </div>
-                <div class="flex justify-end gap-3 pt-2">
-                    <button type="button" id="cancel-edit-modal-btn" class="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-lg font-medium transition">Cancel</button>
-                    <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold px-4 py-2 rounded-lg transition">Update Question</button>
+                <div class="modal-btn">
+                    <button type="button" id="cancel-edit-modal-btn" class="inputField">Cancel</button>
+                    <button type="submit" class="btn">Update Question</button>
                 </div>
             </form>
         </div>

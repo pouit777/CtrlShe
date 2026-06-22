@@ -1,22 +1,21 @@
 <?php
 $page_title = "brainSKwiz - Quizzes";
 
-require_once __DIR__ . '/components/header.php';
 require_once __DIR__ . '/config/db.php';
+include "components/header.php";
 
 $categories = $pdo->query("SELECT * FROM categories ORDER BY label")->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
-<div class="flex flex-col sm:flex-row justify-between items-center mb-8 bg-gray-800 p-4 sm:p-6 rounded-xl border border-gray-700 shadow-lg gap-4">
-    <div>
-        <h1 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">
-            brainSKwiz Quizzes
-        </h1>
-        <p class="text-sm text-gray-400 mt-1">
-            Choose a quiz and start playing
-        </p>
-    </div>
+<div class="titleBox">
+    <h1 class="titleText">
+        brainSKwiz Quizzes
+    </h1>
+    <p class="subTitle">
+        Choose a quiz and start playing
+    </p>
 </div>
+
 
 <!-- FILTER -->
 <div class="bg-gray-800 p-6 rounded-xl border border-gray-700 shadow-xl mb-8">
