@@ -34,6 +34,7 @@ require_once __DIR__ . '/../config/db.php';
                 <li><a href="/admin_users.php">Users</a>
                 <li><a href="login.php">Login</a></li>
                 <li><a href="register.php">Register</a></li>
+                <li><a href="/logout.php">Logout</a></li>
                 <li>
                     <label class="switch">
                         <input type="checkbox" id="theme-toggle">
