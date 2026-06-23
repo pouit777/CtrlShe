@@ -21,31 +21,42 @@ require_once __DIR__ . '/../config/db.php';
 
 <body>
     <nav class="navbar">
-        <button class="hamburger" id="hamburger">
-            <span class="material-icons">menu</span>
-        </button>
 
-        <ul class="nav-menu" id="nav-menu">
-            <li><a href="index.php"><img src="/public/logo.png" alt="Logo" id="logoNavBar"></a></li>
-            <li><a href="/admin_questions.php">Questions</a></li>
-            <li><a href="/admin_categories.php">Categories</a></li>
-            <li><a href="/admin_dashboard.php">Quiz Dashboard</a>
-            <div class="right">
-                <li><a href="/admin_users.php">Users</a>
-                <li><a href="login.php">Login</a></li>
-                <li><a href="register.php">Register</a></li>
-                <li><a href="/logout.php">Logout</a></li>
-                <li>
-                    <label class="switch">
-                        <input type="checkbox" id="theme-toggle">
-                        <span class="slider round">
-                            <span id="theme-icon" class="material-icons">sunny</span>
-                        </span>
-                    </label>
-                </li>
-            </div>
-        </ul>
-    </nav>
+    <a href="index.php" class="logo">
+        <img src="/public/logo.png" alt="Logo" id="logoNavBar">
+    </a>
+
+    <button class="hamburger" id="hamburger">
+        <span class="material-icons">menu</span>
+    </button>
+
+    <ul class="nav-menu" id="nav-menu">
+
+        <li><a href="/admin_questions.php">Questions</a></li>
+        <li><a href="/admin_categories.php">Categories</a></li>
+        <li><a href="/admin_dashboard.php">Dashboard</a></li>
+        <li><a href="/admin_users.php">Users</a></li>
+        <li><a href="/settings.php">Settings</a></li>
+
+        <li><a href="login.php">Login</a></li>
+        <li><a href="register.php">Register</a></li>
+        <li><a href="/logout.php" class="logout">
+            Logout
+            <span class="material-icons logout">logout</span>
+        </a></li>
+
+        <li>
+            <label class="switch">
+                <input type="checkbox" id="theme-toggle">
+                <span class="slider round">
+                    <span id="theme-icon" class="material-icons">sunny</span>
+                </span>
+            </label>
+        </li>
+
+    </ul>
+
+</nav>
 
     <script>
         const toggle = document.getElementById('theme-toggle');

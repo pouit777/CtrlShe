@@ -130,89 +130,109 @@ label {
 
 /* Navbar style */
 .navbar {
+  position: sticky;
+  top: 0;
+
   display: flex;
   justify-content: space-between;
   align-items: center;
-  position: sticky;
+
+  padding: 0 2rem;
+  height: 80px;
+
+  background: var(--color-bg);
+
+  border-bottom: 1px solid rgba(255,255,255,.08);
+
   z-index: 1000;
+}
 
-  padding: 0 1rem;
-  min-height: 60px;
+.logo {
+  display: flex;
+  align-items: center;
+}
 
-  background: var(--color-primary-light);
-  box-shadow: var(--shadow-modal);
-
-  margin-bottom: 1rem;
+#logoNavBar {
+  height: 55px;
+  width: auto;
 }
 
 .nav-menu {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 2rem;
 
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
-.nav-menu li {
-  margin: 0;
+.nav-menu a {
+  color: var(--color-text);
+  text-decoration: none;
+  font-weight: 500;
+
+  transition: .2s;
 }
 
-.nav-menu a {
-  text-decoration: none;
-  color: var(--color-text);
+.nav-menu a:hover {
+  color: var(--color-primary);
 }
 
 .hamburger {
   display: none;
 
   border: none;
-  background: transparent;
-  color: var(--color-text);
+  background: none;
 
   cursor: pointer;
+  color: var(--color-text);
 }
 
 .hamburger .material-icons {
   font-size: 32px;
 }
 
-#logoNavBar{
-  width: 7rem;
-}
 
 /* Responsive design navBar*/
 @media (max-width: 768px) {
 
   .hamburger {
     display: block;
+    z-index: 1001;
   }
 
   .nav-menu {
-    display: none;
+    position: fixed;
 
-    position: absolute;
-    top: 60px;
-    left: 0;
-    right: 0;
-    width: 25%;
+    top: 80px;
+    right: -300px;
+
+    width: 300px;
+    height: calc(100vh - 80px);
 
     flex-direction: column;
+    align-items: flex-start;
 
-    background: var(--color-primary-light);
+    padding: 2rem;
 
-    padding: 1rem;
+    background: var(--color-bg);
+
+    transition: right 0.3s ease;
   }
 
   .nav-menu.active {
-    display: flex;
-    border-radius: 0px 0px 10px 10px;
+    right: 0;
   }
 
   .nav-menu li {
     width: 100%;
-    text-align: center;
+  }
+
+  .nav-menu a {
+    display: block;
+    width: 100%;
+    padding: 0.75rem 0;
   }
 
   td, th {
@@ -220,10 +240,17 @@ label {
     font-size: 0.8rem;
   }
 
-    .table {
-      border-radius: 8px;
-    }
+  .table {
+    border-radius: 8px;
+  }
 }
+
+.logout{
+  color: var(--color-danger) !important;
+  vertical-align: middle;
+  margin-left: 4px;
+}
+
 
 /* Toggle switch style */
 .switch {
