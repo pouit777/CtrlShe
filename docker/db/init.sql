@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS users (
     email VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
     role ENUM('admin', 'user') DEFAULT 'user',
-    avatar VARCHAR(100) NOT NULL DEFAULT 'hamster.png',
+    avatar VARCHAR(100) NOT NULL DEFAULT 'bee.png',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
