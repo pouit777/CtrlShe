@@ -4,6 +4,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 require_once __DIR__ . '/../config/db.php';
 ?>
+
 <!DOCTYPE html>
 <html lang="en" class="h-full">
 <head>
@@ -26,24 +27,40 @@ require_once __DIR__ . '/../config/db.php';
         </button>
 
         <ul class="nav-menu" id="nav-menu">
-            <li><a href="index.php"><img src="/public/logo.png" alt="Logo" id="logoNavBar"></a></li>
+            <li>
+                <a href="/index.php">
+                    <img src="/public/logo.png" alt="Logo" id="logoNavBar">
+                </a>
+            </li>
             <li><a href="/admin_questions.php">Questions</a></li>
             <li><a href="/admin_categories.php">Categories</a></li>
-            <li><a href="/admin_dashboard.php">Quiz Dashboard</a>
-            <div class="right">
-                <li><a href="/admin_users.php">Users</a>
-                <li><a href="login.php">Login</a></li>
-                <li><a href="register.php">Register</a></li>
-                <li><a href="/logout.php">Logout</a></li>
+            <li><a href="/admin_dashboard.php">Quiz Dashboard</a></li>
+
+            <?php if(isset($_SESSION['user_id'])): ?>
+                <li><a href="/admin_users.php">Users</a></li>
                 <li>
-                    <label class="switch">
-                        <input type="checkbox" id="theme-toggle">
-                        <span class="slider round">
-                            <span id="theme-icon" class="material-icons">sunny</span>
-                        </span>
-                    </label>
+                    <a href="/profile.php" class="flex items-center gap-2">
+                        <img
+                            src="/public/avatars/<?= htmlspecialchars($_SESSION['avatar'] ?? 'hamster.png') ?>"
+                            class="w-10 h-10 rounded-full border-2 border-cyan-400 object-cover"
+                        >
+                        <span><?= htmlspecialchars($_SESSION['username']) ?></span>
+                    </a>
                 </li>
-            </div>
+                <li><a href="/logout.php">Logout</a></li>
+
+            <?php else: ?>
+                <li><a href="/login.php">Login</a></li>
+                <li><a href="/register.php">Register</a></li>
+            <?php endif; ?>
+            <li>
+                <label class="switch">
+                    <input type="checkbox" id="theme-toggle">
+                    <span class="slider round">
+                        <span id="theme-icon" class="material-icons">sunny</span>
+                    </span>
+                </label>
+            </li>
         </ul>
     </nav>
 
