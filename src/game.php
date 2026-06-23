@@ -1,4 +1,12 @@
 <?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], ['user', 'admin'])) {
+    header('Location: /login.php');
+    exit;
+}
 
 $page_title = "brainSKwiz - Play!";
 require_once __DIR__ . '/components/header.php';

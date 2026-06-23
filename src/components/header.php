@@ -42,7 +42,9 @@ $is_logged = isset($_SESSION['user_id']);
 
     <ul class="nav-menu" id="nav-menu">
 
-        <li><a href="/index.php">Home</a></li>
+        <?php if(!$is_admin): ?>
+            <li><a href="/index.php">Home</a></li>
+        <?php endif; ?>
 
         <?php if($is_user): ?>
             <li><a href="/index.php">History</a></li>
@@ -50,10 +52,17 @@ $is_logged = isset($_SESSION['user_id']);
         <?php endif; ?>
 
         <?php if($is_admin): ?>
+            
+            <li><a href="/admin_dashboard.php">Quiz</a></li>
             <li><a href="/admin_questions.php">Questions</a></li>
             <li><a href="/admin_categories.php">Categories</a></li>
-            <li><a href="/admin_dashboard.php">Quiz Dashboard</a></li>
             <li><a href="/admin_users.php">Users</a></li>
+            <li>
+                <a href="/index.php" class="bg-primary/20 text-primary border border-primary/30 px-3 py-1 rounded-lg hover:bg-primary hover:text-white transition font-medium flex items-center gap-1">
+                    <span class="material-icons text-sm mr-2">visibility</span> 
+                    User Mode
+                </a>
+            </li>
         <?php endif; ?>
 
         <?php if($is_logged): ?>
