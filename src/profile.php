@@ -56,8 +56,7 @@ $avatars = array_values(array_diff(scandir($avatarDir), ['.', '..']));
 
                     <img
                         src="/public/avatars/<?= $a ?>"
-                        class="w-14 h-14 rounded-full cursor-pointer border-2 border-transparent hover:border-cyan-400 transition avatar-option"
-                        data-avatar="<?= $a ?>"
+                        class="w-14 h-14 rounded-full cursor-pointer border-2 border-transparent hover:border-green-500 transition avatar-option"                        data-avatar="<?= $a ?>"
                     >
 
                 <?php endif; ?>
@@ -75,44 +74,68 @@ $avatars = array_values(array_diff(scandir($avatarDir), ['.', '..']));
 </div>
 
 <script>
-const preview = document.getElementById("avatarPreview");
 const hiddenInput = document.getElementById("selectedAvatar");
 
-// selection avatar
+// avatar actuellement enregistré
+const currentAvatar = hiddenInput.value;
+
+// mise en évidence de l'avatar actuel
 document.querySelectorAll(".avatar-option").forEach(img => {
+
+    if(img.dataset.avatar === currentAvatar){
+        img.classList.remove("border-transparent");
+        img.classList.add("border-green-500");
+    }
+
     img.addEventListener("click", () => {
 
-        document.querySelectorAll(".avatar-option").forEach(i =>
-            i.classList.remove("border-cyan-400")
-        );
+        document.querySelectorAll(".avatar-option").forEach(i => {
+            i.classList.remove("border-green-500");
+            i.classList.add("border-transparent");
+        });
 
-        img.classList.add("border-cyan-400");
+        img.classList.remove("border-transparent");
+        img.classList.add("border-green-500");
 
-        const avatar = img.dataset.avatar;
-        hiddenInput.value = avatar;
-        preview.src = "/public/avatars/" + avatar;
+        hiddenInput.value = img.dataset.avatar;
     });
 });
 
 // SAVE
 document.getElementById("avatarForm").addEventListener("submit", async (e) => {
+
     e.preventDefault();
 
-    const res = await fetch("/api/account/update_avatar.php", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({
-            avatar: hiddenInput.value
-        })
-    });
+    try {
 
-    const data = await res.json();
+        const response = await fetch("/api/account/update_avatar.php", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                avatar: hiddenInput.value
+            })
+        });
 
-    if (data.status === "success") {
-        location.reload();
-    } else {
-        alert("Error saving avatar");
+        const data = await response.json();
+
+        if(data.status === "success"){
+
+            alert("Avatar saved !");
+            location.reload();
+
+        }else{
+
+            alert(data.message || "Save failed");
+        }
+
+    } catch(err){
+
+        console.error(err);
+        alert("Server error");
     }
+
 });
 </script>
 
