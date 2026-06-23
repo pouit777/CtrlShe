@@ -5,7 +5,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
 // Only allow access to this page for users with the 'admin' role
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
-    header('Location: /login.php');
+    header('Location: /index.php');
     exit;
 }
 

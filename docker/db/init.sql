@@ -97,10 +97,10 @@ ON DUPLICATE KEY UPDATE label = VALUES(label);
 -- ('admin', 'admin@quiz.fr', '$2y$10$K9R7MrgYvPcdQdAsLdP1fuAFMVhTvVui5JHa8hg/BfB4fyjtmFX5m', 'admin'),
 -- ('student', 'student@school.com', '$2y$10$K9R7MrgYvPcdQdAsLdP1fuAFMVhTvVui5JHa8hg/BfB4fyjtmFX5m', 'user');
 INSERT INTO users (id, username, email, password, role, avatar) VALUES 
-(1, 'admin', 'admin@quiz.fr', '$2y$10$K9R7MrgYvPcdQdAsLdP1fuAFMVhTvVui5JHa8hg/BfB4fyjtmFX5m', 'admin', 'hamster.png'),
-(2, 'student', 'student@school.com', '$2y$10$K9R7MrgYvPcdQdAsLdP1fuAFMVhTvVui5JHa8hg/BfB4fyjtmFX5m', 'user', 'hamster.png'),
-(3, 'player_one', 'player1@gmail.com', '$2y$10$K9R7MrgYvPcdQdAsLdP1fuAFMVhTvVui5JHa8hg/BfB4fyjtmFX5m', 'user', 'hamster.png'),
-(4, 'quizmaster', 'master@brain.com', '$2y$10$K9R7MrgYvPcdQdAsLdP1fuAFMVhTvVui5JHa8hg/BfB4fyjtmFX5m', 'admin', 'hamster.png')
+(1, 'admin', 'admin@quiz.fr', '$2y$10$K9R7MrgYvPcdQdAsLdP1fuAFMVhTvVui5JHa8hg/BfB4fyjtmFX5m', 'admin', 'racoon.png'),
+(2, 'student', 'student@school.com', '$2y$10$K9R7MrgYvPcdQdAsLdP1fuAFMVhTvVui5JHa8hg/BfB4fyjtmFX5m', 'user', 'bee.png'),
+(3, 'player_one', 'player1@gmail.com', '$2y$10$K9R7MrgYvPcdQdAsLdP1fuAFMVhTvVui5JHa8hg/BfB4fyjtmFX5m', 'user', 'monkey.png'),
+(4, 'quizmaster', 'master@brain.com', '$2y$10$K9R7MrgYvPcdQdAsLdP1fuAFMVhTvVui5JHa8hg/BfB4fyjtmFX5m', 'admin', 'lion.png')
 ON DUPLICATE KEY UPDATE username=VALUES(username);
 
 -- Seed initial test questions

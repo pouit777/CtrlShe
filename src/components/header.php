@@ -59,7 +59,7 @@ $is_logged = isset($_SESSION['user_id']);
         <?php if($is_logged): ?>
             <li>
                 <a href="/profile.php" class="profile flex justify-center items-center gap-2 m-0">
-                    <img src="/public/avatars/<?= htmlspecialchars($_SESSION['avatar'] ?? 'hamster.png') ?>"
+                    <img src="/public/avatars/<?= htmlspecialchars($_SESSION['avatar'] ?? 'bee.png') ?>"
                          class="w-9 h-9 rounded-full border-2 border-cyan-400 object-cover">
                     <span><?= htmlspecialchars($_SESSION['username']) ?></span>
                 </a>
@@ -90,38 +90,34 @@ $is_logged = isset($_SESSION['user_id']);
 </nav>
 
 <script>
-    // const toggle = document.getElementById('theme-toggle');
-    // const hamburger = document.getElementById('hamburger');
-    // const navMenu = document.getElementById('nav-menu');
-    
-        const toggle = document.getElementById('theme-toggle');
-        const icon = document.getElementById('theme-icon');
+    const toggle = document.getElementById('theme-toggle');
+    const icon = document.getElementById('theme-icon');
 
-        const savedTheme = localStorage.getItem('theme') || 'light';
+    const savedTheme = localStorage.getItem('theme') || 'light';
 
-        document.documentElement.setAttribute('data-theme', savedTheme);
-        toggle.checked = savedTheme === 'dark';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    toggle.checked = savedTheme === 'dark';
 
-        updateIcon(savedTheme);
+    updateIcon(savedTheme);
 
-        toggle.addEventListener('change', () => {
-            const theme = toggle.checked ? 'dark' : 'light';
+    toggle.addEventListener('change', () => {
+        const theme = toggle.checked ? 'dark' : 'light';
 
-            document.documentElement.setAttribute('data-theme', theme);
-            localStorage.setItem('theme', theme);
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem('theme', theme);
 
-            updateIcon(theme);
-        });
+        updateIcon(theme);
+    });
 
-        function updateIcon(theme) {
-            icon.textContent = theme === 'dark'
-                ? 'dark_mode'
-                : 'sunny';
-        }
+    function updateIcon(theme) {
+        icon.textContent = theme === 'dark'
+            ? 'dark_mode'
+            : 'sunny';
+    }
 
-        //navBar script
-        const hamburger = document.getElementById('hamburger');
-        const navMenu = document.getElementById('nav-menu');
+    //navBar script
+    const hamburger = document.getElementById('hamburger');
+    const navMenu = document.getElementById('nav-menu');
 
     hamburger.addEventListener('click', () => {
     navMenu.classList.toggle('active');

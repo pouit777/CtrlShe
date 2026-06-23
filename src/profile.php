@@ -3,14 +3,21 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 require_once __DIR__ . '/config/db.php';
+include __DIR__ . '/components/header.php';
 
-if (!isset($_SESSION['user_id'])) {
-    header("Location: /login.php");
-    exit;
-}
+if (!isset($_SESSION['user_id'])): ?>
+    <div class="max-w-md mx-auto mt-20 bg-gray-800 p-8 rounded-xl border border-gray-700 text-center space-y-4">
+        <img src="/public/avatars/bee.png" class="w-20 h-20 mx-auto rounded-full border-2 border-cyan-400 object-cover">
+        <h1 class="text-xl font-bold text-white">You are in Guest Mode</h1>
+        <p class="text-gray-400 text-sm">Please sign in or create an account to customize your profile and save your scores.</p>
+        <a href="/login.php" class="inline-block bg-cyan-500 hover:bg-cyan-600 text-black font-bold px-6 py-2 rounded-lg transition">Sign In</a>
+    </div>
+<?php 
+include __DIR__ . '/components/footer.php';
+exit; 
+endif;
 
 $userId = $_SESSION['user_id'];
-
 $stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
 $stmt->execute([$userId]);
 $user = $stmt->fetch();
