@@ -3,6 +3,12 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 require_once __DIR__ . '/../config/db.php';
+
+$is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
+$is_user = isset($_SESSION['role']) && $_SESSION['role'] === 'user';
+
+$is_logged = isset($_SESSION['user_id']);
+
 ?>
 
 <!DOCTYPE html>
@@ -36,14 +42,21 @@ require_once __DIR__ . '/../config/db.php';
 
     <ul class="nav-menu" id="nav-menu">
 
-        <li><a href="/admin_questions.php">Questions</a></li>
-        <li><a href="/admin_categories.php">Categories</a></li>
-        <li><a href="/admin_dashboard.php">Quiz Dashboard</a></li>
+        <li><a href="/index.php">Home</a></li>
 
-        <?php if(isset($_SESSION['user_id'])): ?>
+        <?php if($is_user): ?>
+            <li><a href="/index.php">History</a></li>
+            <li><a href="/index.php">Rank</a></li>
+        <?php endif; ?>
 
+        <?php if($is_admin): ?>
+            <li><a href="/admin_questions.php">Questions</a></li>
+            <li><a href="/admin_categories.php">Categories</a></li>
+            <li><a href="/admin_dashboard.php">Quiz Dashboard</a></li>
             <li><a href="/admin_users.php">Users</a></li>
+        <?php endif; ?>
 
+        <?php if($is_logged): ?>
             <li>
                 <a href="/profile.php" class="profile flex justify-center items-center gap-2 m-0">
                     <img src="/public/avatars/<?= htmlspecialchars($_SESSION['avatar'] ?? 'hamster.png') ?>"
@@ -58,13 +71,11 @@ require_once __DIR__ . '/../config/db.php';
                     <span class="material-icons logout">logout</span>
                 </a>
             </li>
-
         <?php else: ?>
-
             <li><a href="/login.php">Login</a></li>
             <li><a href="/register.php">Register</a></li>
-
         <?php endif; ?>
+
         <li>
             <label class="switch">
                 <input type="checkbox" id="theme-toggle">
@@ -79,10 +90,10 @@ require_once __DIR__ . '/../config/db.php';
 </nav>
 
 <script>
-    const toggle = document.getElementById('theme-toggle');
-    const hamburger = document.getElementById('hamburger');
-    const navMenu = document.getElementById('nav-menu');
-    <script>
+    // const toggle = document.getElementById('theme-toggle');
+    // const hamburger = document.getElementById('hamburger');
+    // const navMenu = document.getElementById('nav-menu');
+    
         const toggle = document.getElementById('theme-toggle');
         const icon = document.getElementById('theme-icon');
 
