@@ -29,6 +29,9 @@ try {
         $_SESSION['user_id'] = $userAccount['id'];
         $_SESSION['username'] = $userAccount['username'];
         $_SESSION['role'] = $userAccount['role'];
+        $_SESSION['avatar'] = !empty($userAccount['avatar'])
+            ? $userAccount['avatar']
+            : 'hamster.png';
 
         echo json_encode([
             'status' => 'success',
