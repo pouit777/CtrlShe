@@ -4,11 +4,31 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 require_once __DIR__ . '/../config/db.php';
 
+// Gestion des bascules de mode via l'URL (?action=toggle_preview)
+if (isset($_GET['action']) && $_GET['action'] === 'toggle_preview' && isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
+    $_SESSION['preview_mode'] = !($_SESSION['preview_mode'] ?? false);
+    
+    // Redirection propre pour nettoyer l'URL après le clic
+    $redirect = $_SERVER['PHP_SELF'];
+    if (!empty($_SERVER['QUERY_STRING'])) {
+        // On retire l'action de la query string pour éviter les boucles
+        parse_str($_SERVER['QUERY_STRING'], $query_params);
+        unset($query_params['action']);
+        if (!empty($query_params)) {
+            $redirect .= '?' . http_build_query($query_params);
+        }
+    }
+    header("Location: " . $redirect);
+    exit;
+}
+
+// Détection du statut réel
 $is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
 $is_user = isset($_SESSION['role']) && $_SESSION['role'] === 'user';
-
 $is_logged = isset($_SESSION['user_id']);
 
+// Est-ce que l'admin a activé la vue utilisateur ?
+$preview_mode = $is_admin && ($_SESSION['preview_mode'] ?? false);
 ?>
 
 <!DOCTYPE html>
@@ -42,23 +62,32 @@ $is_logged = isset($_SESSION['user_id']);
 
     <ul class="nav-menu" id="nav-menu">
 
-        <?php if(!$is_admin): ?>
+        
+
+        <?php if (!$is_admin || $preview_mode): ?>
             <li><a href="/index.php">Home</a></li>
+            <?php if ($is_user || $preview_mode): ?>
+                <li><a href="/index.php">History</a></li>
+                <li><a href="/index.php">Rank</a></li>
+            <?php endif; ?>
+        <?php endif; ?>
+        
+        <?php if ($preview_mode): ?>
+            <li>
+                <a href="?action=toggle_preview" class="bg-amber-500/20 text-amber-400 border border-amber-500/30 px-3 py-1 rounded-lg hover:bg-amber-500 hover:text-black transition font-bold flex items-center gap-1 animate-pulse">
+                    <span class="material-icons text-sm mr-1">admin_panel_settings</span> 
+                    Admin Mode
+                </a>
+            </li>
         <?php endif; ?>
 
-        <?php if($is_user): ?>
-            <li><a href="/index.php">History</a></li>
-            <li><a href="/index.php">Rank</a></li>
-        <?php endif; ?>
-
-        <?php if($is_admin): ?>
-            
+        <?php if ($is_admin && !$preview_mode): ?>
             <li><a href="/admin_dashboard.php">Quiz</a></li>
             <li><a href="/admin_questions.php">Questions</a></li>
             <li><a href="/admin_categories.php">Categories</a></li>
             <li><a href="/admin_users.php">Users</a></li>
             <li>
-                <a href="/index.php" class="bg-primary/20 text-primary border border-primary/30 px-3 py-1 rounded-lg hover:bg-primary hover:text-white transition font-medium flex items-center gap-1">
+                <a href="?action=toggle_preview" class="bg-primary/20 text-primary border border-primary/30 px-3 py-1 rounded-lg hover:bg-primary hover:text-white transition font-medium flex items-center gap-1">
                     <span class="material-icons text-sm mr-2">visibility</span> 
                     User Mode
                 </a>
@@ -129,6 +158,6 @@ $is_logged = isset($_SESSION['user_id']);
     const navMenu = document.getElementById('nav-menu');
 
     hamburger.addEventListener('click', () => {
-    navMenu.classList.toggle('active');
-});
+        navMenu.classList.toggle('active');
+    });
 </script>
