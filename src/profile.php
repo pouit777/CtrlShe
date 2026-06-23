@@ -28,7 +28,6 @@ $avatars = array_values(array_diff(scandir($avatarDir), ['.', '..']));
 ?>
 
 <?php $page_title = "Profile"; ?>
-<?php include __DIR__ . '/components/header.php'; ?>
 
 <div class="max-w-3xl mx-auto mt-10 bg-gray-800 p-6 rounded-xl border border-gray-700">
 
@@ -42,7 +41,7 @@ $avatars = array_values(array_diff(scandir($avatarDir), ['.', '..']));
              class="w-24 h-24 rounded-full border-4 border-cyan-400 object-cover">
 
         <div>
-            <p class="text-lg font-bold"><?= htmlspecialchars($user['username']) ?></p>
+            <p class="text-lg font-bold text-white"><?= htmlspecialchars($user['username']) ?></p>
             <p class="text-gray-400"><?= htmlspecialchars($user['email']) ?></p>
             <p class="text-sm text-gray-500">Role: <?= htmlspecialchars($user['role']) ?></p>
         </div>
