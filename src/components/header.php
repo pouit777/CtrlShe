@@ -24,17 +24,15 @@ require_once __DIR__ . '/../config/db.php';
 <body>
 
 <nav class="navbar">
+    <a href="index.php" class="logo">
+        <img src="/public/logo.png" alt="Logo" id="logoNavBar">
+    </a>
+
     <button class="hamburger" id="hamburger">
         <span class="material-icons">menu</span>
     </button>
 
     <ul class="nav-menu" id="nav-menu">
-
-        <li>
-            <a href="/index.php">
-                <img src="/public/logo.png" id="logoNavBar">
-            </a>
-        </li>
 
         <li><a href="/admin_questions.php">Questions</a></li>
         <li><a href="/admin_categories.php">Categories</a></li>
@@ -45,14 +43,19 @@ require_once __DIR__ . '/../config/db.php';
             <li><a href="/admin_users.php">Users</a></li>
 
             <li>
-                <a href="/profile.php" class="flex items-center gap-2">
+                <a href="/profile.php" class="profile flex justify-center items-center gap-2 m-0">
                     <img src="/public/avatars/<?= htmlspecialchars($_SESSION['avatar'] ?? 'hamster.png') ?>"
                          class="w-9 h-9 rounded-full border-2 border-cyan-400 object-cover">
                     <span><?= htmlspecialchars($_SESSION['username']) ?></span>
                 </a>
             </li>
-
-            <li><a href="/logout.php">Logout</a></li>
+            <li><a href="/settings.php">Settings</a></li>
+            <li>
+                <a href="/logout.php" class="logout flex justify-center items-center gap-2 m-0">
+                    Logout  
+                    <span class="material-icons logout">logout</span>
+                </a>
+            </li>
 
         <?php else: ?>
 
@@ -60,15 +63,23 @@ require_once __DIR__ . '/../config/db.php';
             <li><a href="/register.php">Register</a></li>
 
         <?php endif; ?>
-
+        <li>
+            <label class="switch">
+                <input type="checkbox" id="theme-toggle">
+                <span class="slider round">
+                    <span id="theme-icon" class="material-icons">sunny</span>
+                </span>
+            </label>
+        </li>
     </ul>
 </nav>
 
 <script>
-const hamburger = document.getElementById('hamburger');
-const navMenu = document.getElementById('nav-menu');
+    const toggle = document.getElementById('theme-toggle');
+    const hamburger = document.getElementById('hamburger');
+    const navMenu = document.getElementById('nav-menu');
 
-hamburger.addEventListener('click', () => {
+    hamburger.addEventListener('click', () => {
     navMenu.classList.toggle('active');
 });
 </script>

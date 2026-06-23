@@ -15,7 +15,7 @@ $stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
 $stmt->execute([$userId]);
 $user = $stmt->fetch();
 
-// 🔥 AUTO LOAD avatars from folder (IMPORTANT)
+// AUTO LOAD avatars from folder
 $avatarDir = __DIR__ . "/public/avatars/";
 $avatars = array_values(array_diff(scandir($avatarDir), ['.', '..']));
 ?>
