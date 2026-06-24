@@ -31,7 +31,7 @@ try {
         $_SESSION['role'] = $userAccount['role'];
         $_SESSION['avatar'] = !empty($userAccount['avatar'])
             ? $userAccount['avatar']
-            : 'hamster.png';
+            : 'bee.png';
 
         echo json_encode([
             'status' => 'success',
