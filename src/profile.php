@@ -90,6 +90,7 @@ $avatars = array_values(array_diff(scandir($avatarDir), ['.', '..']));
 <script>
 const hiddenInput = document.getElementById("selectedAvatar");
 const avatarPreview = document.getElementById("avatarPreview");
+const navbarAvatar = document.getElementById("navbarAvatar");
 
 document.querySelectorAll(".avatar-option").forEach(img => {
 
@@ -134,6 +135,10 @@ document.querySelectorAll(".avatar-option").forEach(img => {
 
             if (data.status === "success") {
                 hiddenInput.value = avatar;
+                avatarPreview.src = `/public/avatars/${avatar}`;
+                if (navbarAvatar) {
+                    navbarAvatar.src = `/public/avatars/${avatar}`;
+                }
             } 
             else {
                 alert(data.message || "Save failed");
