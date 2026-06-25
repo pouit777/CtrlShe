@@ -99,7 +99,7 @@ $preview_mode = $is_admin && ($_SESSION['preview_mode'] ?? false);
         <?php if($is_logged): ?>
             <li>
                 <!-- TODO -->
-                <a href="/profile.php" class="profile flex justify-center items-center gap-2 m-0">
+                <a href="/settings.php" class="profile flex justify-center items-center gap-2 m-0">
                     <img 
                         id="navbarAvatar"
                         src="/public/avatars/<?= htmlspecialchars($_SESSION['avatar'] ?? 'bee.png') ?>"
@@ -109,7 +109,6 @@ $preview_mode = $is_admin && ($_SESSION['preview_mode'] ?? false);
                     <span><?= htmlspecialchars($_SESSION['username']) ?></span>
                 </a>
             </li>
-            <li><a href="/settings.php">Settings</a></li>
             <li>
                 <a href="/logout.php" class="logout flex justify-center items-center gap-2 m-0">
                     Logout  

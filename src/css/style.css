@@ -254,6 +254,10 @@ label {
   .table {
     border-radius: 8px;
   }
+
+  .avatar-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
 }
 
 .logout{
@@ -545,9 +549,24 @@ button {
 }
 
 /*Settings page style*/
+@media (max-width: 768px) {
+  .settings {
+    flex-direction: column;
+  }
+
+  .choices {
+    width: 100%;
+    margin-right: 0;
+  }
+
+  .settingPage {
+    width: 100%;
+  }
+}
+
 .settings{
   display: flex;
-  justify-content: flex-end;
+  align-items: flex-start;
   gap: 1rem;
 }
 
@@ -641,34 +660,93 @@ button {
   white-space: nowrap;
 }
 
-.avatar-grid {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 12px;
-  justify-items: center;
+
+
+/*PROFILE HEADER*/
+.profile-header {
+  display: flex;
   align-items: center;
-  margin-top: 15px;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  border-radius: 12px;
 }
 
-.avatar-option {
-  width: 70px;
-  height: 70px;
+.profile-avatar {
+  width: 7rem;
+  height: 7rem;
   border-radius: 50%;
-  cursor: pointer;
+  border: 3px solid var(--color-primary);
   object-fit: cover;
-  border: 2px solid transparent;
-  transition: 0.2s;
+}
+
+.profile-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-name {
+  color: var(--color-white);
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.profile-email {
+  font-size: 15px;
+  color: #9ca3af;
+}
+
+.profile-role {
+  font-size: 15px;
+  color: #9ca3af;
+}
+
+.avatar-section {
+  margin-top: 20px;
+  padding: 15px;
+  border-radius: 12px;
+}
+
+.avatar-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+  gap: 12px;
+  justify-items: center;
+}
+
+.avatar-item {
+  width: 64px;
+  height: 64px;
+  min-width: 64px;
+  min-height: 64px;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  object-fit: cover;
   display: block;
 }
 
-.avatar-option:hover {
+@media (max-width: 480px) {
+  .avatar-item {
+    width: 56px;
+    height: 56px;
+  }
+}
+
+@media (max-width: 768px) {
+  .profile-header {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .profile-info {
+    align-items: center;
+  }
+}
+
+.avatar-item:hover {
   transform: scale(1.05);
 }
 
-.border-transparent {
-  border-color: transparent;
-}
-
-.border-green-500 {
-  border: 3px solid #22c55e;
+.avatar-selected {
+  border: 3px solid var(--color-primary) !important;
 }
