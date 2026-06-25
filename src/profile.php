@@ -48,6 +48,21 @@ $avatars = array_values(array_diff(scandir($avatarDir), ['.', '..']));
 
     </div>
 
+    <!-- PSEUDO -->
+    <form id="usernameForm" class="mb-8">
+        <label class="block mb-2 text-gray-300">
+            Username
+        </label>
+
+        <div class="flex gap-3">
+            <input type="text" id="username" value="<?= htmlspecialchars($user['username']) ?>" class="flex-1 p-3 rounded bg-gray-900 border border-gray-700" >
+
+            <button type="submit" class="bg-green-500 hover:bg-green-600 px-4 py-2 rounded text-black font-bold">
+                Save
+            </button>
+        </div>
+    </form>
+
     <!-- AVATAR GRID -->
     <form id="avatarForm" class="space-y-4">
 
@@ -75,20 +90,6 @@ $avatars = array_values(array_diff(scandir($avatarDir), ['.', '..']));
             Save
         </button>
 
-    </form>
-
-    <form id="usernameForm" class="mb-8">
-        <label class="block mb-2 text-gray-300">
-            Username
-        </label>
-
-        <div class="flex gap-3">
-            <input type="text" id="username" value="<?= htmlspecialchars($user['username']) ?>" class="flex-1 p-3 rounded bg-gray-900 border border-gray-700" >
-
-            <button type="submit" class="bg-green-500 hover:bg-green-600 px-4 py-2 rounded text-black font-bold">
-                Save
-            </button>
-        </div>
     </form>
 
 </div>
