@@ -82,34 +82,32 @@ $avatars = array_values(array_diff(scandir($avatarDir), ['.', '..']));
 
                 <?php endif; ?>
             <?php endforeach; ?>
-
         </div>
-
-        <button type="submit"
-                class="bg-cyan-500 hover:bg-cyan-600 px-4 py-2 rounded-lg text-black font-bold">
-            Save
-        </button>
-
     </form>
 
 </div>
 
 <script>
 const hiddenInput = document.getElementById("selectedAvatar");
+const avatarPreview = document.getElementById("avatarPreview");
 
-// avatar actuellement enregistré
-const currentAvatar = hiddenInput.value;
-
-// mise en évidence de l'avatar actuel
 document.querySelectorAll(".avatar-option").forEach(img => {
 
-    if(img.dataset.avatar === currentAvatar){
+    if (img.dataset.avatar === hiddenInput.value) {
         img.classList.remove("border-transparent");
         img.classList.add("border-green-500");
     }
 
-    img.addEventListener("click", () => {
+    img.addEventListener("click", async () => {
 
+        const avatar = img.dataset.avatar;
+
+        // évite un appel inutile
+        if (avatar === hiddenInput.value) {
+            return;
+        }
+
+        // sélection visuelle immédiate
         document.querySelectorAll(".avatar-option").forEach(i => {
             i.classList.remove("border-green-500");
             i.classList.add("border-transparent");
@@ -118,7 +116,33 @@ document.querySelectorAll(".avatar-option").forEach(img => {
         img.classList.remove("border-transparent");
         img.classList.add("border-green-500");
 
-        hiddenInput.value = img.dataset.avatar;
+        // update preview instantané
+        avatarPreview.src = `/public/avatars/${avatar}`;
+
+        try {
+            const response = await fetch("/api/account/update_avatar.php", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    avatar: avatar
+                })
+            });
+
+            const data = await response.json();
+
+            if (data.status === "success") {
+                hiddenInput.value = avatar;
+            } 
+            else {
+                alert(data.message || "Save failed");
+            }
+
+        } catch (err) {
+            console.error(err);
+            alert("Server error");
+        }
     });
 });
 
