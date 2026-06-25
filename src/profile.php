@@ -94,7 +94,6 @@ $avatars = array_values(array_diff(scandir($avatarDir), ['.', '..']));
                         data-avatar="<?= htmlspecialchars($name, ENT_QUOTES, 'UTF-8') ?>"
                     >
 
-<<<<<<< HEAD
                 <?php endforeach; ?>
 
             </div>
@@ -108,12 +107,6 @@ $avatars = array_values(array_diff(scandir($avatarDir), ['.', '..']));
         </div>
 
 </form>
-=======
-                <?php endif; ?>
-            <?php endforeach; ?>
-        </div>
-    </form>
->>>>>>> 31b5e9c73f736fb0e997951a81013b5991d887c2
 
 </div>
 
