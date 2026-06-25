@@ -23,13 +23,32 @@
 
         <div id="profileSetting" class="settingPage activeWindow">
             <div class="avatar">
-                <img class="avatar" src="public/avatar.png">
-                <button class="btn">Change Avatar</button>
+                <img src="public/avatar.png"/>
+                <h3 class="textWhite"><?php echo $_SESSION['username'] ?></h3>
+                <div class="modal-btn">
+                    <button class="btn" onclick="editUsername()">Edit Username</button>
+                    <button class="btn" onclick="diplayAvatarChoices()">Change Avatar</button>
+                </div>
             </div>
 
-            <form>
+            <div id="avatarChoices" class="avatar-selector hidden textWhite">
+                <h3>Choose your new avatar</h3>
+                <div id="avatarGrid" class="avatar-grid">
+                    <?php
+                        $files = glob("public/avatars/*.png");
 
-            </form>
+                        foreach ($files as $file) {
+                            $name = basename($file, ".png");
+                            echo '
+                            <label class="avatar-option">
+                                <button type="radio" name="avatar" value="'.$name.'">
+                                    <img src="'.$file.'" alt="'.$name.'">
+                                </button>
+                            </label>';
+                        }
+                    ?>
+                </div>
+            </div>
         </div>
 
         <div id="passwordSetting" class="settingPage hidden">
@@ -66,28 +85,33 @@
 </div>
 
 <script>
-function setActive(idWindow) {
-    const pages = document.querySelectorAll('.settingPage');
-    const buttons = document.querySelectorAll('.choices li');
+    function setActive(idWindow) {
+        const pages = document.querySelectorAll('.settingPage');
+        const buttons = document.querySelectorAll('.choices li');
 
-    pages.forEach(page => {
-        page.classList.remove('activeWindow');
-        page.classList.add('hidden');
-    });
+        pages.forEach(page => {
+            page.classList.remove('activeWindow');
+            page.classList.add('hidden');
+        });
 
-    buttons.forEach(btn => {
-        btn.classList.remove('active');
-    });
+        buttons.forEach(btn => {
+            btn.classList.remove('active');
+        });
 
-    const activePage = document.getElementById(idWindow);
-    if (activePage) {
-        activePage.classList.remove('hidden');
-        activePage.classList.add('activeWindow');
+        const activePage = document.getElementById(idWindow);
+        if (activePage) {
+            activePage.classList.remove('hidden');
+            activePage.classList.add('activeWindow');
+        }
+
+        const activeBtn = document.getElementById(idWindow + 'Btn');
+        if (activeBtn) {
+            activeBtn.classList.add('active');
+        }
+
     }
 
-    const activeBtn = document.getElementById(idWindow + 'Btn');
-    if (activeBtn) {
-        activeBtn.classList.add('active');
+    function diplayAvatarChoices(){
+        document.getElementById("avatarChoices").classList.remove("hidden");
     }
-}
 </script>

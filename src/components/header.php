@@ -74,6 +74,7 @@ $preview_mode = $is_admin && ($_SESSION['preview_mode'] ?? false);
         
         <?php if ($preview_mode): ?>
             <li>
+                <!-- TODO -->
                 <a href="?action=toggle_preview" class="bg-amber-500/20 text-amber-400 border border-amber-500/30 px-3 py-1 rounded-lg hover:bg-amber-500 hover:text-black transition font-bold flex items-center gap-1 animate-pulse">
                     <span class="material-icons text-sm mr-1">admin_panel_settings</span> 
                     Admin Mode
@@ -87,6 +88,7 @@ $preview_mode = $is_admin && ($_SESSION['preview_mode'] ?? false);
             <li><a href="/admin_categories.php">Categories</a></li>
             <li><a href="/admin_users.php">Users</a></li>
             <li>
+                <!-- TODO -->
                 <a href="?action=toggle_preview" class="bg-primary/20 text-primary border border-primary/30 px-3 py-1 rounded-lg hover:bg-primary hover:text-white transition font-medium flex items-center gap-1">
                     <span class="material-icons text-sm mr-2">visibility</span> 
                     User Mode
@@ -96,6 +98,7 @@ $preview_mode = $is_admin && ($_SESSION['preview_mode'] ?? false);
 
         <?php if($is_logged): ?>
             <li>
+                <!-- TODO -->
                 <a href="/profile.php" class="profile flex justify-center items-center gap-2 m-0">
                     <img src="/public/avatars/<?= htmlspecialchars($_SESSION['avatar'] ?? 'bee.png') ?>"
                          class="w-9 h-9 rounded-full border-2 border-cyan-400 object-cover">

@@ -49,33 +49,49 @@ $avatars = array_values(array_diff(scandir($avatarDir), ['.', '..']));
     </div>
 
     <!-- AVATAR GRID -->
-    <form id="avatarForm" class="space-y-4">
+    <form id="avatarForm">
 
-        <input type="hidden" id="selectedAvatar" value="<?= htmlspecialchars($user['avatar']) ?>">
+        <input type="hidden"
+            id="selectedAvatar"
+            name="avatar"
+            value="<?= htmlspecialchars($user['avatar'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
 
-        <label class="text-sm text-gray-300">Choose your avatar</label>
+        <div id="avatarChoices" class="avatar-selector textWhite">
 
-        <div class="grid grid-cols-6 gap-3 bg-gray-900 p-4 rounded-lg border border-gray-700">
+            <h3>Choose your new avatar</h3>
 
-            <?php foreach ($avatars as $a): ?>
-                <?php if (is_file($avatarDir . $a)): ?>
+            <div class="avatar-grid">
+
+                <?php
+                    $files = glob("public/avatars/*.png");
+
+                    foreach ($files as $file):
+
+                        $name = basename($file, ".png");
+                        $url = "public/avatars/" . $name . ".png";
+
+                ?>
 
                     <img
-                        src="/public/avatars/<?= $a ?>"
-                        class="w-14 h-14 rounded-full cursor-pointer border-2 border-transparent hover:border-green-500 transition avatar-option"                        data-avatar="<?= $a ?>"
+                        src="<?= htmlspecialchars($url, ENT_QUOTES, 'UTF-8') ?>"
+                        alt="<?= htmlspecialchars($name, ENT_QUOTES, 'UTF-8') ?>"
+                        class="avatar-option"
+                        data-avatar="<?= htmlspecialchars($name, ENT_QUOTES, 'UTF-8') ?>"
                     >
 
-                <?php endif; ?>
-            <?php endforeach; ?>
+                <?php endforeach; ?>
+
+            </div>
+
+            <div class="modal-btn">
+                <button type="submit" class="btn">
+                    Save Avatar
+                </button>
+            </div>
 
         </div>
 
-        <button type="submit"
-                class="bg-cyan-500 hover:bg-cyan-600 px-4 py-2 rounded-lg text-black font-bold">
-            Save
-        </button>
-
-    </form>
+</form>
 
 </div>
 

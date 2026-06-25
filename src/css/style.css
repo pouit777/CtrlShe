@@ -96,6 +96,10 @@ label {
   margin-bottom: 0.25rem;
 }
 
+.textWhite{
+  color: var(--color-white) !important;
+}
+
 .btn{
   width: 100%;
   padding: 0.65rem 1rem;
@@ -617,18 +621,54 @@ button {
   border-radius: 3px 0 0 3px;
 }
 
-.avatar img {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  object-fit: cover;
-  width: 150px;
+.avatar {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  margin: 0 auto;
+  gap: 0.3rem;
+  padding-bottom: 1rem;
 }
 
-.avatar {
-  width: 150px;
-  height: 150px;
-  display: flex;
-  justify-content: center;
+.avatar img {
+  width: 10rem;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.modal-btn .btn {
+  white-space: nowrap;
+}
+
+.avatar-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 12px;
+  justify-items: center;
   align-items: center;
+  margin-top: 15px;
+}
+
+.avatar-option {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  cursor: pointer;
+  object-fit: cover;
+  border: 2px solid transparent;
+  transition: 0.2s;
+  display: block;
+}
+
+.avatar-option:hover {
+  transform: scale(1.05);
+}
+
+.border-transparent {
+  border-color: transparent;
+}
+
+.border-green-500 {
+  border: 3px solid #22c55e;
 }
