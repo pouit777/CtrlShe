@@ -100,8 +100,12 @@ $preview_mode = $is_admin && ($_SESSION['preview_mode'] ?? false);
             <li>
                 <!-- TODO -->
                 <a href="/profile.php" class="profile flex justify-center items-center gap-2 m-0">
-                    <img src="/public/avatars/<?= htmlspecialchars($_SESSION['avatar'] ?? 'bee.png') ?>"
-                         class="w-9 h-9 rounded-full border-2 border-cyan-400 object-cover">
+                    <img 
+                        id="navbarAvatar"
+                        src="/public/avatars/<?= htmlspecialchars($_SESSION['avatar'] ?? 'bee.png') ?>"
+                        alt="Avatar"
+                        class="w-9 h-9 rounded-full border-2 border-cyan-400 object-cover"
+                    >
                     <span><?= htmlspecialchars($_SESSION['username']) ?></span>
                 </a>
             </li>

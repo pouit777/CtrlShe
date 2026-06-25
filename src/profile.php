@@ -48,6 +48,21 @@ $avatars = array_values(array_diff(scandir($avatarDir), ['.', '..']));
 
     </div>
 
+    <!-- PSEUDO -->
+    <form id="usernameForm" class="mb-8">
+        <label class="block mb-2 text-gray-300">
+            Username
+        </label>
+
+        <div class="flex gap-3">
+            <input type="text" id="username" value="<?= htmlspecialchars($user['username']) ?>" class="flex-1 p-3 rounded bg-gray-900 border border-gray-700" >
+
+            <button type="submit" class="bg-green-500 hover:bg-green-600 px-4 py-2 rounded text-black font-bold">
+                Save
+            </button>
+        </div>
+    </form>
+
     <!-- AVATAR GRID -->
     <form id="avatarForm">
 
@@ -79,6 +94,7 @@ $avatars = array_values(array_diff(scandir($avatarDir), ['.', '..']));
                         data-avatar="<?= htmlspecialchars($name, ENT_QUOTES, 'UTF-8') ?>"
                     >
 
+<<<<<<< HEAD
                 <?php endforeach; ?>
 
             </div>
@@ -92,25 +108,37 @@ $avatars = array_values(array_diff(scandir($avatarDir), ['.', '..']));
         </div>
 
 </form>
+=======
+                <?php endif; ?>
+            <?php endforeach; ?>
+        </div>
+    </form>
+>>>>>>> 31b5e9c73f736fb0e997951a81013b5991d887c2
 
 </div>
 
 <script>
 const hiddenInput = document.getElementById("selectedAvatar");
+const avatarPreview = document.getElementById("avatarPreview");
+const navbarAvatar = document.getElementById("navbarAvatar");
 
-// avatar actuellement enregistré
-const currentAvatar = hiddenInput.value;
-
-// mise en évidence de l'avatar actuel
 document.querySelectorAll(".avatar-option").forEach(img => {
 
-    if(img.dataset.avatar === currentAvatar){
+    if (img.dataset.avatar === hiddenInput.value) {
         img.classList.remove("border-transparent");
         img.classList.add("border-green-500");
     }
 
-    img.addEventListener("click", () => {
+    img.addEventListener("click", async () => {
 
+        const avatar = img.dataset.avatar;
+
+        // évite un appel inutile
+        if (avatar === hiddenInput.value) {
+            return;
+        }
+
+        // sélection visuelle immédiate
         document.querySelectorAll(".avatar-option").forEach(i => {
             i.classList.remove("border-green-500");
             i.classList.add("border-transparent");
@@ -119,7 +147,37 @@ document.querySelectorAll(".avatar-option").forEach(img => {
         img.classList.remove("border-transparent");
         img.classList.add("border-green-500");
 
-        hiddenInput.value = img.dataset.avatar;
+        // update preview instantané
+        avatarPreview.src = `/public/avatars/${avatar}`;
+
+        try {
+            const response = await fetch("/api/account/update_avatar.php", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    avatar: avatar
+                })
+            });
+
+            const data = await response.json();
+
+            if (data.status === "success") {
+                hiddenInput.value = avatar;
+                avatarPreview.src = `/public/avatars/${avatar}`;
+                if (navbarAvatar) {
+                    navbarAvatar.src = `/public/avatars/${avatar}`;
+                }
+            } 
+            else {
+                alert(data.message || "Save failed");
+            }
+
+        } catch (err) {
+            console.error(err);
+            alert("Server error");
+        }
     });
 });
 
@@ -159,6 +217,46 @@ document.getElementById("avatarForm").addEventListener("submit", async (e) => {
     }
 
 });
+
+document.getElementById("usernameForm").addEventListener("submit", async (e) => {
+
+    e.preventDefault();
+
+    const username = document.getElementById("username").value.trim();
+
+    if(username.length < 3){
+        alert("Username too short");
+        return;
+    }
+
+    try {
+
+        const response = await fetch("/api/account/update_username.php", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                username: username
+            })
+        });
+
+        const data = await response.json();
+
+        if(data.status === "success"){
+            alert("Username updated");
+            location.reload();
+        } else {
+            alert(data.message);
+        }
+
+    } catch(err){
+        console.error(err);
+        alert("Server error");
+    }
+
+});
+
 </script>
 
 <?php include __DIR__ . '/components/footer.php'; ?>
