@@ -676,8 +676,6 @@ require_once __DIR__ . '/components/header.php';
                     categories
                 };
 
-                console.log("QUIZ PAYLOAD =>", payload); // 👈 DEBUG IMPORTANT
-
                 fetch('/api/quizzes/add_quizzes.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -685,7 +683,6 @@ require_once __DIR__ . '/components/header.php';
                 })
                 .then(res => res.json())
                 .then(data => {
-                    console.log("QUIZ RESPONSE =>", data); // 👈 DEBUG IMPORTANT
 
                     if (data.status === 'success') {
                         quizModal.classList.add('hidden');

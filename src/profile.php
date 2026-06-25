@@ -48,53 +48,97 @@ $avatars = array_values(array_diff(scandir($avatarDir), ['.', '..']));
 
     </div>
 
+    <!-- PSEUDO -->
+    <form id="usernameForm" class="mb-8">
+        <label class="block mb-2 text-gray-300">
+            Username
+        </label>
+
+        <div class="flex gap-3">
+            <input type="text" id="username" value="<?= htmlspecialchars($user['username']) ?>" class="flex-1 p-3 rounded bg-gray-900 border border-gray-700" >
+
+            <button type="submit" class="bg-green-500 hover:bg-green-600 px-4 py-2 rounded text-black font-bold">
+                Save
+            </button>
+        </div>
+    </form>
+
     <!-- AVATAR GRID -->
-    <form id="avatarForm" class="space-y-4">
+    <form id="avatarForm">
 
-        <input type="hidden" id="selectedAvatar" value="<?= htmlspecialchars($user['avatar']) ?>">
+        <input type="hidden"
+            id="selectedAvatar"
+            name="avatar"
+            value="<?= htmlspecialchars($user['avatar'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
 
-        <label class="text-sm text-gray-300">Choose your avatar</label>
+        <div id="avatarChoices" class="avatar-selector textWhite">
 
-        <div class="grid grid-cols-6 gap-3 bg-gray-900 p-4 rounded-lg border border-gray-700">
+            <h3>Choose your new avatar</h3>
 
-            <?php foreach ($avatars as $a): ?>
-                <?php if (is_file($avatarDir . $a)): ?>
+            <div class="avatar-grid">
+
+                <?php
+                    $files = glob("public/avatars/*.png");
+
+                    foreach ($files as $file):
+
+                        $name = basename($file, ".png");
+                        $url = "public/avatars/" . $name . ".png";
+
+                ?>
 
                     <img
-                        src="/public/avatars/<?= $a ?>"
-                        class="w-14 h-14 rounded-full cursor-pointer border-2 border-transparent hover:border-green-500 transition avatar-option"                        data-avatar="<?= $a ?>"
+                        src="<?= htmlspecialchars($url, ENT_QUOTES, 'UTF-8') ?>"
+                        alt="<?= htmlspecialchars($name, ENT_QUOTES, 'UTF-8') ?>"
+                        class="avatar-option"
+                        data-avatar="<?= htmlspecialchars($name, ENT_QUOTES, 'UTF-8') ?>"
                     >
 
-                <?php endif; ?>
-            <?php endforeach; ?>
+<<<<<<< HEAD
+                <?php endforeach; ?>
+
+            </div>
+
+            <div class="modal-btn">
+                <button type="submit" class="btn">
+                    Save Avatar
+                </button>
+            </div>
 
         </div>
 
-        <button type="submit"
-                class="bg-cyan-500 hover:bg-cyan-600 px-4 py-2 rounded-lg text-black font-bold">
-            Save
-        </button>
-
+</form>
+=======
+                <?php endif; ?>
+            <?php endforeach; ?>
+        </div>
     </form>
+>>>>>>> 31b5e9c73f736fb0e997951a81013b5991d887c2
 
 </div>
 
 <script>
 const hiddenInput = document.getElementById("selectedAvatar");
+const avatarPreview = document.getElementById("avatarPreview");
+const navbarAvatar = document.getElementById("navbarAvatar");
 
-// avatar actuellement enregistré
-const currentAvatar = hiddenInput.value;
-
-// mise en évidence de l'avatar actuel
 document.querySelectorAll(".avatar-option").forEach(img => {
 
-    if(img.dataset.avatar === currentAvatar){
+    if (img.dataset.avatar === hiddenInput.value) {
         img.classList.remove("border-transparent");
         img.classList.add("border-green-500");
     }
 
-    img.addEventListener("click", () => {
+    img.addEventListener("click", async () => {
 
+        const avatar = img.dataset.avatar;
+
+        // évite un appel inutile
+        if (avatar === hiddenInput.value) {
+            return;
+        }
+
+        // sélection visuelle immédiate
         document.querySelectorAll(".avatar-option").forEach(i => {
             i.classList.remove("border-green-500");
             i.classList.add("border-transparent");
@@ -103,7 +147,37 @@ document.querySelectorAll(".avatar-option").forEach(img => {
         img.classList.remove("border-transparent");
         img.classList.add("border-green-500");
 
-        hiddenInput.value = img.dataset.avatar;
+        // update preview instantané
+        avatarPreview.src = `/public/avatars/${avatar}`;
+
+        try {
+            const response = await fetch("/api/account/update_avatar.php", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    avatar: avatar
+                })
+            });
+
+            const data = await response.json();
+
+            if (data.status === "success") {
+                hiddenInput.value = avatar;
+                avatarPreview.src = `/public/avatars/${avatar}`;
+                if (navbarAvatar) {
+                    navbarAvatar.src = `/public/avatars/${avatar}`;
+                }
+            } 
+            else {
+                alert(data.message || "Save failed");
+            }
+
+        } catch (err) {
+            console.error(err);
+            alert("Server error");
+        }
     });
 });
 
@@ -143,6 +217,46 @@ document.getElementById("avatarForm").addEventListener("submit", async (e) => {
     }
 
 });
+
+document.getElementById("usernameForm").addEventListener("submit", async (e) => {
+
+    e.preventDefault();
+
+    const username = document.getElementById("username").value.trim();
+
+    if(username.length < 3){
+        alert("Username too short");
+        return;
+    }
+
+    try {
+
+        const response = await fetch("/api/account/update_username.php", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                username: username
+            })
+        });
+
+        const data = await response.json();
+
+        if(data.status === "success"){
+            alert("Username updated");
+            location.reload();
+        } else {
+            alert(data.message);
+        }
+
+    } catch(err){
+        console.error(err);
+        alert("Server error");
+    }
+
+});
+
 </script>
 
 <?php include __DIR__ . '/components/footer.php'; ?>

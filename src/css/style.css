@@ -96,6 +96,10 @@ label {
   margin-bottom: 0.25rem;
 }
 
+.textWhite{
+  color: var(--color-white) !important;
+}
+
 .btn{
   width: 100%;
   padding: 0.65rem 1rem;
@@ -538,4 +542,133 @@ button {
   align-items: center;
   gap: 1rem;
   margin-top: 1rem;
+}
+
+/*Settings page style*/
+.settings{
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.settingPage{
+  padding: 1rem;
+  width: 70%;
+  background-color: var(--color-black);
+  border-radius: 12px;
+  box-shadow: var(--shadow-modal);
+}
+
+.choices {
+  margin-right: auto;
+  width: 30%;
+  padding: 1rem;
+  background-color: var(--color-black);
+  border-radius: 12px;
+  box-shadow: var(--shadow-modal);;
+}
+
+
+.choices ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.choices li {
+  position: relative;
+}
+
+.choices button {
+  width: 100%;
+  border: none;
+  background: transparent;
+  padding: 15px 20px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  color: var(--color-white);
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.choices button:hover {
+  background: var(--color-white);
+  color: var(--color-primary);
+}
+
+.choices .material-icons {
+  font-size: 22px;
+}
+
+.choices li.active button {
+  background: var(--color-white);
+  color: var(--color-primary-dark);
+}
+
+.choices li.active .material-icons {
+  color: var(--color-primary-dark);
+}
+
+.choices li.active::after {
+  content: "";
+  position: absolute;
+  top: 8px;
+  right: 0;
+  width: 5px;
+  height: calc(100% - 16px);
+  color: var(--color-primary-dark);
+  border-radius: 3px 0 0 3px;
+}
+
+.avatar {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  margin: 0 auto;
+  gap: 0.3rem;
+  padding-bottom: 1rem;
+}
+
+.avatar img {
+  width: 10rem;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.modal-btn .btn {
+  white-space: nowrap;
+}
+
+.avatar-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 12px;
+  justify-items: center;
+  align-items: center;
+  margin-top: 15px;
+}
+
+.avatar-option {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  cursor: pointer;
+  object-fit: cover;
+  border: 2px solid transparent;
+  transition: 0.2s;
+  display: block;
+}
+
+.avatar-option:hover {
+  transform: scale(1.05);
+}
+
+.border-transparent {
+  border-color: transparent;
+}
+
+.border-green-500 {
+  border: 3px solid #22c55e;
 }
