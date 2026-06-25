@@ -194,14 +194,7 @@ document.getElementById("avatarForm").addEventListener("submit", async (e) => {
         const data = await response.json();
 
         if(data.status === "success"){
-
-            alert("Avatar saved !");
             location.reload();
-
-        }else{
-
-            alert(data.message || "Save failed");
-        }
 
     } catch(err){
 
@@ -237,7 +230,6 @@ document.getElementById("usernameForm").addEventListener("submit", async (e) => 
         const data = await response.json();
 
         if(data.status === "success"){
-            alert("Username updated");
             location.reload();
         } else {
             alert(data.message);
