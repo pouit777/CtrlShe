@@ -64,49 +64,26 @@ $avatars = array_values(array_diff(scandir($avatarDir), ['.', '..']));
     </form>
 
     <!-- AVATAR GRID -->
-    <form id="avatarForm">
+    <form id="avatarForm" class="space-y-4">
 
-        <input type="hidden"
-            id="selectedAvatar"
-            name="avatar"
-            value="<?= htmlspecialchars($user['avatar'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
+        <input type="hidden" id="selectedAvatar" value="<?= htmlspecialchars($user['avatar']) ?>">
 
-        <div id="avatarChoices" class="avatar-selector textWhite">
+        <label class="text-sm text-gray-300">Choose your avatar</label>
 
-            <h3>Choose your new avatar</h3>
+        <div class="grid grid-cols-6 gap-3 bg-gray-900 p-4 rounded-lg border border-gray-700">
 
-            <div class="avatar-grid">
-
-                <?php
-                    $files = glob("public/avatars/*.png");
-
-                    foreach ($files as $file):
-
-                        $name = basename($file, ".png");
-                        $url = "public/avatars/" . $name . ".png";
-
-                ?>
+            <?php foreach ($avatars as $a): ?>
+                <?php if (is_file($avatarDir . $a)): ?>
 
                     <img
-                        src="<?= htmlspecialchars($url, ENT_QUOTES, 'UTF-8') ?>"
-                        alt="<?= htmlspecialchars($name, ENT_QUOTES, 'UTF-8') ?>"
-                        class="avatar-option"
-                        data-avatar="<?= htmlspecialchars($name, ENT_QUOTES, 'UTF-8') ?>"
+                        src="/public/avatars/<?= $a ?>"
+                        class="w-14 h-14 rounded-full cursor-pointer border-2 border-transparent hover:border-green-500 transition avatar-option"                        data-avatar="<?= $a ?>"
                     >
 
-                <?php endforeach; ?>
-
-            </div>
-
-            <div class="modal-btn">
-                <button type="submit" class="btn">
-                    Save Avatar
-                </button>
-            </div>
-
+                <?php endif; ?>
+            <?php endforeach; ?>
         </div>
-
-</form>
+    </form>
 
 </div>
 
@@ -195,6 +172,7 @@ document.getElementById("avatarForm").addEventListener("submit", async (e) => {
 
         if(data.status === "success"){
             location.reload();
+        }
 
     } catch(err){
 
