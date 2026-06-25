@@ -118,7 +118,7 @@ $preview_mode = $is_admin && ($_SESSION['preview_mode'] ?? false);
             </li>
         <?php else: ?>
             <li><a href="/login.php">Login</a></li>
-            <li><a href="/register.php">Register</a></li>
+            <!-- <li><a href="/register.php">Register</a></li> -->
         <?php endif; ?>
 
         <li>
