@@ -222,11 +222,14 @@ main {
 .logo {
   display: flex;
   align-items: center;
+  
 }
 
 #logoNavBar {
-  height: 55px;
-  width: auto;
+  width: 180px;
+  height: 60px;
+  object-fit: contain;
+  display: block;
 }
 
 .nav-menu {
