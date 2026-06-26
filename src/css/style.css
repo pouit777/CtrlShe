@@ -894,4 +894,20 @@ button {
   border-radius: 12px;
   box-shadow: var(--shadow-modal);
   padding: 1rem;
+  justify-content: center;
+  align-items: center;
+}
+
+@media (min-width: 768px) {
+
+  .quizCard{
+    display: flex;
+    flex-direction: column;
+    background-color: var(--color-black);
+    border-radius: 12px;
+    box-shadow: var(--shadow-modal);
+    padding: 1rem;
+    justify-content: flex-start;
+    align-items:flex-start;
+  }
 }

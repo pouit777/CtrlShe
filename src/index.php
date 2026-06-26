@@ -19,10 +19,9 @@ $categories = $pdo->query("SELECT * FROM categories ORDER BY label")->fetchAll(P
 
 <!-- FILTER -->
 <div class="titleBox">
-    <div>
+    <div class="flex gap-2 justify-center items-center">
         <input id="search-input"
                class="inputField"
-               style="margin-bottom: 1rem"
                placeholder="Quiz name...">
 
         <select id="category-select"
