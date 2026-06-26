@@ -84,5 +84,3 @@ echo json_encode([
     "status" => "success",
     "game_id" => $pdo->lastInsertId()
 ]);
-
-<?php include __DIR__."/components/footer.php"; ?>

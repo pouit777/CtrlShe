@@ -45,8 +45,8 @@ async function loadHistory() {
 
         const date = new Date(game.played_at).toLocaleString();
 
-        const percent = game.question_count
-            ? Math.round((game.score / game.question_count) * 100)
+        const percent = game.total_questions
+            ? Math.round((game.score / game.total_questions) * 100)
             : null;
 
         let color = "text-green-400";
@@ -72,7 +72,7 @@ async function loadHistory() {
 
             <div class="text-right">
                 <p class="text-xl font-bold ${color}">
-                    ${game.score} / ${game.question_count ?? "?"}
+                    ${game.score} / ${game.total_questions}
                 </p>
 
                 ${percent !== null ? `

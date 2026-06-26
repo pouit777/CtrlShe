@@ -54,7 +54,7 @@ $percent = round(($game["score"] / $game["total_questions"]) * 100);
     </h2>
 
     <div class="text-6xl font-bold text-green-400 mb-4">
-        <?= $game["score"] ?> / <?= $game["question_count"] ?>
+        <?= $game["score"] ?> / <?= $game["total_questions"] ?>
     </div>
 
     <div class="text-2xl text-gray-300 mb-8">
@@ -63,7 +63,7 @@ $percent = round(($game["score"] / $game["total_questions"]) * 100);
 
     <div class="flex justify-center gap-4">
 
-        <a href="/game.php?quiz=<?= $_GET["quiz"] ?? "" ?>"
+        <a href="/game.php?quiz=<?= $game["quiz_id"] ?>"
            class="bg-cyan-500 px-5 py-3 rounded-lg text-black font-bold">
 
             Replay
