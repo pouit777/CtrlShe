@@ -77,11 +77,24 @@ CREATE TABLE IF NOT EXISTS games (
     quiz_id INT NOT NULL,
     score INT NOT NULL,
     total_questions INT NOT NULL,
+    duration INT NOT NULL DEFAULT 0
     played_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (quiz_id) REFERENCES quizzes(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE game_answers (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    game_id INT NOT NULL,
+    question_id INT NOT NULL,
+    answer_id INT,
+    is_correct TINYINT(1) NOT NULL,
+
+    FOREIGN KEY (game_id) REFERENCES games(id) ON DELETE CASCADE,
+    FOREIGN KEY (question_id) REFERENCES questions(id) ON DELETE CASCADE,
+    FOREIGN KEY (answer_id) REFERENCES answers(id) ON DELETE SET NULL
+);
 
 -- =========================================================================
 -- SEEDING DATA
