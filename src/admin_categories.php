@@ -31,7 +31,7 @@ $page_title = "brainSKwiz - Admin Categories";
 require_once __DIR__ . '/components/header.php';
 ?>
 
-        <div class="titleBox">
+        <div class="titleBoxAdmin">
             <div>
                 <h1 class="titleText">Question category management</h1>
                 <button id="open-modal-btn" class="btn">

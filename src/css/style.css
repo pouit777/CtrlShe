@@ -464,6 +464,18 @@ input:checked + .slider #theme-icon {
   background-color: var(--color-black);
   border-radius: 12px;
   box-shadow: var(--shadow-modal);
+  /* padding: 1rem; */
+}
+
+.titleBoxAdmin {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  background-color: var(--color-black);
+  border-radius: 12px;
+  box-shadow: var(--shadow-modal);
   padding: 1rem;
 }
 
@@ -471,10 +483,26 @@ input:checked + .slider #theme-icon {
   font-size: large;
   font-weight: bold;
   color: var(--color-white);
+  text-align: center;
 }
 
 .subTitle{
   color: grey;
+  max-width: 80%;
+  text-align: center;
+}
+
+@media (min-width: 768px) {
+
+  .titleText{
+    margin:auto;
+  }
+
+  .subTitle{
+    color: grey;
+    max-width: 100%;
+    text-align: left;
+  }
 }
 
 /* Table style */

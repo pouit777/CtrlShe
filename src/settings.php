@@ -14,7 +14,7 @@ $user = $stmt->fetch();
 ?>
 
 <div style="padding: 1rem;">
-    <div class="titleBox">
+    <div class="titleBoxAdmin">
         <div>
             <h1 class="titleText">Account Settings</h1>
             <p class="subTitle">

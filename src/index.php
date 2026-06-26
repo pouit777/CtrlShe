@@ -7,7 +7,7 @@ include "components/header.php";
 $categories = $pdo->query("SELECT * FROM categories ORDER BY label")->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
-<div class="titleBox">
+<div class="titleBoxAdmin">
     <h1 class="titleText">
         brainSKwiz Quizzes
     </h1>
@@ -18,7 +18,7 @@ $categories = $pdo->query("SELECT * FROM categories ORDER BY label")->fetchAll(P
 
 
 <!-- FILTER -->
-<div class="titleBox w-full">
+<div class="titleBoxAdmin w-full">
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[2fr_1fr] gap-4 items-center w-full">
         <input id="search-input"
                class="inputField"
@@ -74,12 +74,12 @@ function loadQuizzes() {
                         <h2 class="titleText">${q.name}</h2>
                         <p class="subTitle">${q.description ?? ''}</p>
 
-                        <div class="text-xs text-gray-500 mt-3">
+                        <div class="text-xs text-gray-500 m-auto mt-3">
                             <span class="${diffColor} uppercase">${q.difficulty}</span> • ${q.question_count ?? '∞'}
                         </div>
 
                         <a href="/game.php?quiz=${q.id}"
-                        class="btn" style="width: fit-content; margin-top: 1rem;">
+                        class="btn m-auto" style="width: fit-content; margin-top: 1rem;">
                             Start
                         </a>
                     </div>

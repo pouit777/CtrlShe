@@ -34,7 +34,7 @@ $page_title = "brainSKwiz - Admin Panel";
 require_once __DIR__ . '/components/header.php';
 ?>
 
-        <div class="titleBox">
+        <div class="titleBoxAdmin">
             <div>
                 <h1 class="titleText">Quiz Management</h1>
             </div>

@@ -25,7 +25,7 @@ $page_title = "brainSKwiz - Admin Questions";
 require_once __DIR__ . '/components/header.php';
 ?>
 
-    <div class="titleBox">
+    <div class="titleBoxAdmin">
         <div>
             <h1 class="titleText">Question management</h1>
             <button id="open-modal-btn" class="btn">
