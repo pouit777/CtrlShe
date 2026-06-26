@@ -59,16 +59,21 @@ require_once __DIR__ . '/components/header.php';
             </thead>
 
             <tbody>
-            <?php foreach($quizzes as $quiz): ?>
+            <?php foreach($quizzes as $quiz): 
+                
+
+            ?>    
                 <tr>
                     <td>#<?php echo $quiz['id']; ?></td>
 
-                    <td class="">
+                    <td>
                         <?= htmlspecialchars($quiz['name']) ?>
                     </td>
 
                     <td>
-                        <?= htmlspecialchars($quiz['difficulty']) ?>
+                        <span class="<?php echo $quiz['difficulty']?>">
+                            <?= htmlspecialchars($quiz['difficulty']) ?>
+                        </span>
                     </td>
 
                     <td>
@@ -83,7 +88,7 @@ require_once __DIR__ . '/components/header.php';
                         <?= $quiz['allow_custom_question_count'] ? 'Yes' : 'No' ?>
                     </td>
 
-                    <td>
+                    <td class="flex gap-2">
 
                         <button
                             onclick="editQuiz(this)"
