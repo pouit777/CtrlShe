@@ -37,18 +37,19 @@ require_once __DIR__ . '/components/header.php';
         <div class="titleBoxAdmin">
             <div>
                 <h1 class="titleText">Quiz Management</h1>
-            </div>
-            <div class="modal-btn">
-                <button id="open-quiz-modal-btn" class="btn">
-                    + Add New Quiz
-                </button>
+                <div class="modal-btn">
+                    <button id="open-quiz-modal-btn" class="btn">
+                        + Add New Quiz
+                    </button>
+                </div>
             </div>
         </div>
     
-    <div class="table w-full overflow-x-auto">
+    <div class="table-wrapper">
         <table class="whitespace-nowrap">
             <thead class="tableTitle">
                 <tr>
+                    <th>ID</th>
                     <th>Name</th>
                     <th>Difficulty</th>
                     <th>Questions</th>
@@ -60,7 +61,9 @@ require_once __DIR__ . '/components/header.php';
             <tbody>
             <?php foreach($quizzes as $quiz): ?>
                 <tr>
-                    <td>
+                    <td>#<?php echo $quiz['id']; ?></td>
+
+                    <td class="">
                         <?= htmlspecialchars($quiz['name']) ?>
                     </td>
 

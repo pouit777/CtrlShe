@@ -71,7 +71,7 @@ function loadQuizzes() {
 
                 quizGrid.innerHTML += `
                     <div class="quizCard">
-                        <h2 class="titleText">${q.name}</h2>
+                        <h2 class="titleText mb-2">${q.name}</h2>
                         <p class="subTitle">${q.description ?? ''}</p>
 
                         <div class="text-xs text-gray-500 m-auto mt-3">

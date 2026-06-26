@@ -28,13 +28,15 @@ require_once __DIR__ . '/components/header.php';
     <div class="titleBoxAdmin">
         <div>
             <h1 class="titleText">Question management</h1>
-            <button id="open-modal-btn" class="btn">
-                + Add New Question
-            </button>
+            <div class="modal-btn">
+                <button id="open-modal-btn" class="btn">
+                    + Add New Question
+                </button>
+            </div>
         </div>
     </div>
 
-    <div class="table">
+    <div class="table-wrapper">
         <table>
             <thead class="tableTitle">
                 <tr>

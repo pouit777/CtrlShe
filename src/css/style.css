@@ -226,6 +226,8 @@ main {
 
   /* padding: 0 2rem; */
   height: 80px;
+  min-height: 80px;
+  padding: 0 1rem;
 
   background: var(--color-bg);
 
@@ -259,7 +261,7 @@ main {
 .nav-menu {
   display: flex;
   align-items: center;
-  gap: 2rem;
+  gap: 1rem;
 
   list-style: none;
   margin: 0;
@@ -304,7 +306,6 @@ main {
 
   .nav-menu {
     position: fixed;
-
     top: 80px;
     right: -300px;
 
@@ -349,12 +350,18 @@ main {
     font-size: 0.8rem;
   }
 
-  .table {
+  .table-wrapper {
     border-radius: 8px;
   }
 
   .avatar-grid {
     grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .nav-menu{
+    gap:2rem;
   }
 }
 
@@ -471,7 +478,7 @@ input:checked + .slider #theme-icon {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.5rem;
+  gap: 1.5rem;
   margin-bottom: 2rem;
   background-color: var(--color-black);
   border-radius: 12px;
@@ -492,6 +499,12 @@ input:checked + .slider #theme-icon {
   text-align: center;
 }
 
+.navbar {
+    height: 64px;
+    min-height: 64px;
+    align-items: center;
+}
+
 @media (min-width: 768px) {
 
   .titleText{
@@ -506,7 +519,7 @@ input:checked + .slider #theme-icon {
 }
 
 /* Table style */
-.table {
+.table-wrapper {
   width: 100%;
   overflow-x: auto;
   border-radius: 12px;
@@ -518,11 +531,13 @@ table {
   width: 100%;
   border-collapse: collapse;
   font-family: inherit;
+  min-width: 600px;
 }
 
 thead.tableTitle {
   background: var(--color-bg);
   text-align: left;
+  border-bottom:2px solid var(--color-primary);
 }
 
 thead.tableTitle th {

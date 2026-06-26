@@ -28,7 +28,7 @@ require_once __DIR__ . '/components/header.php';
             </div>
         </div>
 
-        <div class="table">
+        <div class="table-wrapper">
             <table>
                 <thead class="tableTitle">
                     <tr>
