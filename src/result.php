@@ -100,7 +100,7 @@ $corrections = $stmt->fetchAll(PDO::FETCH_ASSOC);
            class="bg-cyan-500 px-5 py-3 rounded-lg text-black font-bold">
             Replay
         </a>
-
+        
         <a href="/history.php"
            class="bg-gray-700 px-5 py-3 rounded-lg text-white">
             History
