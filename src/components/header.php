@@ -67,7 +67,7 @@ $preview_mode = $is_admin && ($_SESSION['preview_mode'] ?? false);
         <?php if (!$is_admin || $preview_mode): ?>
             <li><a href="/index.php">Home</a></li>
             <?php if ($is_user || $preview_mode): ?>
-                <li><a href="/index.php">History</a></li>
+                <li><a href="/history.php">History</a></li>
                 <li><a href="/index.php">Rank</a></li>
             <?php endif; ?>
         <?php endif; ?>
@@ -99,7 +99,7 @@ $preview_mode = $is_admin && ($_SESSION['preview_mode'] ?? false);
         <?php if($is_logged): ?>
             <li>
                 <!-- TODO -->
-                <a href="/profile.php" class="profile flex justify-center items-center gap-2 m-0">
+                <a href="/settings.php" class="profile flex justify-center items-center gap-2 m-0">
                     <img 
                         id="navbarAvatar"
                         src="/public/avatars/<?= htmlspecialchars($_SESSION['avatar'] ?? 'bee.png') ?>"
@@ -109,7 +109,6 @@ $preview_mode = $is_admin && ($_SESSION['preview_mode'] ?? false);
                     <span><?= htmlspecialchars($_SESSION['username']) ?></span>
                 </a>
             </li>
-            <li><a href="/settings.php">Settings</a></li>
             <li>
                 <a href="/logout.php" class="logout flex justify-center items-center gap-2 m-0">
                     Logout  
@@ -140,6 +139,7 @@ $preview_mode = $is_admin && ($_SESSION['preview_mode'] ?? false);
 <script>
     const toggle = document.getElementById('theme-toggle');
     const icon = document.getElementById('theme-icon');
+    const logo = document.getElementById('logoNavBar');
 
     const savedTheme = localStorage.getItem('theme') || 'light';
 
@@ -147,6 +147,7 @@ $preview_mode = $is_admin && ($_SESSION['preview_mode'] ?? false);
     toggle.checked = savedTheme === 'dark';
 
     updateIcon(savedTheme);
+    updateLogo(savedTheme);
 
     toggle.addEventListener('change', () => {
         const theme = toggle.checked ? 'dark' : 'light';
@@ -155,12 +156,19 @@ $preview_mode = $is_admin && ($_SESSION['preview_mode'] ?? false);
         localStorage.setItem('theme', theme);
 
         updateIcon(theme);
+        updateLogo(theme);
     });
 
     function updateIcon(theme) {
         icon.textContent = theme === 'dark'
             ? 'dark_mode'
             : 'sunny';
+    }
+
+    function updateLogo(theme) {
+    logo.src = theme === 'dark'
+        ? '/public/logo-dark-theme.svg'
+        : '/public/logo.png';
     }
 
     //navBar script
