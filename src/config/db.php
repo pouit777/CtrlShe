@@ -1,6 +1,7 @@
 <?php
 // src/config/db.php
 // Manages the unique, centralized Data Objects (PDO) layer connection to the database.
+date_default_timezone_set('Europe/Paris');
 
 $host = 'db';
 $db   = 'brainskwiz_db';
