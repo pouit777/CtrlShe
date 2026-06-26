@@ -139,6 +139,7 @@ $preview_mode = $is_admin && ($_SESSION['preview_mode'] ?? false);
 <script>
     const toggle = document.getElementById('theme-toggle');
     const icon = document.getElementById('theme-icon');
+    const logo = document.getElementById('logoNavBar');
 
     const savedTheme = localStorage.getItem('theme') || 'light';
 
@@ -146,6 +147,7 @@ $preview_mode = $is_admin && ($_SESSION['preview_mode'] ?? false);
     toggle.checked = savedTheme === 'dark';
 
     updateIcon(savedTheme);
+    updateLogo(savedTheme);
 
     toggle.addEventListener('change', () => {
         const theme = toggle.checked ? 'dark' : 'light';
@@ -154,12 +156,19 @@ $preview_mode = $is_admin && ($_SESSION['preview_mode'] ?? false);
         localStorage.setItem('theme', theme);
 
         updateIcon(theme);
+        updateLogo(theme);
     });
 
     function updateIcon(theme) {
         icon.textContent = theme === 'dark'
             ? 'dark_mode'
             : 'sunny';
+    }
+
+    function updateLogo(theme) {
+    logo.src = theme === 'dark'
+        ? '/public/logo-dark-theme.svg'
+        : '/public/logo.png';
     }
 
     //navBar script
