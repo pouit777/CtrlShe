@@ -96,6 +96,10 @@ if (!empty($quiz['question_count'])) {
         <?= htmlspecialchars($quiz['description']) ?>
     </p>
 
+    <form id="quizForm">
+
+    <input type="hidden" id="quizId" value="<?= $quiz_id ?>">
+
     <div class="space-y-6">
 
         <?php foreach ($questions as $index => $question): ?>
@@ -134,6 +138,71 @@ if (!empty($quiz['question_count'])) {
 
     </div>
 
+    <div class="mt-8 text-center">
+        <button
+            type="submit"
+            class="bg-cyan-500 hover:bg-cyan-600 px-8 py-3 rounded-lg font-bold">
+            Finish Quiz
+        </button>
+    </div>
+
+    </form>
+
 </div>
+
+<script>
+document.getElementById("quizForm").addEventListener("submit", async (e) => {
+
+    e.preventDefault();
+
+    const answers = {};
+
+    document.querySelectorAll("input[type=radio]:checked").forEach(input => {
+
+        const questionId = input.name.replace("question_", "");
+        answers[questionId] = input.value;
+
+    });
+
+    try {
+
+        const response = await fetch("/api/game/finish.php", {
+
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+
+                quiz_id: document.getElementById("quizId").value,
+                answers: answers
+
+            })
+
+        });
+
+        const data = await response.json();
+
+        if (data.status === "success") {
+
+            window.location = "/result.php?game=" + data.game_id;
+
+        } else {
+
+            alert(data.message);
+
+        }
+
+    } catch (err) {
+
+        console.error(err);
+        alert("Server error");
+
+    }
+
+});
+</script>
 
 <?php require_once __DIR__ . '/components/footer.php'; ?>
