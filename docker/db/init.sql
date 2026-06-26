@@ -77,7 +77,7 @@ CREATE TABLE IF NOT EXISTS games (
     quiz_id INT NOT NULL,
     score INT NOT NULL,
     total_questions INT NOT NULL,
-    duration INT NOT NULL DEFAULT 0
+    duration INT NOT NULL DEFAULT 0,
     played_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
