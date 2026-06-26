@@ -104,10 +104,22 @@ if (!$guestMode) {
     <!-- BUTTONS -->
     <div class="flex justify-center gap-4">
 
-        <a href="/game.php?quiz=<?= $game["quiz_id"] ?>"
-           class="bg-cyan-500 px-5 py-3 rounded-lg text-black font-bold">
-            Replay
-        </a>
+        <?php if (!$guestMode): ?>
+
+            <a href="/game.php?quiz=<?= $game["quiz_id"] ?>"
+                class="bg-cyan-500 px-5 py-3 rounded-lg text-black font-bold">
+                Replay
+            </a>
+
+        <?php else: ?>
+
+            <a id="guestReplay"
+               href="#"
+                class="bg-cyan-500 px-5 py-3 rounded-lg text-black font-bold">
+                Replay
+            </a>
+
+        <?php endif; ?>
 
         <!-- HISTORY BUTTON ONLY FOR REGISTERED USERS -->
         <?php if (!$guestMode): ?>
@@ -134,9 +146,17 @@ if (!$guestMode) {
             const data = JSON.parse(localStorage.getItem("guest_result"));
 
             if (data) {
-                // overwrite score safely
+
                 document.querySelector(".text-5xl").innerText =
-                    data.score + " / " + data.total;
+                   data.score + " / " + data.total;
+
+                const replayBtn = document.getElementById("guestReplay");
+
+                if (replayBtn) {
+                    const params = new URLSearchParams(window.location.search);
+                    replayBtn.href = "/game.php?quiz=" + params.get("quiz");
+
+                }  
             }
         </script>
     <?php endif; ?>
