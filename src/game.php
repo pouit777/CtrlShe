@@ -44,7 +44,7 @@ if (!$questions) {
 foreach ($questions as &$q) {
 
     $stmtA = $pdo->prepare("
-        SELECT id, answer_text, is_correct
+        SELECT id, answer_text
         FROM answers
         WHERE question_id = ?
         ORDER BY id ASC
