@@ -34,47 +34,46 @@ $page_title = "brainSKwiz - Admin Panel";
 require_once __DIR__ . '/components/header.php';
 ?>
 
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8 bg-gray-800 p-6 rounded-xl border border-gray-700 shadow-lg">
+        <div class="titleBox">
             <div>
-                <h1 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-blue-400 to-cyan-400 drop-shadow-sm">Admin Dashboard</h1>
-                <p class="text-sm text-gray-400 mt-1">
-                    Logged in as : <strong class="text-cyan-400"><?php echo htmlspecialchars($_SESSION['username'] ?? 'Admin', ENT_QUOTES, 'UTF-8'); ?> (<?php echo htmlspecialchars($_SESSION['role'], ENT_QUOTES, 'UTF-8'); ?>)</strong>
+                <h1 class="titleText">Admin Dashboard</h1>
+                <p class="subTitle">
+                    Logged in as : <strong><?php echo htmlspecialchars($_SESSION['username'] ?? 'Admin', ENT_QUOTES, 'UTF-8'); ?> (<?php echo htmlspecialchars($_SESSION['role'], ENT_QUOTES, 'UTF-8'); ?>)</strong>
                 </p>
             </div>
-            <div class="flex items-center gap-3 w-full md:w-auto justify-end">
-                <button id="open-modal-btn" class="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-gray-950 font-bold py-2 px-4 rounded-lg shadow-md transition transform hover:-translate-y-0.5">
+            <div class="modal-btn">
+                <button id="open-modal-btn" class="btn">
                     + Add New Question
                 </button>
-                <button id="open-quiz-modal-btn" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg">
+                <button id="open-quiz-modal-btn" class="btn">
                     + Add New Quiz
                 </button>
-                <a href="/logout.php" class="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-lg font-medium transition text-center">Logout</a>
             </div>
         </div>
 
-        <div class="bg-gray-800 rounded-xl border border-gray-700 shadow-xl overflow-hidden overflow-x-auto">
-            <table class="w-full text-left border-collapse">
-                <thead>
-                    <tr class="bg-gray-700/50 text-gray-400 uppercase text-xs font-mono border-b border-gray-700">
-                        <th class="p-4">ID</th>
-                        <th class="p-4">Question Text</th>
-                        <th class="p-4">Category</th>
-                        <th class="p-4">Difficulty</th>
-                        <th class="p-4 text-center">Actions</th>
+        <div class="table">
+            <table>
+                <thead class="tableTitle">
+                    <tr>
+                        <th>ID</th>
+                        <th>Question Text</th>
+                        <th>Category</th>
+                        <th>Difficulty</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody id="questions-table-body">
                     <?php foreach($questions as $q): ?>
-                        <tr id="question-row-<?php echo $q['id']; ?>" class="border-b border-gray-700/50 hover:bg-gray-700/30 transition">
-                            <td class="p-4 font-mono text-cyan-400">#<?php echo $q['id']; ?></td>
-                            <td class="p-4 text-gray-200 font-medium"><?php echo htmlspecialchars($q['question_text'], ENT_QUOTES, 'UTF-8'); ?></td>
-                            <td class="p-4"><span class="bg-gray-900 px-2 py-1 rounded text-sm text-gray-400 border border-gray-700"><?php echo htmlspecialchars($q['category_label'] ?? 'No category', ENT_QUOTES, 'UTF-8'); ?></span></td>
-                            <td class="p-4">
-                                <span class="text-xs font-mono uppercase px-2 py-0.5 rounded <?php echo $q['difficulty'] === 'easy' ? 'bg-green-950 text-green-400 border border-green-900' : ($q['difficulty'] === 'medium' ? 'bg-yellow-950 text-yellow-400 border border-yellow-900' : 'bg-red-950 text-red-400 border border-red-900'); ?> border">
+                        <tr id="question-row-<?php echo $q['id']; ?>">
+                            <td>#<?php echo $q['id']; ?></td>
+                            <td><?php echo htmlspecialchars($q['question_text'], ENT_QUOTES, 'UTF-8'); ?></td>
+                            <td><span><?php echo htmlspecialchars($q['category_label'] ?? 'No category', ENT_QUOTES, 'UTF-8'); ?></span></td>
+                            <td>
+                                <span class="<?php echo $q['difficulty'] ?> ">
                                     <?php echo htmlspecialchars($q['difficulty'], ENT_QUOTES, 'UTF-8'); ?>
                                 </span>
                             </td>
-                            <td class="p-4 flex justify-center gap-2">
+                            <td>
                                 <button 
                                     data-id="<?php echo $q['id']; ?>"
                                     data-category="<?php echo $q['category_id']; ?>"
@@ -82,18 +81,12 @@ require_once __DIR__ . '/components/header.php';
                                     data-text="<?php echo htmlspecialchars($q['question_text'], ENT_QUOTES, 'UTF-8'); ?>"
                                     data-answers="<?php echo htmlspecialchars($q['answers_json'] ?? '[]', ENT_QUOTES, 'UTF-8'); ?>"
                                     onclick="initEditModal(this)"
-                                    class="inline-flex items-center gap-1 bg-blue-900/30 hover:bg-blue-600 border border-blue-800 hover:border-blue-500 text-blue-300 hover:text-white px-2.5 py-1.5 rounded-lg text-xs font-semibold transition duration-150 shadow-sm">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-3.5 h-3.5">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
-                                    </svg>
-                                    Edit
+                                    class="editBtn">
+                                    <span class="material-icons">edit</span>
                                 </button>
 
-                                <button onclick="confirmDeleteQuestion(<?php echo $q['id']; ?>)" class="inline-flex items-center gap-1 bg-red-900/30 hover:bg-red-600 border border-red-800 hover:border-red-500 text-red-300 hover:text-white px-2.5 py-1.5 rounded-lg text-xs font-semibold transition duration-150 shadow-sm">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-3.5 h-3.5">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-                                    </svg>
-                                    Delete
+                                <button onclick="confirmDeleteQuestion(<?php echo $q['id']; ?>)" class="deleteBtn">
+                                    <span class="material-icons">delete</span>
                                 </button>
                             </td>
                         </tr>
@@ -102,48 +95,48 @@ require_once __DIR__ . '/components/header.php';
             </table>
         </div>
     
-    <div class="mt-10 bg-gray-800 rounded-xl border border-gray-700 shadow-xl overflow-hidden">
-        <div class="p-4 border-b border-gray-700">
-            <h2 class="text-xl font-bold text-purple-400">
+    <div class="table">
+        <div class="titleBox">
+            <h2 class="titleText">
                 Quiz Management
             </h2>
         </div>
 
-        <table class="w-full text-left">
-            <thead>
-                <tr class="bg-gray-700/50">
-                    <th class="p-4">Name</th>
-                    <th class="p-4">Difficulty</th>
-                    <th class="p-4">Questions</th>
-                    <th class="p-4">Custom Count</th>
-                    <th class="p-4">Actions</th>
+        <table>
+            <thead class="tableTitle">
+                <tr>
+                    <th>Name</th>
+                    <th>Difficulty</th>
+                    <th>Questions</th>
+                    <th>Custom Count</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
 
             <tbody>
             <?php foreach($quizzes as $quiz): ?>
                 <tr>
-                    <td class="p-4">
+                    <td>
                         <?= htmlspecialchars($quiz['name']) ?>
                     </td>
 
-                    <td class="p-4">
+                    <td>
                         <?= htmlspecialchars($quiz['difficulty']) ?>
                     </td>
 
-                    <td class="p-4">
+                    <td>
                         <?= htmlspecialchars($quiz['category_labels'] ?? 'None') ?>
                     </td>
 
-                    <td class="p-4">
+                    <td>
                         <?= $quiz['question_count'] ?? 'Variable' ?>
                     </td>
 
-                    <td class="p-4">
+                    <td>
                         <?= $quiz['allow_custom_question_count'] ? 'Yes' : 'No' ?>
                     </td>
 
-                    <td class="p-4 flex gap-2">
+                    <td>
 
                         <button
                             onclick="editQuiz(this)"
@@ -154,36 +147,14 @@ require_once __DIR__ . '/components/header.php';
                             data-difficulty="<?= $quiz['difficulty'] ?>"
                             data-count="<?= $quiz['question_count'] ?>"
                             data-custom="<?= $quiz['allow_custom_question_count'] ?>"
-                            class="inline-flex items-center gap-1 bg-blue-900/30 hover:bg-blue-600 border border-blue-800 hover:border-blue-500 text-blue-300 hover:text-white px-2.5 py-1.5 rounded-lg text-xs font-semibold transition duration-150 shadow-sm">
-                            <svg xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke-width="2"
-                                stroke="currentColor"
-                                class="w-3.5 h-3.5">
-                               <path stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
-                            </svg>
-                            Edit
+                            class="editBtn">
+                            <span class="material-icons">edit</span>
                         </button>
 
                         <button
                             onclick="deleteQuiz(<?= $quiz['id'] ?>)"
-                            class="inline-flex items-center gap-1 bg-red-900/30 hover:bg-red-600 border border-red-800 hover:border-red-500 text-red-300 hover:text-white px-2.5 py-1.5 rounded-lg text-xs font-semibold transition duration-150 shadow-sm">
-
-                            <svg xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke-width="2"
-                                stroke="currentColor"
-                                class="w-3.5 h-3.5">
-                                <path stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-                            </svg>
-
-                            Delete
+                            class="deleteBtn">
+                            <span class="material-icons">delete</span>
                         </button>
 
                     </td>
@@ -193,29 +164,29 @@ require_once __DIR__ . '/components/header.php';
         </table>
     </div>
 
-    <div id="question-modal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-        <div class="bg-gray-800 max-w-lg w-full rounded-2xl border border-gray-700 p-6 shadow-2xl overflow-y-auto max-h-[90vh]">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-bold text-emerald-400">Add a New Question</h3>
-                <button id="close-modal-btn" class="text-gray-400 hover:text-white text-2xl font-bold">&times;</button>
+    <div id="question-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="titleText modal-header">
+                <h3>Add a New Question</h3>
+                <button id="close-modal-btn" class="closeBtn">&times;</button>
             </div>
-            <form id="add-question-form" class="space-y-4">
+            <form id="add-question-form">
                 <div>
-                    <label class="block text-sm font-medium text-gray-400 mb-1">Question Text</label>
-                    <textarea id="modal-question-text" required rows="2" placeholder="Ex: What does CSS stand for?" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-emerald-500 transition"></textarea>
+                    <label>Question Text</label>
+                    <textarea id="modal-question-text" required rows="2" placeholder="Ex: What does CSS stand for?" class="inputField"></textarea>
                 </div>
-                <div class="grid grid-cols-2 gap-4">
+                <div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-400 mb-1">Category</label>
-                        <select id="modal-category" required class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-emerald-500 transition">
+                        <label>Category</label>
+                        <select id="modal-category" required class="inputField">
                             <?php foreach($categories as $cat): ?>
                                 <option value="<?php echo $cat['id']; ?>"><?php echo htmlspecialchars($cat['label'], ENT_QUOTES, 'UTF-8'); ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-400 mb-1">Difficulty</label>
-                        <select id="modal-difficulty" required class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-emerald-500 transition">
+                        <label>Difficulty</label>
+                        <select id="modal-difficulty" required class="inputField">
                             <option value="easy">Easy</option>
                             <option value="medium" selected>Medium</option>
                             <option value="hard">Hard</option>
@@ -224,48 +195,48 @@ require_once __DIR__ . '/components/header.php';
                 </div>
                 <hr class="border-gray-700 my-2">
                 <div>
-                    <label class="block text-sm font-medium text-emerald-400 mb-2">Answers Options (Select the correct one)</label>
-                    <div class="space-y-3">
+                    <label>Answers Options (Select the correct one)</label>
+                    <div>
                         <?php for($i = 0; $i < 3; $i++): ?>
-                        <div class="flex items-center gap-3">
-                            <input type="radio" name="correct_answer" value="<?php echo $i; ?>" <?php echo $i === 0 ? 'checked' : ''; ?> class="w-4 h-4 text-emerald-500 bg-gray-700 border-gray-600 focus:ring-emerald-500">
-                            <input type="text" id="answer-<?php echo $i; ?>" required placeholder="Answer option <?php echo $i+1; ?>" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-1.5 text-white focus:outline-none focus:border-emerald-500 transition">
+                        <div class="answer-row">
+                            <input type="radio" name="correct_answer" value="<?php echo $i; ?>" <?php echo $i === 0 ? 'checked' : ''; ?>>
+                            <input type="text" id="answer-<?php echo $i; ?>" required placeholder="Answer option <?php echo $i+1; ?>" class="inputField">
                         </div>
                         <?php endfor; ?>
                     </div>
                 </div>
-                <div class="flex justify-end gap-3 pt-2">
-                    <button type="button" id="cancel-modal-btn" class="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-lg font-medium transition">Cancel</button>
-                    <button type="submit" class="bg-emerald-500 hover:bg-emerald-600 text-gray-950 font-bold px-4 py-2 rounded-lg transition">Save Question</button>
+                <div class="modal-btn">
+                    <button type="button" id="cancel-modal-btn" class="inputField">Cancel</button>
+                    <button type="submit" class="btn">Save Question</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <div id="edit-question-modal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-        <div class="bg-gray-800 max-w-lg w-full rounded-2xl border border-gray-700 p-6 shadow-2xl overflow-y-auto max-h-[90vh]">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-bold text-blue-400">Edit Question Detail</h3>
-                <button id="close-edit-modal-btn" class="text-gray-400 hover:text-white text-2xl font-bold">&times;</button>
+    <div id="edit-question-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="titleText modal-header">
+                <h3>Edit Question Detail</h3>
+                <button id="close-edit-modal-btn" class="closeBtn">&times;</button>
             </div>
-            <form id="edit-question-form" class="space-y-4">
+            <form id="edit-question-form">
                 <input type="hidden" id="edit-question-id">
                 <div>
-                    <label class="block text-sm font-medium text-gray-400 mb-1">Question Text</label>
-                    <textarea id="edit-modal-question-text" required rows="2" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500 transition"></textarea>
+                    <label>Question Text</label>
+                    <textarea id="edit-modal-question-text" required rows="2" class="inputField"></textarea>
                 </div>
-                <div class="grid grid-cols-2 gap-4">
+                <div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-400 mb-1">Category</label>
-                        <select id="edit-modal-category" required class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500 transition">
+                        <label>Category</label>
+                        <select id="edit-modal-category" required class="inputField">
                             <?php foreach($categories as $cat): ?>
                                 <option value="<?php echo $cat['id']; ?>"><?php echo htmlspecialchars($cat['label'], ENT_QUOTES, 'UTF-8'); ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-400 mb-1">Difficulty</label>
-                        <select id="edit-modal-difficulty" required class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500 transition">
+                        <label>Difficulty</label>
+                        <select id="edit-modal-difficulty" required class="inputField">
                             <option value="easy">Easy</option>
                             <option value="medium">Medium</option>
                             <option value="hard">Hard</option>
@@ -274,19 +245,19 @@ require_once __DIR__ . '/components/header.php';
                 </div>
                 <hr class="border-gray-700 my-2">
                 <div>
-                    <label class="block text-sm font-medium text-blue-400 mb-2">Answers Options (Check the correct one)</label>
-                    <div class="space-y-3">
+                    <label>Answers Options (Check the correct one)</label>
+                    <div>
                         <?php for($i = 0; $i < 3; $i++): ?>
-                        <div class="flex items-center gap-3">
-                            <input type="radio" name="edit_correct_answer" value="<?php echo $i; ?>" id="edit-radio-<?php echo $i; ?>" class="w-4 h-4 text-blue-500 bg-gray-700 border-gray-600 focus:ring-blue-500">
-                            <input type="text" id="edit-answer-<?php echo $i; ?>" required class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-1.5 text-white focus:outline-none focus:border-blue-500 transition">
+                        <div class="answer-row">
+                            <input type="radio" name="edit_correct_answer" value="<?php echo $i; ?>" id="edit-radio-<?php echo $i; ?>">
+                            <input type="text" id="edit-answer-<?php echo $i; ?>" required class="inputField">
                         </div>
                         <?php endfor; ?>
                     </div>
                 </div>
-                <div class="flex justify-end gap-3 pt-2">
-                    <button type="button" id="cancel-edit-modal-btn" class="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-lg font-medium transition">Cancel</button>
-                    <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold px-4 py-2 rounded-lg transition">Update Question</button>
+                <div class="modal-btn">
+                    <button type="button" id="cancel-edit-modal-btn" class="inputField">Cancel</button>
+                    <button type="submit" class="btn">Update Question</button>
                 </div>
             </form>
         </div>
@@ -305,119 +276,112 @@ require_once __DIR__ . '/components/header.php';
             </div>
         </div>
     </div>
-    <div id="quiz-modal"
-            class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
 
-            <div class="bg-gray-800 max-w-xl w-full rounded-xl p-6 border border-gray-700">
+    <div id="quiz-modal"class="modal hidden">
+        <div class="modal-content">
 
-                <div class="flex justify-between mb-4">
-                    <h3 class="text-xl font-bold text-purple-400">
-                        Create Quiz
-                    </h3>
+            <div class="titleText modal-header">
+                <h3>Create Quiz</h3>
+                <button id="close-quiz-modal-btn" class="closeBtn">&times;</button>
+            </div>
 
-                    <button type="button" id="close-quiz-modal-btn">
-                        ✕
-                    </button>
+            <form id="add-quiz-form">
+
+                <!-- NAME -->
+                <div>
+                    <label>Name</label>
+                    <input type="text"
+                            id="quiz-name"
+                            required
+                            class="inputField">
                 </div>
 
-                <form id="add-quiz-form" class="space-y-4">
+                <!-- DESCRIPTION -->
+                <div>
+                    <label>Description</label>
+                    <textarea id="quiz-description"
+                                class="inputField"></textarea>
+                </div>
 
-                    <!-- NAME -->
-                    <div>
-                        <label class="text-gray-300">Name</label>
-                        <input type="text"
-                               id="quiz-name"
-                               required
-                               class="w-full bg-gray-700 p-2 rounded">
+                <!-- DIFFICULTY -->
+                <div>
+                    <label>Difficulty</label>
+                    <select id="quiz-difficulty"
+                            class="inputField">
+                        <option value="easy">Easy</option>
+                        <option value="medium">Medium</option>
+                        <option value="hard">Hard</option>
+                    </select>
+                </div>
+
+                <!-- CATEGORIES -->
+                <div>
+                    <label>Categories</label>
+
+                    <div class="categories-container">
+                        <?php foreach($categories as $cat): ?>
+                            <label class="category-item">
+                                <input type="checkbox"
+                                        class="quiz-category"
+                                        value="<?= $cat['id'] ?>">
+                                <?= htmlspecialchars($cat['label']) ?>
+                            </label>
+                        <?php endforeach; ?>
                     </div>
+                </div>
 
-                    <!-- DESCRIPTION -->
-                    <div>
-                        <label class="text-gray-300">Description</label>
-                        <textarea id="quiz-description"
-                                  class="w-full bg-gray-700 p-2 rounded"></textarea>
-                    </div>
+                <!-- CUSTOM COUNT TOGGLE -->
+                <div class="modal-btn">
+                    <input type="checkbox" id="allow-custom-count">
+                    <label>User chooses number of questions</label>
+                </div>
 
-                    <!-- DIFFICULTY -->
-                    <div>
-                        <label class="text-gray-300">Difficulty</label>
-                        <select id="quiz-difficulty"
-                                class="w-full bg-gray-700 p-2 rounded">
-                            <option value="easy">Easy</option>
-                            <option value="medium">Medium</option>
-                            <option value="hard">Hard</option>
-                        </select>
-                    </div>
+                <!-- QUESTION COUNT -->
+                <div style="margin-bottom: 1rem;">
+                    <label>Fixed question count</label>
+                    <input type="number"
+                            id="quiz-question-count"
+                            min="1"
+                            class="inputField">
+                </div>
 
-                    <!-- CATEGORIES -->
-                    <div>
-                        <label class="text-gray-300">Categories</label>
-
-                        <div class="grid grid-cols-2 gap-2 mt-2">
-                            <?php foreach($categories as $cat): ?>
-                                <label class="flex items-center gap-2 text-gray-300">
-                                    <input type="checkbox"
-                                           class="quiz-category"
-                                           value="<?= $cat['id'] ?>">
-                                    <?= htmlspecialchars($cat['label']) ?>
-                                </label>
-                            <?php endforeach; ?>
-                        </div>
-                    </div>
-
-                    <!-- CUSTOM COUNT TOGGLE -->
-                    <div class="flex items-center gap-2 text-gray-300">
-                        <input type="checkbox" id="allow-custom-count">
-                        <label>User chooses number of questions</label>
-                    </div>
-
-                    <!-- QUESTION COUNT -->
-                    <div>
-                        <label class="text-gray-300">Fixed question count</label>
-                        <input type="number"
-                               id="quiz-question-count"
-                               min="1"
-                               class="w-full bg-gray-700 p-2 rounded">
-                    </div>
-
-                    <!-- SUBMIT -->
-                    <button type="submit"
-                           class="bg-purple-600 px-4 py-2 rounded w-full">
-                        Save Quiz
-                    </button>
-
-                </form>
-            </div>
+                <!-- SUBMIT -->
+                <button type="submit" class="btn">Save Quiz</button>
+            </form>
         </div>
-    <div id="edit-quiz-modal" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-50">
-        <div class="bg-gray-800 p-6 rounded-xl w-full max-w-lg">
-            <h2 class="text-xl text-blue-400 mb-4">Edit Quiz</h2>
+    </div>
+
+    <div id="edit-quiz-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="titleText modal-header">
+                <h3>Edit Quiz</h3>
+                <button id="close-edit-quiz-modal-btn" class="closeBtn">&times;</button>
+            </div>
 
             <form id="edit-quiz-form">
                 <input type="hidden" id="edit-quiz-id">
 
-                <input id="edit-quiz-name" class="w-full mb-2 p-2 bg-gray-700 rounded">
+                <input id="edit-quiz-name" class="inputField">
+                <textarea id="edit-quiz-description" class="inputField"></textarea>
 
-                <textarea id="edit-quiz-description" class="w-full mb-2 p-2 bg-gray-700 rounded"></textarea>
-
-                <select id="edit-quiz-difficulty" class="w-full mb-2 p-2 bg-gray-700 rounded">
+                <select id="edit-quiz-difficulty" class="inputField">
                     <option value="easy">Easy</option>
                     <option value="medium">Medium</option>
                     <option value="hard">Hard</option>
                 </select>
 
-                <input type="number" id="edit-quiz-count" class="w-full mb-2 p-2 bg-gray-700 rounded">
+                <input type="number" id="edit-quiz-count" class="inputField">
 
-                <div class="flex gap-2 mb-2">
+                <div class="categories-container">
                     <?php foreach($categories as $cat): ?>
-                        <label>
+                        <label class="category-item">
                             <input type="checkbox" class="edit-quiz-cat" value="<?= $cat['id'] ?>">
                             <?= htmlspecialchars($cat['label']) ?>
                         </label>
                     <?php endforeach; ?>
                 </div>
 
-                <button class="bg-blue-600 px-4 py-2 rounded w-full">Save</button>
+                <button class="btn">Save</button>
             </form>
         </div>
     </div>
@@ -448,7 +412,14 @@ require_once __DIR__ . '/components/header.php';
         .addEventListener('click', () => {
 
             quizModal.classList.add('hidden');
-        });                    
+        });
+        
+        document
+        .getElementById('close-edit-quiz-modal-btn')
+        .addEventListener('click', () => {
+
+            document.getElementById('edit-quiz-modal').classList.add('hidden');
+        });  
 
         openModalBtn.addEventListener('click', () => {
             addForm.reset(); 

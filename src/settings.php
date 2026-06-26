@@ -1,5 +1,16 @@
 <?php
-    include 'components/header.php'
+include 'components/header.php';
+require_once __DIR__ . '/config/db.php';
+
+
+if (!isset($_SESSION['user_id'])) {
+    header("Location: /login.php");
+    exit;
+}
+
+$stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
+$stmt->execute([$_SESSION['user_id']]);
+$user = $stmt->fetch();
 ?>
 
 <div style="padding: 1rem;">
@@ -22,33 +33,58 @@
         </div>
 
         <div id="profileSetting" class="settingPage activeWindow">
-            <div class="avatar">
-                <img src="public/avatar.png"/>
-                <h3 class="textWhite"><?php echo $_SESSION['username'] ?></h3>
-                <div class="modal-btn">
-                    <button class="btn" onclick="editUsername()">Edit Username</button>
-                    <button class="btn" onclick="diplayAvatarChoices()">Change Avatar</button>
+            <h1 class="textWhite">My Profile</h1>
+
+            <!-- USER INFO -->
+            <div class="profile-header">
+                <img id="avatarPreview"
+                    src="/public/avatars/<?= htmlspecialchars($user['avatar']) ?>"
+                    class="profile-avatar">
+
+                <div class="profile-info">
+                    <p class="profile-name"><?= htmlspecialchars($user['username']) ?></p>
+                    <p class="profile-email"><?= htmlspecialchars($user['email']) ?></p>
+                    <p class="profile-role">Role: <?= htmlspecialchars($user['role']) ?></p>
                 </div>
+
             </div>
 
-            <div id="avatarChoices" class="avatar-selector hidden textWhite">
-                <h3>Choose your new avatar</h3>
-                <div id="avatarGrid" class="avatar-grid">
-                    <?php
-                        $files = glob("public/avatars/*.png");
+            <!-- PSEUDO -->
+            <form id="usernameForm">
+                <label>Username</label>
+                <input style="margin-bottom: 1rem;" class="inputField" type="text" id="username" value="<?= htmlspecialchars($user['username']) ?>">
+                <button type="submit" class="btn">Save</button>
+            </form>
 
-                        foreach ($files as $file) {
-                            $name = basename($file, ".png");
-                            echo '
-                            <label class="avatar-option">
-                                <button type="radio" name="avatar" value="'.$name.'">
-                                    <img src="'.$file.'" alt="'.$name.'">
-                                </button>
-                            </label>';
-                        }
-                    ?>
+            <!-- AVATAR GRID -->
+            <form id="avatarForm">
+                <input type="hidden"
+                    id="selectedAvatar"
+                    name="avatar"
+                    value="<?= htmlspecialchars($user['avatar'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
+
+                <div id="avatarChoices" class="avatar-section textWhite">
+                    <h3>Choose your new avatar</h3>
+                    <div class="avatar-grid">
+                        <?php
+                        $files = glob(__DIR__ . "/public/avatars/*.png");
+
+                        foreach ($files as $file):
+                            $filename = basename($file);
+                        ?>
+                            <img
+                                src="/public/avatars/<?= htmlspecialchars($filename) ?>"
+                                class="avatar-item"
+                                data-avatar="<?= htmlspecialchars($filename) ?>"
+                            >
+                        <?php endforeach; ?>
+                    </div>
+
+                    <div class="modal-btn">
+                        <button type="submit" class="btn">Save Avatar</button>
+                    </div>
                 </div>
-            </div>
+            </form>
         </div>
 
         <div id="passwordSetting" class="settingPage hidden">
@@ -114,4 +150,136 @@
     function diplayAvatarChoices(){
         document.getElementById("avatarChoices").classList.remove("hidden");
     }
+
+    const hiddenInput = document.getElementById("selectedAvatar");
+    const avatarPreview = document.getElementById("avatarPreview");
+    const navbarAvatar = document.getElementById("navbarAvatar");
+
+    document.querySelectorAll(".avatar-item").forEach(img => {
+
+        if (img.dataset.avatar === hiddenInput.value) {
+            img.classList.remove("border-transparent");
+            img.classList.add("border-green-500");
+        }
+
+        img.addEventListener("click", async () => {
+
+            const avatar = img.dataset.avatar;
+            if (avatar === hiddenInput.value) {
+                return;
+            }
+
+            document.querySelectorAll(".avatar-item").forEach(i => {
+                i.classList.remove("border-green-500");
+                i.classList.add("border-transparent");
+            });
+
+            img.classList.remove("border-transparent");
+            img.classList.add("border-green-500");
+
+            console.log("Avatar sélectionné :", avatar);
+            console.log("URL :", `/public/avatars/${avatar}`);
+            avatarPreview.src = `/public/avatars/${avatar}`;
+
+            try {
+                const response = await fetch("/api/account/update_avatar.php", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        avatar: avatar
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.status === "success") {
+                    hiddenInput.value = avatar;
+                    avatarPreview.src = `/public/avatars/${avatar}`;
+                    if (navbarAvatar) {
+                        navbarAvatar.src = `/public/avatars/${avatar}`;
+                    }
+                } 
+                else {
+                    alert(data.message || "Save failed");
+                }
+
+            } catch (err) {
+                console.error(err);
+                alert("Server error");
+            }
+        });
+    });
+
+    // SAVE
+    document.getElementById("avatarForm").addEventListener("submit", async (e) => {
+
+        e.preventDefault();
+
+        try {
+
+            const response = await fetch("/api/account/update_avatar.php", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    avatar: hiddenInput.value
+                })
+            });
+
+            const data = await response.json();
+
+            if (data.status === "success") {
+                location.reload();
+            } else {
+                alert(data.message || "Save failed");
+            }
+
+        } catch (err) {
+
+            console.error(err);
+            alert("Server error");
+        }
+
+    });
+
+    document.getElementById("usernameForm").addEventListener("submit", async (e) => {
+
+        e.preventDefault();
+
+        const username = document.getElementById("username").value.trim();
+
+        if(username.length < 3){
+            alert("Username too short");
+            return;
+        }
+
+        try {
+
+            const response = await fetch("/api/account/update_username.php", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    username: username
+                })
+            });
+
+            const data = await response.json();
+
+            if(data.status === "success"){
+                location.reload();
+            } else {
+                alert(data.message);
+            }
+
+        } catch(err){
+            console.error(err);
+            alert("Server error");
+        }
+
+    });
 </script>
