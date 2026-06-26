@@ -14,17 +14,18 @@ $userId = $_SESSION['user_id'];
 try {
 
     $stmt = $pdo->prepare("
-        SELECT 
-            g.id,
-            g.score,
-            g.played_at,
-            q.name AS quiz_name,
-            q.difficulty,
-            q.question_count
-        FROM games g
-        LEFT JOIN quizzes q ON q.id = g.quiz_id
-        WHERE g.user_id = ?
-        ORDER BY g.played_at DESC
+    SELECT
+        g.id,
+        g.score,
+        g.total_questions,
+        g.played_at,
+        q.name AS quiz_name,
+        q.difficulty
+    FROM games g
+    LEFT JOIN quizzes q
+    ON q.id = g.quiz_id
+    WHERE g.user_id = ?
+    ORDER BY g.played_at DESC
     ");
 
     $stmt->execute([$userId]);
