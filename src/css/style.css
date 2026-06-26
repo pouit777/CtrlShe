@@ -789,8 +789,8 @@ button {
 }
 
 .choices button:hover {
-  background: var(--color-white);
-  color: var(--color-primary);
+  background: #aeb8fe8a;
+  color: var(--color-white);
 }
 
 .choices .material-icons {

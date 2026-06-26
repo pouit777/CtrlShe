@@ -1,56 +1,55 @@
-<?php
+<!-- 
+// session_start();
+// header('Content-Type: application/json');
 
-session_start();
-header('Content-Type: application/json');
+// require_once __DIR__ . '/../../config/db.php';
 
-require_once __DIR__ . '/../../config/db.php';
+// if (!isset($_SESSION['user_id'])) {
 
-if (!isset($_SESSION['user_id'])) {
+//     echo json_encode([
+//         'status' => 'error',
+//         'message' => 'Not logged in'
+//     ]);
+//     exit;
+// }
 
-    echo json_encode([
-        'status' => 'error',
-        'message' => 'Not logged in'
-    ]);
-    exit;
-}
+// $data = json_decode(file_get_contents('php://input'), true);
 
-$data = json_decode(file_get_contents('php://input'), true);
+// $username = trim($data['username'] ?? '');
 
-$username = trim($data['username'] ?? '');
+// if(strlen($username) < 3){
 
-if(strlen($username) < 3){
+//     echo json_encode([
+//         'status' => 'error',
+//         'message' => 'Username too short'
+//     ]);
+//     exit;
+// }
 
-    echo json_encode([
-        'status' => 'error',
-        'message' => 'Username too short'
-    ]);
-    exit;
-}
+// try {
 
-try {
+//     $stmt = $pdo->prepare("
+//         UPDATE users
+//         SET username = ?
+//         WHERE id = ?
+//     ");
 
-    $stmt = $pdo->prepare("
-        UPDATE users
-        SET username = ?
-        WHERE id = ?
-    ");
+//     $stmt->execute([
+//         $username,
+//         $_SESSION['user_id']
+//     ]);
 
-    $stmt->execute([
-        $username,
-        $_SESSION['user_id']
-    ]);
+//     // IMPORTANT
+//     $_SESSION['username'] = $username;
 
-    // IMPORTANT
-    $_SESSION['username'] = $username;
+//     echo json_encode([
+//         'status' => 'success'
+//     ]);
 
-    echo json_encode([
-        'status' => 'success'
-    ]);
+// } catch(PDOException $e){
 
-} catch(PDOException $e){
-
-    echo json_encode([
-        'status' => 'error',
-        'message' => 'Username already used'
-    ]);
-}
+//     echo json_encode([
+//         'status' => 'error',
+//         'message' => 'Username already used'
+//     ]);
+// } -->
