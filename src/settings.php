@@ -79,10 +79,6 @@ $user = $stmt->fetch();
                             >
                         <?php endforeach; ?>
                     </div>
-
-                    <div class="modal-btn">
-                        <button type="submit" class="btn">Save Avatar</button>
-                    </div>
                 </div>
             </form>
         </div>
