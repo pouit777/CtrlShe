@@ -36,7 +36,7 @@ require_once __DIR__ . '/components/header.php';
 
         <div class="titleBox">
             <div>
-                <h1 class="titleText">Admin Dashboard</h1>
+                <h1 class="titleText">Quiz Management</h1>
             </div>
             <div class="modal-btn">
                 <button id="open-quiz-modal-btn" class="btn">
@@ -45,14 +45,8 @@ require_once __DIR__ . '/components/header.php';
             </div>
         </div>
     
-    <div class="table">
-        <div class="titleBox">
-            <h2 class="titleText">
-                Quiz Management
-            </h2>
-        </div>
-
-        <table>
+    <div class="table w-full overflow-x-auto">
+        <table class="whitespace-nowrap">
             <thead class="tableTitle">
                 <tr>
                     <th>Name</th>
