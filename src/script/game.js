@@ -28,8 +28,7 @@ function renderQuestion() {
     questionText.textContent = q.question_text;
 
     progressText.textContent = `Question ${currentIndex + 1} / ${questions.length}`;
-
-    progressBar.style.width = `${(currentIndex / questions.length) * 100}%`;
+    progressBar.style.width = `${((currentIndex + 1) / questions.length) * 100}%`;
 
     q.answers.forEach(answer => {
         const btn = document.createElement("button");
@@ -43,6 +42,9 @@ function renderQuestion() {
 
         answersBox.appendChild(btn);
     });
+
+    console.log(GAME_DATA);
+    console.log(questions);
 }
 
 function selectAnswer(answer, btn) {

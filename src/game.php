@@ -44,7 +44,7 @@ if (!$questions) {
 foreach ($questions as &$q) {
 
     $stmtA = $pdo->prepare("
-        SELECT id, answer_text
+        SELECT id, answer_text, is_correct
         FROM answers
         WHERE question_id = ?
         ORDER BY id ASC
@@ -57,17 +57,37 @@ unset($q);
 
 $gameData = [
     "quiz" => [
-        "id" => $quiz['id'],
+        "id" => (int)$quiz['id'],
         "name" => $quiz['name'],
         "description" => $quiz['description']
     ],
-    "questions" => $questions
+    "questions" => array_map(function ($q) {
+
+        global $pdo;
+
+        $stmtA = $pdo->prepare("
+            SELECT id, answer_text, is_correct
+            FROM answers
+            WHERE question_id = ?
+            ORDER BY id ASC
+        ");
+
+        $stmtA->execute([$q['id']]);
+
+        return [
+            "id" => (int)$q["id"],
+            "question_text" => $q["question_text"],
+            "answers" => $stmtA->fetchAll(PDO::FETCH_ASSOC)
+        ];
+
+    }, $questions)
 ];
 ?>
 
 <!-- GAME DATA -->
 <script>
-    const GAME_DATA = <?= json_encode($gameData, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP); ?>;
+    const GAME_DATA = <?= json_encode($gameData, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>;
+    console.log(GAME_DATA);
 </script>
 
 <!-- GAME UI -->
@@ -126,6 +146,6 @@ $gameData = [
 </div>
 
 <!-- GAME SCRIPT -->
-<script src="/assets/js/game.js"></script>
+<script src="/script/game.js"></script>
 
 <?php require_once __DIR__ . '/components/footer.php'; ?>
