@@ -38,52 +38,25 @@ require_once __DIR__ . '/header.php';
     </p>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <button class="bg-[#8A96FF] hover:bg-[#7885FF] w-full text-left rounded-full py-3 px-4 flex items-center shadow-md transition-colors">
-    
-            <span class="bg-white text-[#A3ADFF] rounded-full w-10 h-10 flex items-center justify-center font-bold text-lg shrink-0">
-                A
-            </span>
-    
-            <span class="text-black font-semibold ml-4">
-                A
-            </span>
-
+        
+        <button class="answer-btn bg-[#8A96FF] hover:bg-[#7885FF] w-full text-left rounded-full py-3 px-4 flex items-center shadow-md transition-colors" data-correct="false">
+            <span class="circle-letter bg-white text-[#A3ADFF] rounded-full w-10 h-10 flex items-center justify-center font-bold text-lg shrink-0">A</span>
+            <span class="answer-text text-black font-semibold ml-4">Reponse A</span>
         </button>
 
-        <button class="bg-[#8A96FF] hover:bg-[#7885FF] w-full text-left rounded-full py-3 px-4 flex items-center shadow-md transition-colors">
-    
-            <span class="bg-white text-[#A3ADFF] rounded-full w-10 h-10 flex items-center justify-center font-bold text-lg shrink-0">
-                B
-            </span>
-    
-            <span class="text-black font-semibold ml-4">
-                B
-            </span>
-
+        <button class="answer-btn bg-[#8A96FF] hover:bg-[#7885FF] w-full text-left rounded-full py-3 px-4 flex items-center shadow-md transition-colors" data-correct="false">
+            <span class="circle-letter bg-white text-[#A3ADFF] rounded-full w-10 h-10 flex items-center justify-center font-bold text-lg shrink-0">B</span>
+            <span class="answer-text text-black font-semibold ml-4">Reponse B</span>
         </button>
 
-        <button class="bg-[#8A96FF] hover:bg-[#7885FF] w-full text-left rounded-full py-3 px-4 flex items-center shadow-md transition-colors">
-    
-            <span class="bg-white text-[#A3ADFF] rounded-full w-10 h-10 flex items-center justify-center font-bold text-lg shrink-0">
-                C
-            </span>
-    
-            <span class="text-black font-semibold ml-4">
-                C
-            </span>
-
+        <button class="answer-btn bg-[#8A96FF] hover:bg-[#7885FF] w-full text-left rounded-full py-3 px-4 flex items-center shadow-md transition-colors" data-correct="true">
+            <span class="circle-letter bg-white text-[#A3ADFF] rounded-full w-10 h-10 flex items-center justify-center font-bold text-lg shrink-0">C</span>
+            <span class="answer-text text-black font-semibold ml-4">Reponse C</span>
         </button>
 
-        <button class="bg-[#8A96FF] hover:bg-[#7885FF] w-full text-left rounded-full py-3 px-4 flex items-center shadow-md transition-colors">
-    
-            <span class="bg-white text-[#A3ADFF] rounded-full w-10 h-10 flex items-center justify-center font-bold text-lg shrink-0">
-                D
-            </span>
-    
-            <span class="text-black font-semibold ml-4">
-                D
-            </span>
-
+        <button class="answer-btn bg-[#8A96FF] hover:bg-[#7885FF] w-full text-left rounded-full py-3 px-4 flex items-center shadow-md transition-colors" data-correct="false">
+            <span class="circle-letter bg-white text-[#A3ADFF] rounded-full w-10 h-10 flex items-center justify-center font-bold text-lg shrink-0">D</span>
+            <span class="answer-text text-black font-semibold ml-4">Reponse D</span>
         </button>
 
     </div>
@@ -119,6 +92,53 @@ require_once __DIR__ . '/header.php';
            
         }
     }, 1000); 
+</script>
+
+<script>
+    const answerButtons = document.querySelectorAll('.answer-btn');
+    let hasAnswered = false; 
+
+    answerButtons.forEach(button => {
+        button.addEventListener('click', function() {
+           
+            if (hasAnswered) return; 
+            hasAnswered = true;
+
+            if (typeof countdown !== 'undefined') {
+                clearInterval(countdown);
+            }
+
+            const isCorrect = this.getAttribute('data-correct') === 'true';
+
+            if (isCorrect) {
+                changeButtonColor(this, 'green');
+            } else {
+                changeButtonColor(this, 'red');
+                
+                const correctBtn = document.querySelector('.answer-btn[data-correct="true"]');
+                changeButtonColor(correctBtn, 'green');
+            }
+        });
+    });
+
+    function changeButtonColor(btn, color) {
+        const circle = btn.querySelector('.circle-letter');
+        const text = btn.querySelector('.answer-text');
+
+        btn.classList.remove('bg-[#8A96FF]', 'hover:bg-[#7885FF]');
+        circle.classList.remove('text-[#A3ADFF]');
+        text.classList.remove('text-black');
+
+        if (color === 'green') {
+            btn.classList.add('bg-green-500');
+            circle.classList.add('text-green-500');
+            text.classList.add('text-white');
+        } else if (color === 'red') {
+            btn.classList.add('bg-red-500');
+            circle.classList.add('text-red-500');
+            text.classList.add('text-white');
+        }
+    }
 </script>
 
 <?php require_once __DIR__ . '/footer.php'; ?>
