@@ -248,11 +248,12 @@ main {
 .logo {
   display: flex;
   align-items: center;
-  
 }
 
 #logoNavBar {
-  width: 180px;
+  width: auto;
+  min-width: 180px;
+  max-width:180px;
   height: 60px;
   object-fit: contain;
   display: block;
@@ -324,7 +325,7 @@ main {
 
   .nav-menu.active {
     right: 0;
-    top: 3.82rem;
+    top: 4.2rem;
     z-index: 1;
   }
 
@@ -500,8 +501,8 @@ input:checked + .slider #theme-icon {
 }
 
 .navbar {
-    height: 64px;
-    min-height: 64px;
+    height: 70px;
+    min-height: 70px;
     align-items: center;
 }
 
