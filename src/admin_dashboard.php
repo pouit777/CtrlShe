@@ -107,7 +107,7 @@ require_once __DIR__ . '/components/header.php';
     <div class="modal-content">
         <div class="titleText modal-header">
             <h3>Create Quiz</h3>
-            <button id="close-quiz-modal-btn" class="closeBtn">&times;</button>
+            <button id="close-quiz-modal-btn" class="closeBtn closeBtn font-large text-secondary">&times;</button>
         </div>
         <form id="add-quiz-form" class="flex flex-col gap-2">
             <div>
@@ -154,7 +154,7 @@ require_once __DIR__ . '/components/header.php';
     <div class="modal-content">
         <div class="titleText modal-header">
             <h3>Edit Quiz</h3>
-            <button id="close-edit-quiz-modal-btn" class="closeBtn">&times;</button>
+            <button id="close-edit-quiz-modal-btn" class="closeBtn font-large text-secondary">&times;</button>
         </div>
         <form id="edit-quiz-form">
             <input type="hidden" id="edit-quiz-id">

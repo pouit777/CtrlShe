@@ -22,14 +22,16 @@ require_once __DIR__ . '/components/header.php';
         <div class="titleBoxAdmin">
             <div>
                 <h1 class="titleText">User management</h1>
-                <button id="open-modal-btn" class="btn">
-                    + Add New User
-                </button>
+                <div class="modal-btn">
+                    <button id="open-modal-btn" class="btn">
+                        + Add New User
+                    </button>
+                </div>
             </div>
         </div>
 
         <div class="table-wrapper">
-            <table>
+            <table class="whitespace-normal">
                 <thead class="tableTitle">
                     <tr>
                         <th>ID</th>
@@ -52,8 +54,8 @@ require_once __DIR__ . '/components/header.php';
                                 </span>
                             </td>
                             <td><?php echo htmlspecialchars($u['created_at'], ENT_QUOTES, 'UTF-8') ?></td>
-                            <td>
-                                <div>
+                            <td class="align-middle">
+                                <div class="flex items-center gap-2 justify-start h-full">
                                     <button 
                                         data-id="<?php echo $u['id']; ?>"
                                         data-username="<?php echo htmlspecialchars($u['username'], ENT_QUOTES, 'UTF-8'); ?>"
@@ -84,7 +86,7 @@ require_once __DIR__ . '/components/header.php';
         <div class="modal-content">
             <div class="titleText modal-header">
                 <h3>Add a New User</h3>
-                <button id="close-modal-btn" class="closeBtn">&times;</button>
+                <button id="close-modal-btn" class="closeBtn font-large text-secondary">&times;</button>
             </div>
             <form id="add-user-form">
                 <div>
@@ -118,7 +120,7 @@ require_once __DIR__ . '/components/header.php';
         <div class="modal-content">
             <div class="titleText modal-header">
                 <h3>Edit User Detail</h3>
-                <button id="close-edit-modal-btn" class="closeBtn">&times;</button>
+                <button id="close-edit-modal-btn" class="closeBtn font-large text-secondary">&times;</button>
             </div>
             <form id="edit-user-form">
                 <input type="hidden" id="edit-user-id">

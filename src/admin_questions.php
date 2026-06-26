@@ -37,7 +37,7 @@ require_once __DIR__ . '/components/header.php';
     </div>
 
     <div class="table-wrapper">
-        <table>
+        <table class="whitespace-normal">
             <thead class="tableTitle">
                 <tr>
                     <th>ID</th>
@@ -53,17 +53,15 @@ require_once __DIR__ . '/components/header.php';
                         <td>#<?php echo $q['id']; ?></td>
                         <td><?php echo htmlspecialchars($q['question_text'], ENT_QUOTES, 'UTF-8'); ?></td>
                         <td>
-                            <span>
-                                <?php echo htmlspecialchars($q['category_label'] ?? 'No category', ENT_QUOTES, 'UTF-8'); ?>
-                            </span>
+                            <?php echo htmlspecialchars($q['category_label'] ?? 'No category', ENT_QUOTES, 'UTF-8'); ?>
                         </td>
                         <td>
                             <span class="<?php echo $q['difficulty']?>">
                                 <?php echo htmlspecialchars($q['difficulty'], ENT_QUOTES, 'UTF-8'); ?>
                             </span>
                         </td>
-                        <td>
-                            <div>
+                        <td class="align-middle">
+                            <div class="flex items-center gap-2 justify-start h-full">
                                 <button 
                                     data-id="<?php echo $q['id']; ?>"
                                     data-category="<?php echo $q['category_id']; ?>"
@@ -94,7 +92,7 @@ require_once __DIR__ . '/components/header.php';
         <div class="modal-content">
             <div class="titleText modal-header">
                 <h3>Add a New Question</h3>
-                <button class="closeBtn" id="close-modal-btn">&times;</button>
+                <button class="closeBtn font-large text-secondary" id="close-modal-btn">&times;</button>
             </div>
             <form id="add-question-form">
                 <div>
@@ -140,7 +138,7 @@ require_once __DIR__ . '/components/header.php';
         <div class="modal-content">
             <div class="titleText modal-header">
                 <h3>Edit Question Detail</h3>
-                <button id="close-edit-modal-btn" class="closeBtn">&times;</button>
+                <button id="close-edit-modal-btn" class="closeBtn font-large text-secondary">&times;</button>
             </div>
             <form id="edit-question-form" >
                 <input type="hidden" id="edit-question-id">
