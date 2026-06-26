@@ -28,9 +28,6 @@ require_once __DIR__ . '/components/header.php';
     <div class="titleBox">
         <div>
             <h1 class="titleText">Question management</h1>
-            <p class="subTitle">
-                Logged in as : <strong><?php echo htmlspecialchars($_SESSION['username'] ?? 'Admin', ENT_QUOTES, 'UTF-8'); ?> (<span class="uppercase"><?php echo htmlspecialchars($_SESSION['role'], ENT_QUOTES, 'UTF-8'); ?></span>)</strong>
-            </p>
             <button id="open-modal-btn" class="btn">
                 + Add New Question
             </button>

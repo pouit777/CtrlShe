@@ -37,62 +37,12 @@ require_once __DIR__ . '/components/header.php';
         <div class="titleBox">
             <div>
                 <h1 class="titleText">Admin Dashboard</h1>
-                <p class="subTitle">
-                    Logged in as : <strong><?php echo htmlspecialchars($_SESSION['username'] ?? 'Admin', ENT_QUOTES, 'UTF-8'); ?> (<?php echo htmlspecialchars($_SESSION['role'], ENT_QUOTES, 'UTF-8'); ?>)</strong>
-                </p>
             </div>
             <div class="modal-btn">
-                <button id="open-modal-btn" class="btn">
-                    + Add New Question
-                </button>
                 <button id="open-quiz-modal-btn" class="btn">
                     + Add New Quiz
                 </button>
             </div>
-        </div>
-
-        <div class="table">
-            <table>
-                <thead class="tableTitle">
-                    <tr>
-                        <th>ID</th>
-                        <th>Question Text</th>
-                        <th>Category</th>
-                        <th>Difficulty</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="questions-table-body">
-                    <?php foreach($questions as $q): ?>
-                        <tr id="question-row-<?php echo $q['id']; ?>">
-                            <td>#<?php echo $q['id']; ?></td>
-                            <td><?php echo htmlspecialchars($q['question_text'], ENT_QUOTES, 'UTF-8'); ?></td>
-                            <td><span><?php echo htmlspecialchars($q['category_label'] ?? 'No category', ENT_QUOTES, 'UTF-8'); ?></span></td>
-                            <td>
-                                <span class="<?php echo $q['difficulty'] ?> ">
-                                    <?php echo htmlspecialchars($q['difficulty'], ENT_QUOTES, 'UTF-8'); ?>
-                                </span>
-                            </td>
-                            <td>
-                                <button 
-                                    data-id="<?php echo $q['id']; ?>"
-                                    data-category="<?php echo $q['category_id']; ?>"
-                                    data-difficulty="<?php echo htmlspecialchars($q['difficulty'], ENT_QUOTES, 'UTF-8'); ?>"
-                                    data-text="<?php echo htmlspecialchars($q['question_text'], ENT_QUOTES, 'UTF-8'); ?>"
-                                    data-answers="<?php echo htmlspecialchars($q['answers_json'] ?? '[]', ENT_QUOTES, 'UTF-8'); ?>"
-                                    onclick="initEditModal(this)"
-                                    class="editBtn">
-                                    <span class="material-icons">edit</span>
-                                </button>
-
-                                <button onclick="confirmDeleteQuestion(<?php echo $q['id']; ?>)" class="deleteBtn">
-                                    <span class="material-icons">delete</span>
-                                </button>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
         </div>
     
     <div class="table">
