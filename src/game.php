@@ -1,9 +1,10 @@
 <?php
 session_start();
 
+$guestMode = false;
+
 if (!isset($_SESSION['user_id'])) {
-    header('Location: /login.php');
-    exit;
+    $guestMode = true;
 }
 
 $page_title = "Quiz Game";
@@ -56,6 +57,7 @@ foreach ($questions as &$q) {
 unset($q);
 
 $gameData = [
+    "guest" => $guestMode,
     "quiz" => [
         "id" => (int)$quiz['id'],
         "name" => $quiz['name'],
@@ -98,11 +100,10 @@ $gameData = [
 
         <div class="flex items-center gap-3">
             <img src="/public/avatars/<?= $_SESSION['avatar'] ?? 'bee.png' ?>"
-                 class="w-12 h-12 rounded-full">
-
+                class="w-12 h-12 rounded-full">
             <div>
                 <p class="text-white font-bold">
-                    <?= htmlspecialchars($_SESSION['username'] ?? 'Player') ?>
+                    <?= htmlspecialchars($_SESSION['username'] ?? 'Guest') ?>
                 </p>
                 <p class="text-gray-400 text-sm">
                     <?= htmlspecialchars($quiz['name']) ?>

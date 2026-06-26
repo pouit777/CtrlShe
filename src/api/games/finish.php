@@ -1,24 +1,10 @@
 <?php
 session_start();
-
 header('Content-Type: application/json; charset=utf-8');
-
-ini_set('display_errors', 0);
-error_reporting(0);
 
 require_once __DIR__ . '/../../config/db.php';
 
-if (!isset($_SESSION['user_id'])) {
-    echo json_encode(["status" => "error", "message" => "Not logged in"]);
-    exit;
-}
-
 $data = json_decode(file_get_contents("php://input"), true);
-
-if (!$data) {
-    echo json_encode(["status" => "error", "message" => "Invalid JSON"]);
-    exit;
-}
 
 $quizId = (int)($data["quiz_id"] ?? 0);
 $answers = $data["answers"] ?? [];
@@ -36,33 +22,17 @@ $stmt = $pdo->prepare("
     WHERE qq.quiz_id = ?
 ");
 $stmt->execute([$quizId]);
+
 $questions = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
-/* CREATE GAME */
-$stmt = $pdo->prepare("
-    INSERT INTO games (user_id, quiz_id, score, total_questions)
-    VALUES (?, ?, 0, ?)
-");
-
-$stmt->execute([
-    $_SESSION["user_id"],
-    $quizId,
-    count($questions)
-]);
-
-$gameId = $pdo->lastInsertId();
+$isGuest = !isset($_SESSION["user_id"]);
 
 $score = 0;
+$corrections = [];
 
-/* GAME ANSWERS */
-$stmtInsert = $pdo->prepare("
-    INSERT INTO game_answers (game_id, question_id, answer_id, is_correct)
-    VALUES (?, ?, ?, ?)
-");
+foreach ($questions as $qid) {
 
-foreach ($questions as $questionId) {
-
-    $userAnswer = $answers[$questionId] ?? null;
+    $userAnswer = $answers[$qid] ?? null;
 
     $stmtC = $pdo->prepare("
         SELECT id
@@ -70,27 +40,44 @@ foreach ($questions as $questionId) {
         WHERE question_id = ? AND is_correct = 1
         LIMIT 1
     ");
-    $stmtC->execute([$questionId]);
+    $stmtC->execute([$qid]);
     $correct = $stmtC->fetchColumn();
 
-    $isCorrect = ($userAnswer == $correct) ? 1 : 0;
+    $isCorrect = ($userAnswer == $correct);
 
     if ($isCorrect) $score++;
 
-    $stmtInsert->execute([
-        $gameId,
-        $questionId,
-        $userAnswer,
-        $isCorrect
-    ]);
+    $corrections[] = [
+        "question_id" => $qid,
+        "user_answer" => $userAnswer,
+        "correct_answer" => $correct,
+        "is_correct" => $isCorrect
+    ];
 }
 
-/* UPDATE SCORE */
-$stmt = $pdo->prepare("UPDATE games SET score = ? WHERE id = ?");
-$stmt->execute([$score, $gameId]);
+/* SAVE DB ONLY IF USER */
+if (!$isGuest) {
 
+    $stmt = $pdo->prepare("
+        INSERT INTO games (user_id, quiz_id, score, total_questions)
+        VALUES (?, ?, ?, ?)
+    ");
+
+    $stmt->execute([
+        $_SESSION["user_id"],
+        $quizId,
+        $score,
+        count($questions)
+    ]);
+
+    $gameId = $pdo->lastInsertId();
+}
+
+/* RESPONSE */
 echo json_encode([
     "status" => "success",
-    "game_id" => $gameId
+    "guest" => $isGuest,
+    "score" => $score,
+    "total" => count($questions),
+    "game_id" => $gameId ?? null
 ]);
-exit;
