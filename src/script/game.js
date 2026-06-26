@@ -1,8 +1,12 @@
 let currentIndex = 0;
 let score = 0;
-let selectedAnswer = null;
 let timer = null;
 let timeLeft = 15;
+
+const quiz = GAME_DATA.quiz;
+const questions = GAME_DATA.questions;
+
+const answersMap = {};
 
 const questionText = document.getElementById("questionText");
 const answersBox = document.getElementById("answers");
@@ -12,8 +16,7 @@ const progressText = document.getElementById("progressText");
 const timerEl = document.getElementById("timer");
 const progressBar = document.getElementById("progressBar");
 
-const quiz = GAME_DATA.quiz;
-const questions = GAME_DATA.questions;
+let selected = false;
 
 function startGame() {
     renderQuestion();
@@ -21,42 +24,43 @@ function startGame() {
 }
 
 function renderQuestion() {
-    resetState();
+    selected = false;
+    answersBox.innerHTML = "";
+    nextBtn.classList.add("hidden");
 
     const q = questions[currentIndex];
 
     questionText.textContent = q.question_text;
-
     progressText.textContent = `Question ${currentIndex + 1} / ${questions.length}`;
-    progressBar.style.width = `${((currentIndex + 1) / questions.length) * 100}%`;
 
-    q.answers.forEach(answer => {
+    progressBar.style.width = `${(currentIndex / questions.length) * 100}%`;
+
+    q.answers.forEach(a => {
         const btn = document.createElement("button");
 
-        btn.className =
-            "w-full text-left p-3 rounded-lg bg-gray-700 hover:bg-gray-600 text-white transition";
+        btn.className = "w-full text-left p-3 rounded-lg bg-gray-700 hover:bg-gray-600 text-white";
+        btn.textContent = a.answer_text;
 
-        btn.textContent = answer.answer_text;
-
-        btn.onclick = () => selectAnswer(answer, btn);
+        btn.onclick = () => selectAnswer(a, btn);
 
         answersBox.appendChild(btn);
     });
-
-    console.log(GAME_DATA);
-    console.log(questions);
 }
 
 function selectAnswer(answer, btn) {
-    if (selectedAnswer) return;
-
-    selectedAnswer = answer;
+    if (selected) return;
+    selected = true;
 
     clearInterval(timer);
 
-    const buttons = answersBox.querySelectorAll("button");
+    const questionId = questions[currentIndex].id;
 
-    buttons.forEach(b => (b.disabled = true));
+    answersMap[questionId] = answer.id;
+
+    const buttons = answersBox.querySelectorAll("button");
+    buttons.forEach(b => b.disabled = true);
+
+    const correctAnswer = questions[currentIndex].answers.find(a => a.is_correct);
 
     if (answer.is_correct) {
         btn.classList.add("bg-green-600");
@@ -66,19 +70,13 @@ function selectAnswer(answer, btn) {
         btn.classList.add("bg-red-600");
 
         buttons.forEach(b => {
-            if (b.textContent === getCorrectAnswerText()) {
+            if (b.textContent === correctAnswer.answer_text) {
                 b.classList.add("bg-green-600");
             }
         });
     }
 
     nextBtn.classList.remove("hidden");
-}
-
-function getCorrectAnswerText() {
-    const q = questions[currentIndex];
-    const correct = q.answers.find(a => a.is_correct);
-    return correct ? correct.answer_text : "";
 }
 
 nextBtn.addEventListener("click", nextQuestion);
@@ -93,8 +91,6 @@ function nextQuestion() {
 
     renderQuestion();
     startTimer();
-
-    nextBtn.classList.add("hidden");
 }
 
 function startTimer() {
@@ -103,44 +99,26 @@ function startTimer() {
 
     timer = setInterval(() => {
         timeLeft--;
-
         timerEl.textContent = timeLeft;
-
-        const percent = (timeLeft / 15) * 100;
-        progressBar.style.width = `${(currentIndex / questions.length) * 100 + percent / questions.length}%`;
 
         if (timeLeft <= 0) {
             clearInterval(timer);
-            autoNext();
+            nextQuestion();
         }
     }, 1000);
-}
-
-function autoNext() {
-    // si aucune réponse → on passe direct
-    selectedAnswer = null;
-    nextQuestion();
-}
-
-function resetState() {
-    selectedAnswer = null;
-    answersBox.innerHTML = "";
 }
 
 async function finishGame() {
     clearInterval(timer);
 
-    const payload = {
-        quiz_id: quiz.id,
-        score: score,
-        total_questions: questions.length
-    };
-
     try {
-        const res = await fetch("/api/game/finish.php", {
+        const res = await fetch("/api/games/finish.php", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
+            body: JSON.stringify({
+                quiz_id: quiz.id,
+                answers: answersMap
+            })
         });
 
         const data = await res.json();
@@ -148,8 +126,9 @@ async function finishGame() {
         if (data.status === "success") {
             window.location.href = "/result.php?game=" + data.game_id;
         } else {
-            alert(data.message || "Error finishing game");
+            alert(data.message);
         }
+
     } catch (e) {
         console.error(e);
         alert("Server error");
