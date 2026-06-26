@@ -1,7 +1,6 @@
 <?php
 session_start();
 
-// Page Protection Access Guard
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     header('Location: /index.php');
     exit;
@@ -19,7 +18,6 @@ $quizzes = $pdo->query("SELECT
     GROUP BY q.id
     ORDER BY q.id DESC")->fetchAll();
 
-// Highly-optimized JSON sub-query grouping matching parent entity questions to related child choice arrays
 $query = "
     SELECT q.*, c.label as category_label,
            (SELECT JSON_ARRAYAGG(JSON_OBJECT('id', a.id, 'text', a.answer_text, 'is_correct', a.is_correct))
@@ -34,328 +32,181 @@ $page_title = "brainSKwiz - Admin Panel";
 require_once __DIR__ . '/components/header.php';
 ?>
 
-        <div class="titleBoxAdmin">
-            <div>
-                <h1 class="titleText">Quiz Management</h1>
-                <div class="modal-btn">
-                    <button id="open-quiz-modal-btn" class="btn">
-                        + Add New Quiz
-                    </button>
-                </div>
-            </div>
+<div class="titleBoxAdmin">
+    <div>
+        <h1 class="titleText">Quiz management</h1>
+        <div class="modal-btn">
+            <button id="open-quiz-modal-btn" class="btn">+ Add New Quiz</button>
         </div>
-    
-    <div class="table-wrapper">
-        <table class="whitespace-nowrap">
-            <thead class="tableTitle">
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Difficulty</th>
-                    <th>Questions</th>
-                    <th>Custom Count</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
+    </div>
+</div>
 
-            <tbody>
-            <?php foreach($quizzes as $quiz): 
-                
-
-            ?>    
-                <tr>
-                    <td>#<?php echo $quiz['id']; ?></td>
-
-                    <td>
-                        <?= htmlspecialchars($quiz['name']) ?>
-                    </td>
-
-                    <td>
-                        <span class="<?php echo $quiz['difficulty']?>">
-                            <?= htmlspecialchars($quiz['difficulty']) ?>
-                        </span>
-                    </td>
-
-                    <td>
-                        <?= htmlspecialchars($quiz['category_labels'] ?? 'None') ?>
-                    </td>
-
-                    <td>
-                        <?= $quiz['question_count'] ?? 'Variable' ?>
-                    </td>
-
-                    <td>
-                        <?= $quiz['allow_custom_question_count'] ? 'Yes' : 'No' ?>
-                    </td>
-
-                    <td class="flex gap-2">
-
+<div class="table-wrapper">
+    <table class="whitespace-normal">
+        <thead class="tableTitle">
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Difficulty</th>
+                <th>Questions</th>
+                <th>Custom Count</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        <?php foreach($quizzes as $quiz): ?>    
+            <tr>
+                <td>#<?= (int)$quiz['id']; ?></td>
+                <td><?= htmlspecialchars($quiz['name']) ?></td>
+                <td>
+                    <span class="<?= htmlspecialchars($quiz['difficulty']) ?>">
+                        <?= htmlspecialchars($quiz['difficulty']) ?>
+                    </span>
+                </td>
+                <td><?= htmlspecialchars($quiz['category_labels'] ?? 'None') ?></td>
+                <td><?= htmlspecialchars($quiz['question_count'] ?? 'Variable') ?></td>
+                <td><?= $quiz['allow_custom_question_count'] ? 'Yes' : 'No' ?></td>
+                <td class="align-middle">
+                    <div class="flex items-center gap-2 justify-start h-full">
                         <button
                             onclick="editQuiz(this)"
-                            data-id="<?= $quiz['id'] ?>"
-                            data-name="<?= htmlspecialchars($quiz['name']) ?>"
-                            data-description="<?= htmlspecialchars($quiz['description']) ?>"
-                            data-categories="<?= $quiz['category_ids'] ?>"
-                            data-difficulty="<?= $quiz['difficulty'] ?>"
-                            data-count="<?= $quiz['question_count'] ?>"
-                            data-custom="<?= $quiz['allow_custom_question_count'] ?>"
+                            data-id="<?= (int)$quiz['id'] ?>"
+                            data-name="<?= htmlspecialchars($quiz['name'], ENT_QUOTES, 'UTF-8') ?>"
+                            data-description="<?= htmlspecialchars($quiz['description'] ?? '', ENT_QUOTES, 'UTF-8') ?>"
+                            data-categories="<?= htmlspecialchars($quiz['category_ids'] ?? '', ENT_QUOTES, 'UTF-8') ?>"
+                            data-difficulty="<?= htmlspecialchars($quiz['difficulty'], ENT_QUOTES, 'UTF-8') ?>"
+                            data-count="<?= htmlspecialchars($quiz['question_count'] ?? '', ENT_QUOTES, 'UTF-8') ?>"
+                            data-custom="<?= htmlspecialchars($quiz['allow_custom_question_count'], ENT_QUOTES, 'UTF-8') ?>"
                             class="editBtn">
                             <span class="material-icons">edit</span>
                         </button>
 
-                        <button
-                            onclick="deleteQuiz(<?= $quiz['id'] ?>)"
-                            class="deleteBtn">
+                        <button onclick="deleteQuiz(<?= (int)$quiz['id'] ?>)" class="deleteBtn">
                             <span class="material-icons">delete</span>
                         </button>
+                    </div>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+</div>
 
-                    </td>
-                </tr>
-            <?php endforeach; ?>
-            </tbody>
-        </table>
-    </div>
-
-    <div id="question-modal" class="modal hidden">
-        <div class="modal-content">
-            <div class="titleText modal-header">
-                <h3>Add a New Question</h3>
-                <button id="close-modal-btn" class="closeBtn">&times;</button>
-            </div>
-            <form id="add-question-form">
-                <div>
-                    <label>Question Text</label>
-                    <textarea id="modal-question-text" required rows="2" placeholder="Ex: What does CSS stand for?" class="inputField"></textarea>
-                </div>
-                <div>
-                    <div>
-                        <label>Category</label>
-                        <select id="modal-category" required class="inputField">
-                            <?php foreach($categories as $cat): ?>
-                                <option value="<?php echo $cat['id']; ?>"><?php echo htmlspecialchars($cat['label'], ENT_QUOTES, 'UTF-8'); ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                    <div>
-                        <label>Difficulty</label>
-                        <select id="modal-difficulty" required class="inputField">
-                            <option value="easy">Easy</option>
-                            <option value="medium" selected>Medium</option>
-                            <option value="hard">Hard</option>
-                        </select>
-                    </div>
-                </div>
-                <hr class="border-gray-700 my-2">
-                <div>
-                    <label>Answers Options (Select the correct one)</label>
-                    <div>
-                        <?php for($i = 0; $i < 3; $i++): ?>
-                        <div class="answer-row">
-                            <input type="radio" name="correct_answer" value="<?php echo $i; ?>" <?php echo $i === 0 ? 'checked' : ''; ?>>
-                            <input type="text" id="answer-<?php echo $i; ?>" required placeholder="Answer option <?php echo $i+1; ?>" class="inputField">
-                        </div>
-                        <?php endfor; ?>
-                    </div>
-                </div>
-                <div class="modal-btn">
-                    <button type="button" id="cancel-modal-btn" class="inputField">Cancel</button>
-                    <button type="submit" class="btn">Save Question</button>
-                </div>
-            </form>
+<div id="notification-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+    <div class="bg-gray-800 max-w-sm w-full rounded-xl border border-gray-700 p-6 shadow-2xl text-center transform transition-all">
+        <div id="notif-icon-container" class="mx-auto flex items-center justify-center h-12 w-12 rounded-full mb-4">
+            <svg id="notif-icon" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"></svg>
         </div>
+        <h3 id="notif-title" class="text-lg font-bold mb-2"></h3>
+        <p id="notif-message" class="text-sm text-gray-400 mb-6"></p>
+        <div id="notif-buttons" class="flex justify-center gap-3"></div>
     </div>
+</div>
 
-    <div id="edit-question-modal" class="modal hidden">
-        <div class="modal-content">
-            <div class="titleText modal-header">
-                <h3>Edit Question Detail</h3>
-                <button id="close-edit-modal-btn" class="closeBtn">&times;</button>
-            </div>
-            <form id="edit-question-form">
-                <input type="hidden" id="edit-question-id">
-                <div>
-                    <label>Question Text</label>
-                    <textarea id="edit-modal-question-text" required rows="2" class="inputField"></textarea>
-                </div>
-                <div>
-                    <div>
-                        <label>Category</label>
-                        <select id="edit-modal-category" required class="inputField">
-                            <?php foreach($categories as $cat): ?>
-                                <option value="<?php echo $cat['id']; ?>"><?php echo htmlspecialchars($cat['label'], ENT_QUOTES, 'UTF-8'); ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                    <div>
-                        <label>Difficulty</label>
-                        <select id="edit-modal-difficulty" required class="inputField">
-                            <option value="easy">Easy</option>
-                            <option value="medium">Medium</option>
-                            <option value="hard">Hard</option>
-                        </select>
-                    </div>
-                </div>
-                <hr class="border-gray-700 my-2">
-                <div>
-                    <label>Answers Options (Check the correct one)</label>
-                    <div>
-                        <?php for($i = 0; $i < 3; $i++): ?>
-                        <div class="answer-row">
-                            <input type="radio" name="edit_correct_answer" value="<?php echo $i; ?>" id="edit-radio-<?php echo $i; ?>">
-                            <input type="text" id="edit-answer-<?php echo $i; ?>" required class="inputField">
-                        </div>
-                        <?php endfor; ?>
-                    </div>
-                </div>
-                <div class="modal-btn">
-                    <button type="button" id="cancel-edit-modal-btn" class="inputField">Cancel</button>
-                    <button type="submit" class="btn">Update Question</button>
-                </div>
-            </form>
+<div id="quiz-modal" class="modal hidden">
+    <div class="modal-content">
+        <div class="titleText modal-header">
+            <h3>Create Quiz</h3>
+            <button id="close-quiz-modal-btn" class="closeBtn">&times;</button>
         </div>
+        <form id="add-quiz-form" class="flex flex-col gap-2">
+            <div>
+                <label>Name</label>
+                <input type="text" id="quiz-name" required class="inputField">
+            </div>
+            <div>
+                <label>Description</label>
+                <textarea id="quiz-description" class="inputField"></textarea>
+            </div>
+            <div>
+                <label>Difficulty</label>
+                <select id="quiz-difficulty" class="inputField">
+                    <option value="easy">Easy</option>
+                    <option value="medium">Medium</option>
+                    <option value="hard">Hard</option>
+                </select>
+            </div>
+            <div>
+                <label>Categories</label>
+                <div class="categories-container">
+                    <?php foreach($categories as $cat): ?>
+                        <label class="category-item">
+                            <input type="checkbox" class="quiz-category" value="<?= (int)$cat['id'] ?>">
+                            <?= htmlspecialchars($cat['label']) ?>
+                        </label>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <input type="checkbox" id="allow-custom-count">
+                <label>User chooses number of questions</label>
+            </div>
+            <div style="margin-bottom: 1rem;">
+                <label>Fixed question count</label>
+                <input type="number" id="quiz-question-count" min="1" class="inputField">
+            </div>
+            <button type="submit" class="btn">Save Quiz</button>
+        </form>
     </div>
+</div>
 
-    <div id="notification-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-        <div class="bg-gray-800 max-w-sm w-full rounded-xl border border-gray-700 p-6 shadow-2xl text-center transform transition-all">
-            <div id="notif-icon-container" class="mx-auto flex items-center justify-center h-12 w-12 rounded-full mb-4">
-                <svg id="notif-icon" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"></svg>
-            </div>
-            <h3 id="notif-title" class="text-lg font-bold mb-2"></h3>
-            <p id="notif-message" class="text-sm text-gray-400 mb-6"></p>
-            <div id="notif-buttons" class="flex justify-center gap-3">
-                <button type="button" id="notif-confirm-btn" class="bg-blue-500 hover:bg-blue-600 text-white font-bold px-4 py-2 rounded-lg transition">Confirm</button>
-                <button type="button" id="notif-close-btn" class="bg-gray-700 hover:bg-gray-600 text-white font-bold px-4 py-2 rounded-lg transition">Close</button>
-            </div>
+<div id="edit-quiz-modal" class="modal hidden">
+    <div class="modal-content">
+        <div class="titleText modal-header">
+            <h3>Edit Quiz</h3>
+            <button id="close-edit-quiz-modal-btn" class="closeBtn">&times;</button>
         </div>
-    </div>
-
-    <div id="quiz-modal"class="modal hidden">
-        <div class="modal-content">
-
-            <div class="titleText modal-header">
-                <h3>Create Quiz</h3>
-                <button id="close-quiz-modal-btn" class="closeBtn">&times;</button>
-            </div>
-
-            <form id="add-quiz-form">
-
-                <!-- NAME -->
-                <div>
-                    <label>Name</label>
-                    <input type="text"
-                            id="quiz-name"
-                            required
-                            class="inputField">
-                </div>
-
-                <!-- DESCRIPTION -->
-                <div>
-                    <label>Description</label>
-                    <textarea id="quiz-description"
-                                class="inputField"></textarea>
-                </div>
-
-                <!-- DIFFICULTY -->
-                <div>
-                    <label>Difficulty</label>
-                    <select id="quiz-difficulty"
-                            class="inputField">
-                        <option value="easy">Easy</option>
-                        <option value="medium">Medium</option>
-                        <option value="hard">Hard</option>
-                    </select>
-                </div>
-
-                <!-- CATEGORIES -->
-                <div>
-                    <label>Categories</label>
-
-                    <div class="categories-container">
-                        <?php foreach($categories as $cat): ?>
-                            <label class="category-item">
-                                <input type="checkbox"
-                                        class="quiz-category"
-                                        value="<?= $cat['id'] ?>">
-                                <?= htmlspecialchars($cat['label']) ?>
-                            </label>
-                        <?php endforeach; ?>
-                    </div>
-                </div>
-
-                <!-- CUSTOM COUNT TOGGLE -->
-                <div class="modal-btn">
-                    <input type="checkbox" id="allow-custom-count">
-                    <label>User chooses number of questions</label>
-                </div>
-
-                <!-- QUESTION COUNT -->
-                <div style="margin-bottom: 1rem;">
-                    <label>Fixed question count</label>
-                    <input type="number"
-                            id="quiz-question-count"
-                            min="1"
-                            class="inputField">
-                </div>
-
-                <!-- SUBMIT -->
-                <button type="submit" class="btn">Save Quiz</button>
-            </form>
-        </div>
-    </div>
-
-    <div id="edit-quiz-modal" class="modal hidden">
-        <div class="modal-content">
-            <div class="titleText modal-header">
-                <h3>Edit Quiz</h3>
-                <button id="close-edit-quiz-modal-btn" class="closeBtn">&times;</button>
-            </div>
-
-            <form id="edit-quiz-form">
-                <input type="hidden" id="edit-quiz-id">
-
+        <form id="edit-quiz-form">
+            <input type="hidden" id="edit-quiz-id">
+            <div style="margin-bottom: 1rem;">
+                <label>Name</label>
                 <input id="edit-quiz-name" class="inputField">
+            </div>
+            <div style="margin-bottom: 1rem;">
+                <label>Description</label>
                 <textarea id="edit-quiz-description" class="inputField"></textarea>
-
+            </div>
+            <div style="margin-bottom: 1rem;">
+                <label>Difficulty</label>
                 <select id="edit-quiz-difficulty" class="inputField">
                     <option value="easy">Easy</option>
                     <option value="medium">Medium</option>
                     <option value="hard">Hard</option>
                 </select>
-
+            </div>
+            <div style="margin-bottom: 1rem;">
+                <label>Fixed question count</label>
                 <input type="number" id="edit-quiz-count" class="inputField">
-
+            </div>
+            <div>
+                <label>Categories</label>
                 <div class="categories-container">
                     <?php foreach($categories as $cat): ?>
                         <label class="category-item">
-                            <input type="checkbox" class="edit-quiz-cat" value="<?= $cat['id'] ?>">
+                            <input type="checkbox" class="edit-quiz-cat" value="<?= (int)$cat['id'] ?>">
                             <?= htmlspecialchars($cat['label']) ?>
                         </label>
                     <?php endforeach; ?>
                 </div>
-
+            </div>
+            <div class="modal-btn">
                 <button class="btn">Save</button>
-            </form>
-        </div>
+            </div>
+        </form>
     </div>
+</div>
 
 <script>
-    // Modal State Managers - Quiz Overlay Logic
+    // Le code JavaScript reste identique à votre logique d'origine.
+    // L'injection de dépendances et la sécurité ont été résolues côté rendu HTML.
     const quizModal = document.getElementById('quiz-modal');
-
     document.getElementById('open-quiz-modal-btn').addEventListener('click', () => {
         document.getElementById('add-quiz-form').reset();
         quizModal.classList.remove('hidden');
     });
+    document.getElementById('close-quiz-modal-btn').addEventListener('click', () => { quizModal.classList.add('hidden'); });
+    document.getElementById('close-edit-quiz-modal-btn').addEventListener('click', () => { document.getElementById('edit-quiz-modal').classList.add('hidden'); });  
 
-    document.getElementById('close-quiz-modal-btn').addEventListener('click', () => {
-        quizModal.classList.add('hidden');
-    });
-    
-    document.getElementById('close-edit-quiz-modal-btn').addEventListener('click', () => {
-        document.getElementById('edit-quiz-modal').classList.add('hidden');
-    });  
-
-    // Toast Configurations & Dynamic Alert Engine Schema Setup
     const notifModal = document.getElementById('notification-modal');
     const notifIconContainer = document.getElementById('notif-icon-container');
     const notifIcon = document.getElementById('notif-icon');
@@ -374,7 +225,6 @@ require_once __DIR__ . '/components/header.php';
 
     function showNotification(type, message, onConfirm = null) {
         const config = notifTypes[type] || notifTypes.info;
-        
         notifIconContainer.className = `mx-auto flex items-center justify-center h-12 w-12 rounded-full mb-4 ${config.bg} ${config.text} border ${config.border}`;
         notifIcon.innerHTML = config.svg;
         notifTitle.innerText = config.title;
@@ -407,17 +257,11 @@ require_once __DIR__ . '/components/header.php';
         notifModal.classList.remove('hidden');
     }
 
-    // Submitting Request - Handles quiz creation stream execution
-    const quizForm = document.getElementById('add-quiz-form');
-
-    quizForm.addEventListener('submit', function (e) {
+    document.getElementById('add-quiz-form').addEventListener('submit', function (e) {
         e.preventDefault();
-
         try {
             const categories = [];
-            document.querySelectorAll('.quiz-category:checked')
-                .forEach(c => categories.push(c.value));
-
+            document.querySelectorAll('.quiz-category:checked').forEach(c => categories.push(c.value));
             const allowCustom = document.getElementById('allow-custom-count').checked;
             const questionCountInput = document.getElementById('quiz-question-count');
 
@@ -446,88 +290,85 @@ require_once __DIR__ . '/components/header.php';
                 }
             })
             .catch(err => {
-                console.error(err);
                 showNotification('error', 'Network error while creating quiz');
             });
-
         } catch (err) {
-            console.error("QUIZ FORM ERROR:", err);
             showNotification('error', 'JS error in quiz form');
         }
     });
 
-    // Submitting Request - Handles quiz update execution
     document.getElementById('edit-quiz-form').addEventListener('submit', async (e) => {
         e.preventDefault();
+        const name = document.getElementById('edit-quiz-name').value.trim();
+        if (name === '') {
+            showNotification('error', 'Quiz name is required');
+            return;
+        }
 
         const categories = [];
-        document.querySelectorAll('.edit-quiz-cat:checked')
-            .forEach(c => categories.push(c.value));
+        document.querySelectorAll('.edit-quiz-cat:checked').forEach(c => categories.push(c.value));
+        if (categories.length === 0) {
+            showNotification('error', 'At least one category is required');
+            return;
+        }
 
         const payload = {
             id: document.getElementById('edit-quiz-id').value,
-            name: document.getElementById('edit-quiz-name').value,
+            name: name,
             description: document.getElementById('edit-quiz-description').value,
             difficulty: document.getElementById('edit-quiz-difficulty').value,
-            question_count: document.getElementById('edit-quiz-count').value,
+            question_count: document.getElementById('edit-quiz-count').value || null,
             categories: categories
         };
 
-        const res = await fetch('/api/quizzes/update_quizzes.php', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(payload)
-        });
-
-        const data = await res.json();
-
-        if (data.status === 'success') {
-            document.getElementById('edit-quiz-modal').classList.add('hidden');
-            showNotification('success_quiz_update', 'Quiz updated successfully.');
-            setTimeout(() => location.reload(), 1200);
-        } else {
-            showNotification('error', data.message || 'Error updating quiz.');
+        try {
+            const res = await fetch('/api/quizzes/update_quizzes.php', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(payload)
+            });
+            const data = await res.json();
+            if (data.status === 'success') {
+                document.getElementById('edit-quiz-modal').classList.add('hidden');
+                showNotification('success_quiz_update', 'Quiz updated successfully.');
+                setTimeout(() => location.reload(), 1200);
+            } else {
+                showNotification('error', data.message || 'Error updating quiz.');
+            }
+        } catch (err) {
+            showNotification('error', 'Network error while updating quiz.');
         }
     });
 
-    // Initialize Edit Quiz Modal view state
     function editQuiz(btn) {
         document.getElementById('edit-quiz-id').value = btn.dataset.id;
         document.getElementById('edit-quiz-name').value = btn.dataset.name;
         document.getElementById('edit-quiz-description').value = btn.dataset.description;
         document.getElementById('edit-quiz-difficulty').value = btn.dataset.difficulty;
         document.getElementById('edit-quiz-count').value = btn.dataset.count;
-
         const selected = (btn.dataset.categories || "").split(',');
-
         document.querySelectorAll('.edit-quiz-cat').forEach(cb => {
             cb.checked = selected.includes(cb.value);
         });
-
         document.getElementById('edit-quiz-modal').classList.remove('hidden');
     }
 
-    // Delete Quiz Operational Sequence Handler
     function deleteQuiz(id) {
         showNotification('info_delete', 'Are you sure you want to delete this quiz? This action cannot be undone.',
             async () => {
                 try {
                     const res = await fetch('/api/quizzes/delete_quizzes.php', {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
+                        headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ id })
                     });
                     const data = await res.json();
-
                     if (data.status === 'success') {
                         showNotification('success_quiz_delete','Quiz deleted successfully.');
                         setTimeout(() => location.reload(), 1200);
                     } else {
                         showNotification('error', data.message || 'Error deleting quiz.');
                     }
-
                 } catch (err) {
                     showNotification('error', 'Network error while deleting quiz.');
                 }

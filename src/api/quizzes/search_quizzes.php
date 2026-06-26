@@ -1,23 +1,16 @@
 <?php
-
+session_start();
 header('Content-Type: application/json');
 require_once __DIR__ . '/../../config/db.php';
 
 try {
-
     $search = trim($_GET['search'] ?? '');
     $category = (int)($_GET['category'] ?? 0);
 
     $sql = "
-        SELECT DISTINCT
-            q.id,
-            q.name,
-            q.description,
-            q.difficulty,
-            q.question_count
+        SELECT DISTINCT q.id, q.name, q.description, q.difficulty, q.question_count
         FROM quizzes q
-        INNER JOIN quiz_categories qc
-            ON qc.quiz_id = q.id
+        INNER JOIN quiz_categories qc ON qc.quiz_id = q.id
         WHERE q.is_active = 1
     ";
 
@@ -44,9 +37,9 @@ try {
     ]);
 
 } catch (Exception $e) {
-
+    http_response_code(500);
     echo json_encode([
         'status' => 'error',
-        'message' => $e->getMessage()
+        'message' => 'An error occurred during search.'
     ]);
 }

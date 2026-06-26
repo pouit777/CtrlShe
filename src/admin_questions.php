@@ -193,7 +193,7 @@ require_once __DIR__ . '/components/header.php';
         </div>
     </div>
 
-    <script>
+<script>
         const modal = document.getElementById('question-modal');
         const openModalBtn = document.getElementById('open-modal-btn');
         const closeModalBtn = document.getElementById('close-modal-btn');

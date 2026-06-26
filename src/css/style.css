@@ -299,6 +299,23 @@ main {
 /* Responsive design navBar*/
 @media (max-width: 768px) {
 
+  /*  */
+
+  td, th {
+    padding: 10px;
+    font-size: 0.8rem;
+  }
+
+  .table-wrapper {
+    border-radius: 8px;
+  }
+
+  .avatar-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 1024px) {
   .hamburger {
     display: flex;
     z-index: 1001;
@@ -307,7 +324,7 @@ main {
 
   .nav-menu {
     position: fixed;
-    top: 80px;
+    top: 60px;
     right: -300px;
 
     width: 300px;
@@ -325,7 +342,7 @@ main {
 
   .nav-menu.active {
     right: 0;
-    top: 4.2rem;
+    /* top: 3.2rem; */
     z-index: 1;
   }
 
@@ -344,19 +361,6 @@ main {
     width: 100%;
     padding: 0.75rem 0;
     justify-content: flex-start;
-  }
-
-  td, th {
-    padding: 10px;
-    font-size: 0.8rem;
-  }
-
-  .table-wrapper {
-    border-radius: 8px;
-  }
-
-  .avatar-grid {
-    grid-template-columns: repeat(4, 1fr);
   }
 }
 
@@ -636,11 +640,15 @@ button {
   padding: 1.5rem;
 
   box-shadow: var(--shadow-modal);
+
+  max-height: calc(100vh - 70px - 2rem);
+  overflow-y: auto;
 }
 
 .modal {
   position: fixed;
   inset: 0;
+  top: 70px;
   backdrop-filter: blur(6px);
 
   display: flex;
@@ -648,7 +656,7 @@ button {
   justify-content: center;
 
   padding: 1rem;
-  z-index: 50;
+  z-index: 49;
 }
 
 .modal.hidden {
@@ -688,6 +696,33 @@ button {
   align-items: center;
   gap: 1rem;
   margin-top: 1rem;
+}
+
+@media (max-width: 768px) {
+  .modal {
+    align-items: flex-start; /* ← colle la modale en haut sur mobile */
+    padding: 0.75rem;
+  }
+
+  .modal-content {
+    padding: 1rem;
+    border-radius: 12px;
+    max-height: calc(100vh - 70px - 1.5rem);
+  }
+
+  /* Réduit les catégories à 1 colonne sur mobile dans les modales */
+  .modal-content .categories-container {
+    grid-template-columns: 1fr;
+  }
+
+  /* Empile les boutons du footer de modale */
+  .modal-content .modal-btn {
+    flex-direction: column;
+  }
+
+  .modal-content .modal-btn button {
+    width: 100%;
+  }
 }
 
 /*Settings page style*/
