@@ -21,7 +21,6 @@ start();
 
 function start() {
     render();
-    startTimer();
 }
 
 function render() {
