@@ -330,373 +330,202 @@ require_once __DIR__ . '/components/header.php';
         </div>
     </div>
 
-    <script>
-        // Modal State Managers - Create Form Overlay Logic
-        const modal = document.getElementById('question-modal');
-        const openModalBtn = document.getElementById('open-modal-btn');
-        const closeModalBtn = document.getElementById('close-modal-btn');
-        const cancelModalBtn = document.getElementById('cancel-modal-btn');
-        const addForm = document.getElementById('add-question-form');
+<script>
+    // Modal State Managers - Quiz Overlay Logic
+    const quizModal = document.getElementById('quiz-modal');
+
+    document.getElementById('open-quiz-modal-btn').addEventListener('click', () => {
+        document.getElementById('add-quiz-form').reset();
+        quizModal.classList.remove('hidden');
+    });
+
+    document.getElementById('close-quiz-modal-btn').addEventListener('click', () => {
+        quizModal.classList.add('hidden');
+    });
+    
+    document.getElementById('close-edit-quiz-modal-btn').addEventListener('click', () => {
+        document.getElementById('edit-quiz-modal').classList.add('hidden');
+    });  
+
+    // Toast Configurations & Dynamic Alert Engine Schema Setup
+    const notifModal = document.getElementById('notification-modal');
+    const notifIconContainer = document.getElementById('notif-icon-container');
+    const notifIcon = document.getElementById('notif-icon');
+    const notifTitle = document.getElementById('notif-title');
+    const notifMessage = document.getElementById('notif-message');
+    const notifButtons = document.getElementById('notif-buttons');
+
+    const notifTypes = {
+        info: { title: "Information", bg: "bg-blue-900/30", text: "text-blue-400", border: "border-blue-800", svg: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />' },
+        info_delete: { title: "Delete Confirmation", bg: "bg-blue-900/30", text: "text-blue-400", border: "border-blue-800", svg: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />' },
+        success_quiz_create: {title: "Quiz Created!", bg: "bg-emerald-950", text: "text-purple-400", border: "border-purple-800", svg: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />'},
+        success_quiz_update: {title: "Quiz Updated!", bg: "bg-blue-950", text: "text-blue-400", border: "border-blue-800", svg: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />' },
+        success_quiz_delete: {title: "Quiz Deleted!", bg: "bg-orange-950", text: "text-orange-400", border: "border-orange-800", svg: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />' },
+        error: { title: "An Error Occurred", bg: "bg-red-950", text: "text-red-400", border: "border-red-800", svg: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />' }
+    };
+
+    function showNotification(type, message, onConfirm = null) {
+        const config = notifTypes[type] || notifTypes.info;
         
-        const quizModal = document.getElementById('quiz-modal');
+        notifIconContainer.className = `mx-auto flex items-center justify-center h-12 w-12 rounded-full mb-4 ${config.bg} ${config.text} border ${config.border}`;
+        notifIcon.innerHTML = config.svg;
+        notifTitle.innerText = config.title;
+        notifTitle.className = `text-lg font-bold mb-2 ${config.text}`;
+        notifMessage.innerText = message;
+        notifButtons.innerHTML = '';
 
-        document
-        .getElementById('open-quiz-modal-btn')
-        .addEventListener('click', () => {
+        if (onConfirm) {
+            const cancelBtn = document.createElement('button');
+            cancelBtn.innerText = "Cancel";
+            cancelBtn.className = "bg-gray-700 hover:bg-gray-600 text-white font-medium px-4 py-2 rounded-lg transition w-full";
+            cancelBtn.onclick = () => notifModal.classList.add('hidden');
 
-            document
-            .getElementById('add-quiz-form')
-            .reset();
-
-            quizModal.classList.remove('hidden');
-        });
-
-        document
-        .getElementById('close-quiz-modal-btn')
-        .addEventListener('click', () => {
-
-            quizModal.classList.add('hidden');
-        });
-        
-        document
-        .getElementById('close-edit-quiz-modal-btn')
-        .addEventListener('click', () => {
-
-            document.getElementById('edit-quiz-modal').classList.add('hidden');
-        });  
-
-        openModalBtn.addEventListener('click', () => {
-            addForm.reset(); 
-            modal.classList.remove('hidden');
-        });
-
-        const hideModal = () => modal.classList.add('hidden');
-        closeModalBtn.addEventListener('click', hideModal);
-        cancelModalBtn.addEventListener('click', hideModal);
-
-        // Modal State Managers - Update Form Overlay Logic
-        const editModal = document.getElementById('edit-question-modal');
-        const closeEditModalBtn = document.getElementById('close-edit-modal-btn');
-        const cancelEditModalBtn = document.getElementById('cancel-edit-modal-btn');
-        const editForm = document.getElementById('edit-question-form');
-
-        const hideEditModal = () => editModal.classList.add('hidden');
-        closeEditModalBtn.addEventListener('click', hideEditModal);
-        cancelEditModalBtn.addEventListener('click', hideEditModal);
-
-        // Toast Configurations & Dynamic Alert Engine Schema Setup
-        const notifModal = document.getElementById('notification-modal');
-        const notifIconContainer = document.getElementById('notif-icon-container');
-        const notifIcon = document.getElementById('notif-icon');
-        const notifTitle = document.getElementById('notif-title');
-        const notifMessage = document.getElementById('notif-message');
-        const notifButtons = document.getElementById('notif-buttons');
-
-        const notifTypes = {
-            info: { title: "Information", bg: "bg-blue-900/30", text: "text-blue-400", border: "border-blue-800", svg: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />' },
-            success_create: { title: "Question Created!", bg: "bg-emerald-950", text: "text-emerald-400", border: "border-emerald-800", svg: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />' },
-            success_update: { title: "Question Updated!", bg: "bg-blue-950", text: "text-blue-400", border: "border-blue-800", svg: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />' },
-            success_delete: { title: "Question Deleted!", bg: "bg-orange-950", text: "text-orange-400", border: "border-orange-800", svg: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />' },
-            info_delete: { title: "Delete Confirmation", bg: "bg-blue-900/30", text: "text-blue-400", border: "border-blue-800", svg: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />' },
-            success_quiz_create: {title: "Quiz Created!", bg: "bg-emerald-950", text: "text-purple-400", border: "border-purple-800", svg: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />'},
-            success_quiz_update: {title: "Quiz Updated!", bg: "bg-blue-950", text: "text-blue-400", border: "border-blue-800", svg: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />' },
-            success_quiz_delete: {title: "Quiz Deleted!", bg: "bg-orange-950", text: "text-orange-400", border: "border-orange-800", svg: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />' },
-            error: { title: "An Error Occurred", bg: "bg-red-950", text: "text-red-400", border: "border-red-800", svg: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />' }
-        };
-
-        function showNotification(type, message, onConfirm = null) {
-            const config = notifTypes[type] || notifTypes.info;
-            
-            notifIconContainer.className = `mx-auto flex items-center justify-center h-12 w-12 rounded-full mb-4 ${config.bg} ${config.text} border ${config.border}`;
-            notifIcon.innerHTML = config.svg;
-            notifTitle.innerText = config.title;
-            notifTitle.className = `text-lg font-bold mb-2 ${config.text}`;
-            notifMessage.innerText = message;
-            notifButtons.innerHTML = '';
-
-            if (onConfirm) {
-                const cancelBtn = document.createElement('button');
-                cancelBtn.innerText = "Cancel";
-                cancelBtn.className = "bg-gray-700 hover:bg-gray-600 text-white font-medium px-4 py-2 rounded-lg transition w-full";
-                cancelBtn.onclick = () => notifModal.classList.add('hidden');
-
-                const actionBtn = document.createElement('button');
-                actionBtn.innerText = "Confirm";
-                actionBtn.className = "bg-red-600 hover:bg-red-700 text-white font-bold px-4 py-2 rounded-lg transition w-full";
-                actionBtn.onclick = () => {
-                    notifModal.classList.add('hidden');
-                    onConfirm();
-                };
-                notifButtons.appendChild(cancelBtn);
-                notifButtons.appendChild(actionBtn);
-            } else {
-                const okBtn = document.createElement('button');
-                okBtn.innerText = "Ok";
-                okBtn.className = "bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-2 rounded-lg transition w-full";
-                okBtn.onclick = () => notifModal.classList.add('hidden');
-                notifButtons.appendChild(okBtn);
-            }
-            notifModal.classList.remove('hidden');
+            const actionBtn = document.createElement('button');
+            actionBtn.innerText = "Confirm";
+            actionBtn.className = "bg-red-600 hover:bg-red-700 text-white font-bold px-4 py-2 rounded-lg transition w-full";
+            actionBtn.onclick = () => {
+                notifModal.classList.add('hidden');
+                onConfirm();
+            };
+            notifButtons.appendChild(cancelBtn);
+            notifButtons.appendChild(actionBtn);
+        } else {
+            const okBtn = document.createElement('button');
+            okBtn.innerText = "Ok";
+            okBtn.className = "bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-2 rounded-lg transition w-full";
+            okBtn.onclick = () => notifModal.classList.add('hidden');
+            notifButtons.appendChild(okBtn);
         }
+        notifModal.classList.remove('hidden');
+    }
 
-        // Initialize Edit Modal view state with dataset parsing
-        function initEditModal(button) {
-            const id = button.dataset.id;
-            const catId = button.dataset.category;
-            const difficulty = button.dataset.difficulty;
-            const text = button.dataset.text;
-            let answers = [];
-            
-            try {
-                answers = JSON.parse(button.dataset.answers);
-            } catch (e) {
-                console.error("Error parsing answers JSON", e);
-            }
+    // Submitting Request - Handles quiz creation stream execution
+    const quizForm = document.getElementById('add-quiz-form');
 
-            document.getElementById('edit-question-id').value = id;
-            document.getElementById('edit-modal-question-text').value = text;
-            document.getElementById('edit-modal-category').value = catId;
-            document.getElementById('edit-modal-difficulty').value = difficulty;
+    quizForm.addEventListener('submit', function (e) {
+        e.preventDefault();
 
-            if(Array.isArray(answers)) {
-                answers.forEach((ans, index) => {
-                    const inputAns = document.getElementById(`edit-answer-${index}`);
-                    const radioAns = document.getElementById(`edit-radio-${index}`);
-                    if (inputAns) inputAns.value = ans.text;
-                    if (radioAns) radioAns.checked = (parseInt(ans.is_correct) === 1);
-                });
-            }
-            editModal.classList.remove('hidden');
-        }
-
-        // Submitting Request - Handles the fetch sequence for modifying item sets
-        editForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const id = document.getElementById('edit-question-id').value;
-            const questionText = document.getElementById('edit-modal-question-text').value;
-            const categoryId = document.getElementById('edit-modal-category').value;
-            const difficulty = document.getElementById('edit-modal-difficulty').value;
-
-            const answers = [
-                document.getElementById('edit-answer-0').value,
-                document.getElementById('edit-answer-1').value,
-                document.getElementById('edit-answer-2').value
-            ];
-            
-            const checkedRadio = document.querySelector('input[name="edit_correct_answer"]:checked');
-            if(!checkedRadio) {
-                showNotification('error', 'Please select a correct answer.');
-                return;
-            }
-            const correctIndex = parseInt(checkedRadio.value);
-
-            fetch('/api/questions/update_questions.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id, question_text: questionText, category_id: categoryId, difficulty, answers, correct_index: correctIndex })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    hideEditModal();
-                    showNotification('success_update', 'The question has been updated successfully.');
-                    setTimeout(() => location.reload(), 1500);
-                } else {
-                    showNotification('error', data.message || 'Error occurred during updating.');
-                }
-            })
-            .catch(() => showNotification('error', 'An unexpected error occurred during update.'));
-        });
-
-        // Delete Operational Sequence Handlers
-        function confirmDeleteQuestion(id) {
-            showNotification('info_delete', 'Are you absolutely sure you want to delete this question? This action cannot be undone.', () => {
-                executeDelete(id);
-            });
-        }
-
-        function executeDelete(id) {
-            fetch('/api/questions/delete_questions.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id: id })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    const row = document.getElementById(`question-row-${id}`);
-                    if (row) row.remove();
-                    showNotification('success_delete', 'The question has been deleted successfully.');
-                } else {
-                    showNotification('error', data.message || 'Error while trying to delete.');
-                }
-            })
-            .catch(() => showNotification('error', 'An error occurred during deletion.'));
-        }
-
-        // Submitting Request - Handles creation stream execution
-        addForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const questionText = document.getElementById('modal-question-text').value;
-            const categoryId = document.getElementById('modal-category').value;
-            const difficulty = document.getElementById('modal-difficulty').value;
-
-            const answers = [
-                document.getElementById('answer-0').value,
-                document.getElementById('answer-1').value,
-                document.getElementById('answer-2').value
-            ];
-            
-            const checkedRadio = document.querySelector('input[name="correct_answer"]:checked');
-            const correctIndex = checkedRadio ? parseInt(checkedRadio.value) : 0;
-
-            fetch('/api/questions/add_questions.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ question_text: questionText, category_id: categoryId, difficulty, answers, correct_index: correctIndex })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    hideModal();
-                    showNotification('success_create', 'The question and its options were successfully saved.');
-                    setTimeout(() => location.reload(), 1500);
-                } else {
-                    showNotification('error', data.message || 'Failed to create the question.');
-                }
-            })
-            .catch(() => showNotification('error', 'An error occurred during save.'));
-        });
-
-        const quizForm = document.getElementById('add-quiz-form');
-
-        quizForm.addEventListener('submit', function (e) {
-            e.preventDefault();
-
-            try {
-                const categories = [];
-                document.querySelectorAll('.quiz-category:checked')
-                    .forEach(c => categories.push(c.value));
-
-                const allowCustom = document.getElementById('allow-custom-count').checked;
-
-                const questionCountInput = document.getElementById('quiz-question-count');
-
-                const payload = {
-                    name: document.getElementById('quiz-name').value,
-                    description: document.getElementById('quiz-description').value,
-                    difficulty: document.getElementById('quiz-difficulty').value,
-                    question_count: allowCustom ? null : (questionCountInput.value || null),
-                    allow_custom_question_count: allowCustom,
-                    categories
-                };
-
-                fetch('/api/quizzes/add_quizzes.php', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                })
-                .then(res => res.json())
-                .then(data => {
-
-                    if (data.status === 'success') {
-                        quizModal.classList.add('hidden');
-                        showNotification('success_quiz_create', 'Quiz created successfully');
-                        setTimeout(() => location.reload(), 1000);
-                    } else {
-                        showNotification('error', data.message || 'Error creating quiz');
-                    }
-                })
-                .catch(err => {
-                    console.error(err);
-                    showNotification('error', 'Network error while creating quiz');
-                });
-
-            } catch (err) {
-                console.error("QUIZ FORM ERROR:", err);
-                showNotification('error', 'JS error in quiz form');
-            }
-        });
-
-        document.getElementById('edit-quiz-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-
+        try {
             const categories = [];
-            document.querySelectorAll('.edit-quiz-cat:checked')
+            document.querySelectorAll('.quiz-category:checked')
                 .forEach(c => categories.push(c.value));
 
+            const allowCustom = document.getElementById('allow-custom-count').checked;
+            const questionCountInput = document.getElementById('quiz-question-count');
+
             const payload = {
-                id: document.getElementById('edit-quiz-id').value,
-                name: document.getElementById('edit-quiz-name').value,
-                description: document.getElementById('edit-quiz-description').value,
-                difficulty: document.getElementById('edit-quiz-difficulty').value,
-                question_count: document.getElementById('edit-quiz-count').value,
-                categories: categories
+                name: document.getElementById('quiz-name').value,
+                description: document.getElementById('quiz-description').value,
+                difficulty: document.getElementById('quiz-difficulty').value,
+                question_count: allowCustom ? null : (questionCountInput.value || null),
+                allow_custom_question_count: allowCustom,
+                categories
             };
 
-            const res = await fetch('/api/quizzes/update_quizzes.php', {
+            fetch('/api/quizzes/add_quizzes.php', {
                 method: 'POST',
-                headers: {'Content-Type': 'application/json'},
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    quizModal.classList.add('hidden');
+                    showNotification('success_quiz_create', 'Quiz created successfully');
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    showNotification('error', data.message || 'Error creating quiz');
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                showNotification('error', 'Network error while creating quiz');
             });
 
-            const data = await res.json();
-
-            if (data.status === 'success') {
-                document.getElementById('edit-quiz-modal').classList.add('hidden');
-
-                showNotification('success_quiz_update', 'Quiz updated successfully.');
-                setTimeout(() => location.reload(), 1200);
-            } else {
-                showNotification('error', data.message || 'Error updating quiz.');
-            }
-        });
-
-        function editQuiz(btn) {
-            document.getElementById('edit-quiz-id').value = btn.dataset.id;
-            document.getElementById('edit-quiz-name').value = btn.dataset.name;
-            document.getElementById('edit-quiz-description').value = btn.dataset.description;
-            document.getElementById('edit-quiz-difficulty').value = btn.dataset.difficulty;
-            document.getElementById('edit-quiz-count').value = btn.dataset.count;
-
-            const selected = (btn.dataset.categories || "").split(',');
-
-            document.querySelectorAll('.edit-quiz-cat').forEach(cb => {
-                cb.checked = selected.includes(cb.value);
-        });
-
-            document.getElementById('edit-quiz-modal').classList.remove('hidden');
+        } catch (err) {
+            console.error("QUIZ FORM ERROR:", err);
+            showNotification('error', 'JS error in quiz form');
         }
+    });
 
-        function deleteQuiz(id) {
-            showNotification('info_delete', 'Are you sure you want to delete this quiz? This action cannot be undone.',
-                async () => {
+    // Submitting Request - Handles quiz update execution
+    document.getElementById('edit-quiz-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
 
-                    try {
-                        const res = await fetch('/api/quizzes/delete_quizzes.php', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({ id })
-                        });
-                        const data = await res.json();
+        const categories = [];
+        document.querySelectorAll('.edit-quiz-cat:checked')
+            .forEach(c => categories.push(c.value));
 
-                        if (data.status === 'success') {
-                            showNotification('success_quiz_delete','Quiz deleted successfully.');
-                            setTimeout(() => location.reload(), 1200);
+        const payload = {
+            id: document.getElementById('edit-quiz-id').value,
+            name: document.getElementById('edit-quiz-name').value,
+            description: document.getElementById('edit-quiz-description').value,
+            difficulty: document.getElementById('edit-quiz-difficulty').value,
+            question_count: document.getElementById('edit-quiz-count').value,
+            categories: categories
+        };
 
-                        } else {
-                    showNotification('error', data.message || 'Error deleting quiz.');
-                        }
+        const res = await fetch('/api/quizzes/update_quizzes.php', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(payload)
+        });
 
-                    } catch (err) {
-                        showNotification('error', 'Network error while deleting quiz.');
+        const data = await res.json();
+
+        if (data.status === 'success') {
+            document.getElementById('edit-quiz-modal').classList.add('hidden');
+            showNotification('success_quiz_update', 'Quiz updated successfully.');
+            setTimeout(() => location.reload(), 1200);
+        } else {
+            showNotification('error', data.message || 'Error updating quiz.');
+        }
+    });
+
+    // Initialize Edit Quiz Modal view state
+    function editQuiz(btn) {
+        document.getElementById('edit-quiz-id').value = btn.dataset.id;
+        document.getElementById('edit-quiz-name').value = btn.dataset.name;
+        document.getElementById('edit-quiz-description').value = btn.dataset.description;
+        document.getElementById('edit-quiz-difficulty').value = btn.dataset.difficulty;
+        document.getElementById('edit-quiz-count').value = btn.dataset.count;
+
+        const selected = (btn.dataset.categories || "").split(',');
+
+        document.querySelectorAll('.edit-quiz-cat').forEach(cb => {
+            cb.checked = selected.includes(cb.value);
+        });
+
+        document.getElementById('edit-quiz-modal').classList.remove('hidden');
+    }
+
+    // Delete Quiz Operational Sequence Handler
+    function deleteQuiz(id) {
+        showNotification('info_delete', 'Are you sure you want to delete this quiz? This action cannot be undone.',
+            async () => {
+                try {
+                    const res = await fetch('/api/quizzes/delete_quizzes.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ id })
+                    });
+                    const data = await res.json();
+
+                    if (data.status === 'success') {
+                        showNotification('success_quiz_delete','Quiz deleted successfully.');
+                        setTimeout(() => location.reload(), 1200);
+                    } else {
+                        showNotification('error', data.message || 'Error deleting quiz.');
                     }
-                }
-            );
-        }
 
-    </script>
+                } catch (err) {
+                    showNotification('error', 'Network error while deleting quiz.');
+                }
+            }
+        );
+    }
+</script>
 
 <?php require_once __DIR__ . '/components/footer.php'; ?>
