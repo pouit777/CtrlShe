@@ -10,16 +10,18 @@ $page_title = "History";
 require_once __DIR__ . '/components/header.php';
 ?>
 
-<div class="max-w-5xl mx-auto mt-10 p-6 bg-gray-900 rounded-xl border border-gray-700">
+<div class="page-index">
+    <div class="titleBoxAdmin">
+        <h1 class="titleText">
+            Game History
+        </h1>
+        <p class="subTitle">
+            Review your past quiz performances
+        </p>
+    </div>
 
-    <h1 class="text-3xl font-bold text-cyan-400 mb-6">
-        Game History
-    </h1>
-
-    <div id="history-container" class="space-y-4">
-
-        <!-- History loaded with JavaScript -->
-
+    <!-- GRID -->
+    <div id="history-container" class="quizzes">
     </div>
 
 </div>
@@ -37,18 +39,22 @@ async function loadHistory() {
 
         if (data.status !== "success") {
             container.innerHTML = `
-                <p class="text-red-400">
-                    Error loading history.
-                </p>
+                <div class="quizCard">
+                    <p class="subTitle text-red-400">
+                        Error loading history.
+                    </p>
+                </div>
             `;
             return;
         }
 
         if (data.data.length === 0) {
             container.innerHTML = `
-                <p class="text-gray-400">
-                    No games played yet.
-                </p>
+                <div class="quizCard">
+                    <p class="subTitle">
+                        No games played yet.
+                    </p>
+                </div>
             `;
             return;
         }
@@ -68,46 +74,38 @@ async function loadHistory() {
             if (percent < 50) {
                 color = "text-red-400";
             } else if (percent < 80) {
-                color = "text-yellow-400";
+                color = "text-amber-400";
             }
 
             return `
-                <div class="bg-gray-800 border border-gray-700 rounded-lg p-5 flex justify-between items-center">
+                <div class="quizCard">
 
-                    <div>
+                    <h2 class="titleText mb-2">
+                        ${game.quiz_name ?? "Unknown Quiz"}
+                    </h2>
 
-                        <h2 class="text-xl font-bold text-white">
-                            ${game.quiz_name ?? "Unknown Quiz"}
-                        </h2>
+                    <p class="subTitle">
+                        Played on ${date}
+                    </p>
 
-                        <p class="text-sm text-gray-400 mt-1">
-                            Played on ${date}
-                        </p>
+                    <p class="subTitle">
+                        Difficulty: ${game.difficulty ?? "Unknown"}
+                    </p>
 
-                        <p class="text-sm text-gray-500">
-                            Difficulty : ${game.difficulty ?? "Unknown"}
-                        </p>
-
-                    </div>
-
-                    <div class="text-right">
-
-                        <p class="text-2xl font-bold ${color}">
+                    <div class="mt-3 text-center">
+                        <p class="text-xl font-bold ${color}">
                             ${game.score} / ${game.total_questions}
                         </p>
 
-                        <p class="text-gray-400">
+                        <p class="subTitle">
                             ${percent}%
                         </p>
-
-                        <a
-                            href="/result.php?game=${game.id}"
-                            class="inline-block mt-3 px-4 py-2 bg-cyan-500 hover:bg-cyan-600 rounded-lg text-black font-semibold transition"
-                        >
-                            View Result
-                        </a>
-
                     </div>
+
+                    <a href="/result.php?game=${game.id}"
+                       class="btn mt-4">
+                        View Result
+                    </a>
 
                 </div>
             `;
@@ -117,9 +115,11 @@ async function loadHistory() {
     } catch (error) {
 
         document.getElementById("history-container").innerHTML = `
-            <p class="text-red-400">
-                Server error.
-            </p>
+            <div class="quizCard">
+                <p class="subTitle text-red-400">
+                    Server error.
+                </p>
+            </div>
         `;
 
         console.error(error);
