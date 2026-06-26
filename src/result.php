@@ -14,17 +14,19 @@ $gameId = (int)($_GET["game"] ?? 0);
 
 $stmt = $pdo->prepare("
 SELECT
-g.score,
-g.played_at,
-q.name,
-q.question_count
+    g.score,
+    g.total_questions,
+    g.quiz_id,
+    g.played_at,
+    q.name
+
 FROM games g
 
 LEFT JOIN quizzes q
 ON q.id = g.quiz_id
 
-WHERE g.id=?
-AND g.user_id=?
+WHERE g.id = ?
+AND g.user_id = ?
 ");
 
 $stmt->execute([
@@ -38,7 +40,7 @@ if (!$game) {
     die("Game not found");
 }
 
-$percent = round(($game["score"] / $game["question_count"]) * 100);
+$percent = round(($game["score"] / $game["total_questions"]) * 100);
 ?>
 
 <div class="max-w-xl mx-auto mt-10 bg-gray-800 p-8 rounded-xl text-center">

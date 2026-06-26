@@ -45,24 +45,39 @@ foreach ($userAnswers as $questionId => $answerId) {
 }
 
 $stmt = $pdo->prepare("
-    INSERT INTO games
-    (
-        user_id,
-        quiz_id,
-        score
-    )
-    VALUES
-    (
-        ?,
-        ?,
-        ?
-    )
+    SELECT question_count
+    FROM quizzes
+    WHERE id = ?
+");
+
+$stmt->execute([$quizId]);
+
+$quiz = $stmt->fetch();
+
+$totalQuestions = (int)$quiz["question_count"];
+
+$stmt = $pdo->prepare("
+INSERT INTO games
+(
+    user_id,
+    quiz_id,
+    score,
+    total_questions
+)
+VALUES
+(
+    ?,
+    ?,
+    ?,
+    ?
+)
 ");
 
 $stmt->execute([
     $_SESSION["user_id"],
     $quizId,
-    $score
+    $score,
+    $totalQuestions
 ]);
 
 echo json_encode([
