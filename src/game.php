@@ -1,14 +1,12 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+session_start();
 
-if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], ['user', 'admin'])) {
+if (!isset($_SESSION['user_id'])) {
     header('Location: /login.php');
     exit;
 }
 
-$page_title = "brainSKwiz - Play!";
+$page_title = "Quiz Game";
 require_once __DIR__ . '/components/header.php';
 require_once __DIR__ . '/config/db.php';
 
@@ -19,190 +17,135 @@ if ($quiz_id <= 0) {
 }
 
 /* Quiz */
-
-$stmt = $pdo->prepare("
-    SELECT *
-    FROM quizzes
-    WHERE id = ?
-      AND is_active = 1
-");
-
+$stmt = $pdo->prepare("SELECT * FROM quizzes WHERE id = ? AND is_active = 1");
 $stmt->execute([$quiz_id]);
-
 $quiz = $stmt->fetch();
 
 if (!$quiz) {
     die("Quiz introuvable");
 }
 
-/* Questions du quiz */
-
+/* Questions */
 $stmt = $pdo->prepare("
     SELECT q.*
     FROM questions q
-    INNER JOIN quiz_questions qq
-        ON qq.question_id = q.id
+    INNER JOIN quiz_questions qq ON qq.question_id = q.id
     WHERE qq.quiz_id = ?
 ");
 $stmt->execute([$quiz_id]);
 
 $questions = $stmt->fetchAll();
 
-if (empty($questions)) {
-    die("DEBUG: quiz_id=$quiz_id a 0 questions dans quiz_questions");
+if (!$questions) {
+    die("Aucune question trouvée");
 }
 
-/* Réponses */
+/* Answers */
+foreach ($questions as &$q) {
 
-foreach ($questions as &$question) {
-
-    $stmtAnswers = $pdo->prepare("
-        SELECT id, answer_text
+    $stmtA = $pdo->prepare("
+        SELECT id, answer_text, is_correct
         FROM answers
         WHERE question_id = ?
         ORDER BY id ASC
     ");
 
-    $stmtAnswers->execute([$question['id']]);
-
-    $question['answers'] = $stmtAnswers->fetchAll();
+    $stmtA->execute([$q['id']]);
+    $q['answers'] = $stmtA->fetchAll();
 }
+unset($q);
 
-unset($question);
+$gameData = [
+    "quiz" => [
+        "id" => (int)$quiz['id'],
+        "name" => $quiz['name'],
+        "description" => $quiz['description']
+    ],
+    "questions" => array_map(function ($q) {
 
-/* Mélange */
+        global $pdo;
 
-shuffle($questions);
+        $stmtA = $pdo->prepare("
+            SELECT id, answer_text, is_correct
+            FROM answers
+            WHERE question_id = ?
+            ORDER BY id ASC
+        ");
 
-/* Limitation nombre de questions */
+        $stmtA->execute([$q['id']]);
 
-if (!empty($quiz['question_count'])) {
+        return [
+            "id" => (int)$q["id"],
+            "question_text" => $q["question_text"],
+            "answers" => $stmtA->fetchAll(PDO::FETCH_ASSOC)
+        ];
 
-    $questions = array_slice(
-        $questions,
-        0,
-        (int)$quiz['question_count']
-    );
-}
+    }, $questions)
+];
 ?>
 
-<div class="max-w-4xl mx-auto bg-gray-800 p-6 rounded-xl border border-gray-700 shadow-xl my-8">
+<!-- GAME DATA -->
+<script>
+    const GAME_DATA = <?= json_encode($gameData, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>;
+    console.log(GAME_DATA);
+</script>
 
-    <h1 class="text-3xl font-bold text-cyan-400 mb-2">
-        <?= htmlspecialchars($quiz['name']) ?>
-    </h1>
+<!-- GAME UI -->
+<div class="max-w-4xl mx-auto mt-10">
 
-    <p class="text-gray-400 mb-6">
-        <?= htmlspecialchars($quiz['description']) ?>
-    </p>
+    <!-- HEADER PLAYER -->
+    <div class="flex justify-between items-center bg-gray-800 p-4 rounded-xl border border-gray-700 mb-6">
 
-    <form id="quizForm">
+        <div class="flex items-center gap-3">
+            <img src="/public/avatars/<?= $_SESSION['avatar'] ?? 'bee.png' ?>"
+                 class="w-12 h-12 rounded-full">
 
-    <input type="hidden" id="quizId" value="<?= $quiz_id ?>">
-
-    <div class="space-y-6">
-
-        <?php foreach ($questions as $index => $question): ?>
-
-            <div class="bg-gray-900 p-4 rounded-lg border border-gray-700">
-
-                <h3 class="font-semibold text-lg mb-4">
-                    <?= ($index + 1) . '. ' . htmlspecialchars($question['question_text']) ?>
-                </h3>
-
-                <div class="space-y-2">
-
-                    <?php foreach ($question['answers'] as $answer): ?>
-
-                        <label class="flex items-center gap-3 p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600">
-
-                            <input
-                                type="radio"
-                                name="question_<?= $question['id'] ?>"
-                                value="<?= $answer['id'] ?>"
-                            >
-
-                            <span>
-                                <?= htmlspecialchars($answer['answer_text']) ?>
-                            </span>
-
-                        </label>
-
-                    <?php endforeach; ?>
-
-                </div>
-
+            <div>
+                <p class="text-white font-bold">
+                    <?= htmlspecialchars($_SESSION['username'] ?? 'Player') ?>
+                </p>
+                <p class="text-gray-400 text-sm">
+                    <?= htmlspecialchars($quiz['name']) ?>
+                </p>
             </div>
+        </div>
 
-        <?php endforeach; ?>
+        <div class="text-right">
+            <p class="text-sm text-gray-400">Score</p>
+            <p id="score" class="text-2xl font-bold text-green-400">0</p>
+        </div>
 
     </div>
 
-    <div class="mt-8 text-center">
-        <button
-            type="submit"
-            class="bg-cyan-500 hover:bg-cyan-600 px-8 py-3 rounded-lg font-bold">
-            Finish Quiz
+    <!-- PROGRESS -->
+    <div class="mb-4">
+        <div class="flex justify-between text-gray-300 mb-1">
+            <span id="progressText">Question 1</span>
+            <span id="timer">15</span>
+        </div>
+
+        <div class="w-full bg-gray-700 rounded-full h-3">
+            <div id="progressBar" class="bg-cyan-500 h-3 rounded-full w-0"></div>
+        </div>
+    </div>
+
+    <!-- QUESTION BOX -->
+    <div class="bg-gray-900 p-6 rounded-xl border border-gray-700">
+
+        <h2 id="questionText" class="text-xl font-bold text-white mb-6"></h2>
+
+        <div id="answers" class="grid gap-3"></div>
+
+        <button id="nextBtn"
+                class="mt-6 w-full bg-cyan-500 hover:bg-cyan-600 text-black font-bold py-3 rounded-lg hidden">
+            Next
         </button>
-    </div>
 
-    </form>
+    </div>
 
 </div>
 
-<script>
-document.getElementById("quizForm").addEventListener("submit", async (e) => {
-
-    e.preventDefault();
-
-    const answers = {};
-
-    document.querySelectorAll("input[type=radio]:checked").forEach(input => {
-
-        const questionId = input.name.replace("question_", "");
-        answers[questionId] = input.value;
-
-    });
-
-    try {
-
-        const response = await fetch("/api/game/finish.php", {
-
-            method: "POST",
-
-            headers: {
-                "Content-Type": "application/json"
-            },
-
-            body: JSON.stringify({
-
-                quiz_id: document.getElementById("quizId").value,
-                answers: answers
-
-            })
-
-        });
-
-        const data = await response.json();
-
-        if (data.status === "success") {
-
-            window.location = "/result.php?game=" + data.game_id;
-
-        } else {
-
-            alert(data.message);
-
-        }
-
-    } catch (err) {
-
-        console.error(err);
-        alert("Server error");
-
-    }
-
-});
-</script>
+<!-- GAME SCRIPT -->
+<script src="/script/game.js"></script>
 
 <?php require_once __DIR__ . '/components/footer.php'; ?>
