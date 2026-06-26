@@ -7,6 +7,8 @@ include "components/header.php";
 $categories = $pdo->query("SELECT * FROM categories ORDER BY label")->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
+<div class="page-index">
+
 <div class="titleBoxAdmin">
     <h1 class="titleText">
         brainSKwiz Quizzes
@@ -15,7 +17,6 @@ $categories = $pdo->query("SELECT * FROM categories ORDER BY label")->fetchAll(P
         Choose a quiz and start playing
     </p>
 </div>
-
 
 <!-- FILTER -->
 <div class="titleBoxAdmin w-full">
@@ -41,7 +42,6 @@ $categories = $pdo->query("SELECT * FROM categories ORDER BY label")->fetchAll(P
 <div id="quiz-grid" class="quizzes"></div>
 
 <script>
-
 const searchInput = document.getElementById('search-input');
 const categorySelect = document.getElementById('category-select');
 const quizGrid = document.getElementById('quiz-grid');
@@ -97,7 +97,8 @@ searchInput.addEventListener('input', () => {
 categorySelect.addEventListener('change', loadQuizzes);
 
 loadQuizzes();
-
 </script>
+
+</div>
 
 <?php require_once __DIR__ . '/components/footer.php'; ?>

@@ -1017,3 +1017,114 @@ button {
     align-items:flex-start;
   }
 }
+
+/* HOME INDEX - LIGHT MODE  */
+
+/* Bandeau titre (primary en mode jour uniquement) */
+.page-index .titleBoxAdmin {
+  background: var(--color-primary-dark);
+  box-shadow: var(--shadow-modal);
+}
+
+/* Texte du bandeau */
+.page-index .titleText {
+  color: var(--color-white);
+}
+
+.page-index .subTitle {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* Inputs */
+.page-index .inputField {
+  background-color: var(--color-primary-light);
+  border: 1px solid var(--color-primary-dark);
+  color: var(--color-text);
+}
+
+/* Placeholder lisible */
+.page-index .inputField::placeholder {
+  color: rgba(31, 41, 55, 0.7);
+}
+
+/* Focus harmonisé */
+.page-index .inputField:focus {
+  box-shadow: 0 0 10px var(--color-primary-dark);
+  border-color: var(--color-primary-dark);
+}
+
+/* Option select lisibilité */
+.page-index select.inputField option {
+  color: var(--color-text);
+}
+
+/* LIGHT MODE (jour) */
+.page-index .quizCard {
+  background: var(--color-primary-dark);
+  color: var(--color-white);
+  box-shadow: var(--shadow-modal);
+}
+
+/* texte dans les cards */
+.page-index .quizCard .titleText {
+  color: var(--color-white);
+}
+
+.page-index .quizCard .subTitle {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+/* hover léger */
+.page-index .quizCard:hover {
+  transform: translateY(-2px);
+  transition: 0.2s ease;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+}
+
+
+/* HOME INDEX - DARK MODE */
+
+[data-theme="dark"] .page-index .titleBoxAdmin {
+  background: #0f172a; /* dark slate */
+  box-shadow: var(--shadow-modal);
+}
+
+[data-theme="dark"] .page-index .titleText {
+  color: var(--color-white);
+}
+
+[data-theme="dark"] .page-index .subTitle {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Inputs en dark mode */
+[data-theme="dark"] .page-index .inputField {
+  background-color: #1f2937;
+  border: 1px solid #374151;
+  color: var(--color-white);
+}
+
+/* Placeholder dark */
+[data-theme="dark"] .page-index .inputField::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* Focus dark */
+[data-theme="dark"] .page-index .inputField:focus {
+  box-shadow: 0 0 10px var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+[data-theme="dark"] .page-index .quizCard {
+  background: #0f172a; /* cohérent avec ton bandeau dark */
+  color: var(--color-white);
+  box-shadow: var(--shadow-modal);
+}
+
+[data-theme="dark"] .page-index .quizCard .subTitle {
+  color: rgba(255,255,255,0.65);
+}
+
+[data-theme="dark"] .page-index .quizCard:hover {
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
