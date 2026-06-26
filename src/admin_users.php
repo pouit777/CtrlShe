@@ -11,8 +11,8 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
 
 require_once __DIR__ . '/config/db.php';
 
-// Recuperation of all users from the database, ordered by ID in descending order
-$query = "SELECT id, username, email, role, created_at FROM users ORDER BY id DESC";
+// Ajout de la colonne 'avatar' à la récupération
+$query = "SELECT id, username, email, role, avatar, created_at FROM users ORDER BY id DESC";
 $users = $pdo->query($query)->fetchAll();
 
 $page_title = "brainSKwiz - User Management";
@@ -35,6 +35,7 @@ require_once __DIR__ . '/components/header.php';
                 <thead class="tableTitle">
                     <tr>
                         <th>ID</th>
+                        <th>Avatar</th>
                         <th>Username</th>
                         <th>Email</th>
                         <th>Role</th>
@@ -46,6 +47,10 @@ require_once __DIR__ . '/components/header.php';
                     <?php foreach($users as $u): ?>
                         <tr id="user-row-<?php echo $u['id']; ?>">
                             <td>#<?php echo $u['id']; ?></td>
+                            <td>
+                                <img src="/public/avatars/<?php echo htmlspecialchars($u['avatar'] ?? 'default.png', ENT_QUOTES, 'UTF-8'); ?>" 
+                                     class="w-8 h-8 rounded-full object-cover border border-lightBlue">
+                            </td>
                             <td><?php echo htmlspecialchars($u['username'], ENT_QUOTES, 'UTF-8'); ?></td>
                             <td><?php echo htmlspecialchars($u['email'], ENT_QUOTES, 'UTF-8'); ?></td>
                             <td>
@@ -61,12 +66,13 @@ require_once __DIR__ . '/components/header.php';
                                         data-username="<?php echo htmlspecialchars($u['username'], ENT_QUOTES, 'UTF-8'); ?>"
                                         data-email="<?php echo htmlspecialchars($u['email'], ENT_QUOTES, 'UTF-8'); ?>"
                                         data-role="<?php echo htmlspecialchars($u['role'], ENT_QUOTES, 'UTF-8'); ?>"
+                                        data-avatar="<?php echo htmlspecialchars($u['avatar'] ?? '', ENT_QUOTES, 'UTF-8'); ?>"
                                         onclick="initEditModal(this)"
                                         title="Edit User"
                                         class="editBtn">
                                         <span class="material-icons">edit</span>
                                     </button>
-                                    <?php if ($u['id'] != $_SESSION['user_id'] ?? 0): ?>
+                                    <?php if ($u['id'] != ($_SESSION['user_id'] ?? 0)): ?>
                                     <button 
                                         onclick="confirmDeleteUser(<?php echo $u['id']; ?>)" 
                                         title="Delete User"
@@ -117,13 +123,41 @@ require_once __DIR__ . '/components/header.php';
     </div>
 
     <div id="edit-user-modal" class="modal hidden">
-        <div class="modal-content">
+        <div class="modal-content max-w-lg overflow-y-auto max-h-[90vh]">
             <div class="titleText modal-header">
                 <h3>Edit User Detail</h3>
                 <button id="close-edit-modal-btn" class="closeBtn font-large text-secondary">&times;</button>
             </div>
             <form id="edit-user-form">
                 <input type="hidden" id="edit-user-id">
+                
+                <div class="flex items-center gap-4 mb-4 p-3 rounded-xl border border-lightBlue/20">
+                    <img id="edit-avatarPreview" src="/public/avatars/default.png" class="w-16 h-16 rounded-full object-cover border-2 border-secondary">
+                    <div>
+                        <p class="text-sm font-semibold text-secondary">User Avatar</p>
+                        <p class="text-xs text-gray-400">Click on an avatar below to update it</p>
+                    </div>
+                </div>
+
+                <input type="hidden" id="edit-selectedAvatar" name="avatar">
+
+                <div class="avatar-section mb-4">
+                    <label class="block mb-2 font-medium">Choose user's avatar</label>
+                    <div class="avatar-grid flex flex-wrap gap-2 p-2 bg-lightBlue rounded-xl border border-gray-200 max-h-[150px] overflow-y-auto">
+                        <?php
+                        $files = glob(__DIR__ . "/public/avatars/*.png");
+                        foreach ($files as $file):
+                            $filename = basename($file);
+                        ?>
+                            <img
+                                src="/public/avatars/<?php echo htmlspecialchars($filename, ENT_QUOTES, 'UTF-8'); ?>"
+                                class="admin-avatar-item w-12 h-12 rounded-full cursor-pointer border-2 border-transparent hover:border-secondary transition"
+                                data-avatar="<?php echo htmlspecialchars($filename, ENT_QUOTES, 'UTF-8'); ?>"
+                            >
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+
                 <div>
                     <label>Username</label>
                     <input type="text" id="edit-modal-username" required class="inputField">
@@ -143,7 +177,7 @@ require_once __DIR__ . '/components/header.php';
                         <option value="admin">Admin</option>
                     </select>
                 </div>
-                <div class="modal-btn">
+                <div class="modal-btn mt-4">
                     <button type="button" id="cancel-edit-modal-btn" class="inputField">Cancel</button>
                     <button type="submit" class="btn">Update User</button>
                 </div>
@@ -169,7 +203,6 @@ require_once __DIR__ . '/components/header.php';
         const cancelModalBtn = document.getElementById('cancel-modal-btn');
         const addForm = document.getElementById('add-user-form');
 
-        // Toggle Modale Ajout
         openModalBtn.addEventListener('click', () => {
             addForm.reset(); 
             modal.classList.remove('hidden');
@@ -238,18 +271,49 @@ require_once __DIR__ . '/components/header.php';
             notifModal.classList.remove('hidden');
         }
 
-        // Init Modale d'Édition
+        // INITIALISATION DE LA MODALE D'ÉDITION AVEC LA COPIE DE L'AVATAR
+        const editHiddenInput = document.getElementById("edit-selectedAvatar");
+        const editAvatarPreview = document.getElementById("edit-avatarPreview");
+
         function initEditModal(button) {
             document.getElementById('edit-user-id').value = button.dataset.id;
             document.getElementById('edit-modal-username').value = button.dataset.username;
             document.getElementById('edit-modal-email').value = button.dataset.email;
             document.getElementById('edit-modal-role').value = button.dataset.role;
-            document.getElementById('edit-modal-password').value = ''; // Reset mot de passe par sécurité
+            document.getElementById('edit-modal-password').value = ''; 
+
+            // Configuration de la preview de l'avatar de l'utilisateur concerné
+            const currentAvatar = button.dataset.avatar || 'default.png';
+            editHiddenInput.value = currentAvatar;
+            editAvatarPreview.src = `/public/avatars/${currentAvatar}`;
+
+            // Sélection visuelle de l'avatar dans la grille
+            document.querySelectorAll(".admin-avatar-item").forEach(img => {
+                if (img.dataset.avatar === currentAvatar) {
+                    img.classList.add("border-secondary");
+                } else {
+                    img.classList.remove("border-secondary");
+                }
+            });
             
             editModal.classList.remove('hidden');
         }
 
-        // --- FETCH : ENVOI ÉDITION ---
+        // GESTION DU CLIC SUR LA GRILLE D'AVATARS (MODALE ADMIN)
+        document.querySelectorAll(".admin-avatar-item").forEach(img => {
+            img.addEventListener("click", () => {
+                const avatar = img.dataset.avatar;
+                editHiddenInput.value = avatar;
+                editAvatarPreview.src = `/public/avatars/${avatar}`;
+
+                document.querySelectorAll(".admin-avatar-item").forEach(i => {
+                    i.classList.remove("border-secondary");
+                });
+                img.classList.add("border-secondary");
+            });
+        });
+
+        // --- FETCH : ENVOI ÉDITION (AVEC PARAMÈTRE AVATAR INCLUS) ---
         editForm.addEventListener('submit', function(e) {
             e.preventDefault();
             const id = document.getElementById('edit-user-id').value;
@@ -257,11 +321,12 @@ require_once __DIR__ . '/components/header.php';
             const email = document.getElementById('edit-modal-email').value;
             const role = document.getElementById('edit-modal-role').value;
             const password = document.getElementById('edit-modal-password').value;
+            const avatar = editHiddenInput.value; // Récupération de l'avatar choisi
 
             fetch('/api/users/update_users.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id, username, email, role, password })
+                body: JSON.stringify({ id, username, email, role, password, avatar }) // Ajout à la payload
             })
             .then(res => res.json())
             .then(data => {
