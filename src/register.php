@@ -4,7 +4,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Security safeguard: Redirect authenticated users to prevent secondary logins
+// Security safeguard: Redirect authenticated users away from subscription routes
 if (isset($_SESSION['user_id'])) {
     header('Location: /index.php');
     exit;
@@ -15,21 +15,28 @@ if (empty($_SESSION['csrf_token'])) {
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 }
 
-$page_title = "brainSKwiz - Login";
+$page_title = "brainSKwiz - Register";
 include "components/header.php";
 ?>
     <div class="centeredDiv">
         <div class="titleBox loginModal">
             <h2 class="titleText">
-                Welcome to brainSKwiz
+                Create an Account
             </h2>
-            <p class="subTitle">Sign in to play or manage brainSKwiz</p>
+            <p class="subTitle">Join brainSKwiz to track your scores and compete !</p>
 
             <div id="error-message" class="hidden mb-4 p-3 bg-red-900/30 border border-red-500/50 text-red-300 rounded-lg text-sm text-center"></div>
+            <div id="success-message" class="hidden mb-4 p-3 bg-emerald-900/30 border border-emerald-500/50 text-emerald-300 rounded-lg text-sm text-center"></div>
 
-            <form id="login-form" class="space-y-5">
+            <form id="register-form" class="space-y-5">
                 <input type="hidden" id="csrf_token" value="<?php echo $_SESSION['csrf_token'] ?? ''; ?>">
                 
+                <div>
+                    <label for="username">Username</label>
+                    <input type="text" id="username" required placeholder="john_doe"
+                        class="inputField">
+                </div>
+
                 <div>
                     <label for="email">Email Address</label>
                     <input type="email" id="email" required placeholder="student@school.com"
@@ -43,70 +50,75 @@ include "components/header.php";
                 </div>
 
                 <button type="submit" id="submit-btn" class="btn">
-                    Sign In
+                    Sign Up
                 </button>
             </form>
 
             <div class="mt-6 text-center text-sm text-gray-400">
-                Don't have an account yet ? 
-                <a href="/register.php" class="text-gray-400 hover:text-secondary transition font-semibold underline decoration-2 underline-offset-2">
-                    Sign up here
+                Do you have  already an account ? 
+                <a href="/login.php" class="text-gray-400 hover:text-secondary transition font-semibold underline decoration-2 underline-offset-2">
+                    Login here
                 </a>
             </div>
         </div>
     </div>
 
     <script>
-        // Intercept form submission to process credential payloads asynchronously
-        document.getElementById('login-form').addEventListener('submit', function(e) {
-            e.preventDefault(); // Stop native page reload sequence events
+        // Bind dynamic interface interceptor onto the registration submission stream
+        document.getElementById('register-form').addEventListener('submit', function(e) {
+            e.preventDefault(); // Lock default event delegation sequences
 
-            // Extract working variables references
+            // Gather elements and contextual payloads
+            const username = document.getElementById('username').value;
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             const csrfToken = document.getElementById('csrf_token').value;
             const errorDiv = document.getElementById('error-message');
+            const successDiv = document.getElementById('success-message');
             const submitBtn = document.getElementById('submit-btn');
 
-            // Reset dynamic message feedback structures
+            // Structural reset of informational modal nodes
             errorDiv.classList.add('hidden');
+            successDiv.classList.add('hidden');
             
-            // UX/Control State: Disable form button interactions to lock concurrent outbound requests
+            // Interface flow locking constraint
             submitBtn.disabled = true;
-            submitBtn.innerText = "Signing in...";
+            submitBtn.innerText = "Creating account...";
 
-            // Send structured validation payload to the authentication processing pipeline
-            fetch('/api/account/login_process.php', {
+            // Send registration parameter data to processing stream
+            fetch('/api/account/register_process.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password, csrf_token: csrfToken })
+                body: JSON.stringify({ username, email, password, csrf_token: csrfToken })
             })
             .then(res => {
-                if (!res.ok) throw new Error(); // Throw error exception on faulty network statuses
+                if (!res.ok) throw new Error();
                 return res.json();
             })
             .then(data => {
                 if (data.status === 'success') {
-                    // Routing Logic: Redirect target viewport location matching identity configurations
-                    window.location.href = data.role === 'admin' ? '/admin_dashboard.php' : '/index.php';
-                } else {
-                    // Execution failure scenario: Render validation alert messages to client
-                    errorDiv.textContent = data.message || "Invalid credentials.";
-                    errorDiv.classList.remove('hidden');
+                    // Update layout mapping messaging parameters to state context
+                    successDiv.textContent = "Account successfully created! Welcoming you to brainSKwiz...";
+                    successDiv.classList.remove('hidden');
                     
-                    // Restore functional interactions states
+                    // Route directly to home mapping automatic background session login state
+                    setTimeout(() => {
+                        window.location.href = '/index.php';
+                    }, 2000);
+                } else {
+                    // Process backend failure notification messages cleanly
+                    errorDiv.textContent = data.message || "Registration failed.";
+                    errorDiv.classList.remove('hidden');
                     submitBtn.disabled = false;
-                    submitBtn.innerText = "Sign In";
+                    submitBtn.innerText = "Sign Up";
                 }
             })
             .catch(() => {
-                // Absolute global server disconnect / network failure fallback block
+                // Network pipeline structural disconnect interceptor boundary
                 errorDiv.textContent = "An error occurred. Please try again.";
                 errorDiv.classList.remove('hidden');
-                
-                // Unlock access control states
                 submitBtn.disabled = false;
-                submitBtn.innerText = "Sign In";
+                submitBtn.innerText = "Sign Up";
             });
         });
     </script>

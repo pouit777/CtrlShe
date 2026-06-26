@@ -18,15 +18,15 @@ $categories = $pdo->query("SELECT * FROM categories ORDER BY label")->fetchAll(P
 
 
 <!-- FILTER -->
-<div class="bg-gray-800 p-6 rounded-xl border border-gray-700 shadow-xl mb-8">
-    <div class="flex flex-col md:flex-row gap-4">
-
+<div class="titleBox">
+    <div>
         <input id="search-input"
-               class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white"
+               class="inputField"
+               style="margin-bottom: 1rem"
                placeholder="Quiz name...">
 
         <select id="category-select"
-                class="w-full md:w-64 bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white">
+                class="inputField">
             <option value="">All Categories</option>
             <?php foreach ($categories as $cat): ?>
                 <option value="<?= (int)$cat['id'] ?>">
@@ -39,7 +39,7 @@ $categories = $pdo->query("SELECT * FROM categories ORDER BY label")->fetchAll(P
 </div>
 
 <!-- GRID -->
-<div id="quiz-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+<div id="quiz-grid" class="quizzes"></div>
 
 <script>
 
@@ -71,16 +71,16 @@ function loadQuizzes() {
                   'text-emerald-400 font-semibold';
 
                 quizGrid.innerHTML += `
-                    <div class="bg-gray-800 p-5 rounded-xl border border-gray-700">
-                        <h2 class="text-white font-bold">${q.name}</h2>
-                        <p class="text-gray-400">${q.description ?? ''}</p>
+                    <div class="quizCard">
+                        <h2 class="titleText">${q.name}</h2>
+                        <p class="subTitle">${q.description ?? ''}</p>
 
                         <div class="text-xs text-gray-500 mt-3">
                             <span class="${diffColor} uppercase">${q.difficulty}</span> • ${q.question_count ?? '∞'}
                         </div>
 
                         <a href="/game.php?quiz=${q.id}"
-                        class="inline-block mt-3 bg-cyan-500 px-4 py-2 rounded text-black font-bold">
+                        class="btn" style="width: fit-content; margin-top: 1rem;">
                             Start
                         </a>
                     </div>
