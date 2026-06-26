@@ -1,4 +1,5 @@
 -- docker/db/init.sql
+SET GLOBAL time_zone = 'Europe/Paris';
 
 -- Create the categories lookup table
 CREATE TABLE IF NOT EXISTS categories (
@@ -78,7 +79,7 @@ CREATE TABLE IF NOT EXISTS games (
     score INT NOT NULL,
     total_questions INT NOT NULL,
     duration INT NOT NULL DEFAULT 0,
-    played_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    played_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (quiz_id) REFERENCES quizzes(id) ON DELETE CASCADE

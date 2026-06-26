@@ -55,7 +55,9 @@ async function loadHistory() {
 
         container.innerHTML = data.data.map(game => {
 
-            const date = new Date(game.played_at).toLocaleString();
+            const date = new Date(game.played_at + " UTC").toLocaleString("fr-FR", {
+                timeZone: "Europe/Paris"
+            });
 
             const percent = game.total_questions
                 ? Math.round((game.score / game.total_questions) * 100)

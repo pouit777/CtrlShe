@@ -41,6 +41,7 @@ try {
         $_SESSION['username'] = $userAccount['username'];
         $_SESSION['role']     = $userAccount['role'];
         $_SESSION['avatar']   = !empty($userAccount['avatar']) ? $userAccount['avatar'] : 'bee.png';
+        $_SESSION['created_at'] = time();
 
         echo json_encode([
             'status'  => 'success',
