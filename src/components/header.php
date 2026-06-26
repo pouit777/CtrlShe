@@ -53,7 +53,7 @@ $preview_mode = $is_admin && ($_SESSION['preview_mode'] ?? false);
 <nav class="navbar">
 
     <a href="index.php" class="logo">
-        <img src="/public/logo.png" alt="Logo" id="logoNavBar">
+        <img src="/public/logo-dark-theme.svg" alt="Logo" id="logoNavBar">
     </a>
 
     <button class="hamburger" id="hamburger">
@@ -61,21 +61,17 @@ $preview_mode = $is_admin && ($_SESSION['preview_mode'] ?? false);
     </button>
 
     <ul class="nav-menu" id="nav-menu">
-
-        
-
         <?php if (!$is_admin || $preview_mode): ?>
             <li><a href="/index.php">Home</a></li>
             <?php if ($is_user || $preview_mode): ?>
-                <li><a href="/index.php">History</a></li>
+                <li><a href="/history.php">History</a></li>
                 <li><a href="/index.php">Rank</a></li>
             <?php endif; ?>
         <?php endif; ?>
         
         <?php if ($preview_mode): ?>
             <li>
-                <!-- TODO -->
-                <a href="?action=toggle_preview" class="bg-amber-500/20 text-amber-400 border border-amber-500/30 px-3 py-1 rounded-lg hover:bg-amber-500 hover:text-black transition font-bold flex items-center gap-1 animate-pulse">
+                <a href="?action=toggle_preview" class="bg-amber-500/20 text-amber-400 border border-amber-500/30 px-3 py-1 rounded-lg hover:bg-amber-500 hover:text-black transition font-bold flex items-center gap-1">
                     <span class="material-icons text-sm mr-1">admin_panel_settings</span> 
                     Admin Mode
                 </a>
@@ -104,7 +100,7 @@ $preview_mode = $is_admin && ($_SESSION['preview_mode'] ?? false);
                         id="navbarAvatar"
                         src="/public/avatars/<?= htmlspecialchars($_SESSION['avatar'] ?? 'bee.png') ?>"
                         alt="Avatar"
-                        class="w-9 h-9 rounded-full border-2 border-cyan-400 object-cover"
+                        class="w-9 h-9 rounded-full border-2 border-secondary object-cover"
                     >
                     <span><?= htmlspecialchars($_SESSION['username']) ?></span>
                 </a>
@@ -167,7 +163,7 @@ $preview_mode = $is_admin && ($_SESSION['preview_mode'] ?? false);
 
     function updateLogo(theme) {
     logo.src = theme === 'dark'
-        ? '/public/logo-dark-theme.svg'
+        ? '/public/logo-dark-theme.png'
         : '/public/logo.png';
     }
 
