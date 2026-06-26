@@ -71,7 +71,7 @@ $preview_mode = $is_admin && ($_SESSION['preview_mode'] ?? false);
         
         <?php if ($preview_mode): ?>
             <li>
-                <a href="?action=toggle_preview" class="bg-amber-500/20 text-amber-400 border border-amber-500/30 px-3 py-1 rounded-lg hover:bg-amber-500 hover:text-black transition font-bold flex items-center gap-1 animate-pulse">
+                <a href="?action=toggle_preview" class="bg-amber-500/20 text-amber-400 border border-amber-500/30 px-3 py-1 rounded-lg hover:bg-amber-500 hover:text-black transition font-bold flex items-center gap-1">
                     <span class="material-icons text-sm mr-1">admin_panel_settings</span> 
                     Admin Mode
                 </a>
@@ -100,7 +100,7 @@ $preview_mode = $is_admin && ($_SESSION['preview_mode'] ?? false);
                         id="navbarAvatar"
                         src="/public/avatars/<?= htmlspecialchars($_SESSION['avatar'] ?? 'bee.png') ?>"
                         alt="Avatar"
-                        class="w-9 h-9 rounded-full border-2 border-cyan-400 object-cover"
+                        class="w-9 h-9 rounded-full border-2 border-secondary object-cover"
                     >
                     <span><?= htmlspecialchars($_SESSION['username']) ?></span>
                 </a>
