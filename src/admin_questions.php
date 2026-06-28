@@ -27,7 +27,7 @@ require_once __DIR__ . '/components/header.php';
 
     <div class="titleBoxAdmin">
         <div>
-            <h1 class="titleText">Question management</h1>
+            <h1 class="bigTitle">Question management</h1>
             <div class="modal-btn">
                 <button id="open-modal-btn" class="btn">
                     + Add New Question

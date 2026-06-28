@@ -21,7 +21,7 @@ require_once __DIR__ . '/components/header.php';
 
         <div class="titleBoxAdmin">
             <div>
-                <h1 class="titleText">User management</h1>
+                <h1 class="bigTitle">User management</h1>
                 <div class="modal-btn">
                     <button id="open-modal-btn" class="btn">
                         + Add New User
