@@ -34,7 +34,7 @@ require_once __DIR__ . '/components/header.php';
 
 <div class="titleBoxAdmin">
     <div>
-        <h1 class="titleText">Quiz management</h1>
+        <h1 class="bigTitle">Quiz management</h1>
         <div class="modal-btn">
             <button id="open-quiz-modal-btn" class="btn">+ Add New Quiz</button>
         </div>
