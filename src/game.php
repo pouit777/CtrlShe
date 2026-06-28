@@ -96,7 +96,7 @@ $gameData = [
 <div class="max-w-4xl mx-auto mt-10">
 
     <!-- HEADER PLAYER -->
-    <div class="flex justify-between items-center bg-gray-800 p-4 rounded-xl border border-gray-700 mb-6">
+    <div class="game-header flex justify-between items-center p-4 rounded-xl border border-gray-700 mb-6">
 
         <div class="flex items-center gap-3">
             <img src="/public/avatars/<?= $_SESSION['avatar'] ?? 'bee.png' ?>"
@@ -120,25 +120,25 @@ $gameData = [
 
     <!-- PROGRESS -->
     <div class="mb-4">
-        <div class="flex justify-between text-gray-300 mb-1">
+        <div class="flex justify-between text-gray-400 mb-1">
             <span id="progressText">Question 1</span>
             <span id="timer">15</span>
         </div>
 
         <div class="w-full bg-gray-700 rounded-full h-3">
-            <div id="progressBar" class="bg-cyan-500 h-3 rounded-full w-0"></div>
+            <div id="progressBar" class="progress-bar-warning h-3 rounded-full w-0"></div>
         </div>
     </div>
 
     <!-- QUESTION BOX -->
-    <div class="bg-gray-900 p-6 rounded-xl border border-gray-700">
+    <div class="question-box bg-gray-900 p-6 rounded-xl border border-gray-700">
 
         <h2 id="questionText" class="text-xl font-bold text-white mb-6"></h2>
 
         <div id="answers" class="grid gap-3"></div>
 
         <button id="nextBtn"
-                class="mt-6 w-full bg-cyan-500 hover:bg-cyan-600 text-black font-bold py-3 rounded-lg hidden">
+                class="mt-6 w-full next-btn-primary hover:opacity-90 text-white font-bold py-3 rounded-lg hidden">
             Next
         </button>
 

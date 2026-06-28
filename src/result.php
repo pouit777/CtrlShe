@@ -44,12 +44,22 @@ if ($guestMode) {
     }
 }
 
-/* PERCENT (ONLY FOR LOGGED USER)*/
 $percent = (!$guestMode && $game["total_questions"] > 0)
     ? round(($game["score"] / $game["total_questions"]) * 100)
     : null;
 
-/* CORRECTIONS (ONLY DB USERS)*/
+/* 🎯 SCORE COLOR LOGIC */
+$scoreClass = "";
+if ($percent !== null) {
+    if ($percent >= 80) {
+        $scoreClass = "score-high";
+    } elseif ($percent >= 50) {
+        $scoreClass = "score-mid";
+    } else {
+        $scoreClass = "score-low";
+    }
+}
+
 $corrections = [];
 
 if (!$guestMode) {
@@ -77,9 +87,10 @@ if (!$guestMode) {
 <div class="max-w-4xl mx-auto mt-10 space-y-6">
 
     <!-- HEADER -->
-    <div class="bg-gray-800 p-6 rounded-xl text-center">
+    <div class="p-6 rounded-xl text-center page-result">
 
-        <h1 class="text-3xl font-bold text-cyan-400 mb-2">
+        <h1 style="color: var(--color-primary);"
+            class="text-3xl font-bold mb-2">
             Quiz Finished
         </h1>
 
@@ -87,14 +98,13 @@ if (!$guestMode) {
             <?= htmlspecialchars($game["name"] ?? "Guest Quiz") ?>
         </h2>
 
-        <!-- SCORE -->
-        <div class="text-5xl font-bold text-green-400">
+        <div class="text-5xl font-bold <?= $scoreClass ?>">
             <?= (int)$game["score"] ?> / <?= (int)$game["total_questions"] ?>
         </div>
 
-        <!-- PERCENT ONLY FOR REGISTERED USERS -->
         <?php if (!$guestMode): ?>
-            <div class="text-xl text-gray-300 mt-2">
+            <div style="color: rgba(255,255,255,0.75);"
+                 class="text-xl mt-2">
                 <?= $percent ?>%
             </div>
         <?php endif; ?>
@@ -105,40 +115,39 @@ if (!$guestMode) {
     <div class="flex justify-center gap-4">
 
         <?php if (!$guestMode): ?>
-
             <a href="/game.php?quiz=<?= $game["quiz_id"] ?>"
-                class="bg-cyan-500 px-5 py-3 rounded-lg text-black font-bold">
+               style="background: var(--color-primary);"
+               class="px-5 py-3 rounded-lg text-black font-bold">
                 Replay
             </a>
-
         <?php else: ?>
-
             <a id="guestReplay"
                href="#"
-                class="bg-cyan-500 px-5 py-3 rounded-lg text-black font-bold">
+               style="background: var(--color-primary);"
+               class="px-5 py-3 rounded-lg text-black font-bold">
                 Replay
             </a>
-
         <?php endif; ?>
 
-        <!-- HISTORY BUTTON ONLY FOR REGISTERED USERS -->
         <?php if (!$guestMode): ?>
             <a href="/history.php"
-               class="bg-gray-700 px-5 py-3 rounded-lg text-white">
+               style="background: #1f2937;"
+               class="px-5 py-3 rounded-lg text-white">
                 History
             </a>
         <?php endif; ?>
 
         <a href="/index.php"
-           class="bg-green-500 px-5 py-3 rounded-lg text-black font-bold">
+           style="background: var(--color-warning);"
+           class="px-5 py-3 rounded-lg text-black font-bold">
             Home
         </a>
 
     </div>
 
-    <!-- GUEST INFO -->
     <?php if ($guestMode): ?>
-        <div class="text-center text-gray-400 mt-4">
+        <div class="text-center mt-4"
+             style="color: rgba(255,255,255,0.6);">
             Guest mode - score is not saved
         </div>
 
@@ -146,7 +155,6 @@ if (!$guestMode) {
             const data = JSON.parse(localStorage.getItem("guest_result"));
 
             if (data) {
-
                 document.querySelector(".text-5xl").innerText =
                    data.score + " / " + data.total;
 
@@ -155,8 +163,7 @@ if (!$guestMode) {
                 if (replayBtn) {
                     const params = new URLSearchParams(window.location.search);
                     replayBtn.href = "/game.php?quiz=" + params.get("quiz");
-
-                }  
+                }
             }
         </script>
     <?php endif; ?>

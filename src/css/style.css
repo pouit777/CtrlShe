@@ -1443,3 +1443,81 @@ label {
 [data-theme="dark"] .page-login .loginModal {
   background: #0f172a; /* fond plus sombre en dark mode */
 }
+
+
+/* result page */
+.page-result {
+    background: var(--color-primary-dark);
+}
+
+[data-theme="dark"] .page-result {
+    background: #1f2937; /* fond plus sombre en dark mode */
+}
+
+/* SCORE COLORS */
+.score-high {
+    color: #22c55e; /* vert */
+}
+
+.score-mid {
+    color: #ff8600; /* orange */
+}
+
+.score-low {
+    color: #ef4444; /* rouge */
+}
+
+
+/* =========================
+   GAME PAGE - HEADERS
+   ========================= */
+
+/* MODE JOUR (light) */
+.game-header,
+.question-box {
+  background: var(--color-primary-dark) !important;
+  color: var(--color-white);
+}
+
+/* MODE NUIT (dark theme) */
+[data-theme="dark"] .game-header,
+[data-theme="dark"] .question-box {
+  background: #0f172a !important; /* plus sombre que primary */
+  color: var(--color-white);
+}
+
+/* =========================
+   GAME ANSWERS STYLE FIX
+========================= */
+
+/* Base des réponses */
+.answer-btn {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.2s ease;
+  border: 2px solid transparent;
+  text-align: left;
+  font-weight: 500;
+}
+
+/* =========================
+   GAME UI CUSTOM COLORS
+========================= */
+
+/* Progress bar orange */
+.progress-bar-warning {
+  background-color: var(--color-warning) ;
+}
+
+/* Next button primary dark */
+.next-btn-primary {
+  background-color: var(--color-primary) ;
+  color: var(--color-white);
+  transition: 0.2s ease;
+}
+
+.next-btn-primary:hover {
+  filter: brightness(1.1);
+}
