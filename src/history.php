@@ -102,10 +102,14 @@ async function loadHistory() {
                         </p>
                     </div>
 
-                    <a href="/result.php?game=${game.id}"
-                       class="btn mt-4">
-                        View Result
-                    </a>
+                    <div class="m-auto flex justify-center text-center">
+
+                        <a href="/result.php?game=${game.id}"
+                        class="btn mt-4">
+                            View Result
+                        </a>
+
+                    </div>
 
                 </div>
             `;

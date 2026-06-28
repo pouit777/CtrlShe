@@ -1007,7 +1007,7 @@ button {
     box-shadow: var(--shadow-modal);
     padding: 1rem;
     justify-content: flex-start;
-    align-items:flex-start;
+    align-items: center;
   }
 }
 
