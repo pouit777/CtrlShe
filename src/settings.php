@@ -19,18 +19,18 @@ $user = $stmt->fetch();
             Account Settings
         </h1>
 
-        <p class="subTitle">
+        <!-- <p class="subTitle">
             Logged in as :
             <strong>
                 <?= htmlspecialchars($_SESSION['username'] ?? 'Admin') ?>
                 (<span class="uppercase"><?= htmlspecialchars($_SESSION['role']) ?></span>)
             </strong>
-        </p>
+        </p> -->
 
     </div>
 
-    <div class="settings">
-        <div class="choices">
+    <div class="settings grid grid-cols-1 md:grid-cols-10 gap-4 items-start">
+        <div class="choices md:col-span-3">
             <ul>
                 <li id="profileSettingBtn" class="active"><button onclick="setActive('profileSetting')">Profile<span class="material-icons">person</span></button></li>
                 <li id="passwordSettingBtn"><button onclick="setActive('passwordSetting')">Password<span class="material-icons">lock</span></button></li>
@@ -38,7 +38,7 @@ $user = $stmt->fetch();
             </ul>
         </div>
 
-        <div id="profileSetting" class="settingPage activeWindow">
+        <div id="profileSetting" class="settingPage activeWindow md:col-span-7">
             <h1 class="textWhite">My Profile</h1>
 
             <div class="profile-header">
@@ -85,7 +85,7 @@ $user = $stmt->fetch();
             </form>
         </div>
 
-        <div id="passwordSetting" class="settingPage hidden">
+        <div id="passwordSetting" class="settingPage hidden md:col-span-7">
             <div class="titleText modal-header">
                 <h3>Change password</h3>
             </div>
@@ -117,7 +117,7 @@ $user = $stmt->fetch();
             </form>
         </div>
 
-        <div id="statUser" class="settingPage hidden">
+        <div id="statUser" class="settingPage hidden md:col-span-7">
             <h3>Meilleur temps</h3>
             <h3>Temps moyen de réponse</h3>
             <h3>Taux de bonnes réponses</h3>

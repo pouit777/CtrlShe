@@ -743,39 +743,14 @@ button {
   }
 }
 
-/*Settings page style*/
-@media (max-width: 768px) {
-  .settings {
-    flex-direction: column;
-  }
-
-  .choices {
-    width: 100%;
-    margin-right: 0;
-  }
-
-  .settingPage {
-    width: 100%;
-  }
-}
-
-.settings{
-  display: flex;
-  align-items: flex-start;
-  gap: 1rem;
-}
-
 .settingPage{
   padding: 1rem;
-  width: 70%;
   background-color: var(--color-black);
   border-radius: 12px;
   box-shadow: var(--shadow-modal);
-}
+} 
 
 .choices {
-  margin-right: auto;
-  width: 30%;
   padding: 1rem;
   background-color: var(--color-black);
   border-radius: 12px;
