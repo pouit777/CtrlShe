@@ -105,7 +105,12 @@ require_once __DIR__ . '/components/header.php';
                 </div>
                 <div>
                     <label>Password</label>
-                    <input type="password" id="modal-password" required placeholder="••••••••" class="inputField">
+                    <div class="relative w-full">
+                        <input type="password" id="modal-password" required placeholder="••••••••" class="inputField pr-10 w-full">
+                        <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-secondary transition focus:outline-none" onclick="togglePasswordVisibility('modal-password', this)">
+                            <span class="material-icons">visibility_off</span>
+                        </button>
+                    </div>
                 </div>
                 <div>
                     <label>Role</label>
@@ -168,7 +173,12 @@ require_once __DIR__ . '/components/header.php';
                 </div>
                 <div>
                     <label>Password (Leave empty to keep current password)</label>
-                    <input type="password" id="edit-modal-password" placeholder="New password (optional)" class="inputField">
+                    <div class="relative w-full">
+                        <input type="password" id="edit-modal-password" placeholder="New password (optional)" class="inputField pr-10 w-full">
+                        <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-secondary transition focus:outline-none" onclick="togglePasswordVisibility('edit-modal-password', this)">
+                            <span class="material-icons">visibility_off</span>
+                        </button>
+                    </div>
                 </div>
                 <div>
                     <label>Role</label>
@@ -197,6 +207,19 @@ require_once __DIR__ . '/components/header.php';
     </div>
 
     <script>
+        function togglePasswordVisibility(inputId, button) {
+            const passwordInput = document.getElementById(inputId);
+            const icon = button.querySelector('.material-icons');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.textContent = 'visibility';
+            } else {
+                passwordInput.type = 'password';
+                icon.textContent = 'visibility_off';
+            }
+        }
+
         const modal = document.getElementById('user-modal');
         const openModalBtn = document.getElementById('open-modal-btn');
         const closeModalBtn = document.getElementById('close-modal-btn');
@@ -204,7 +227,9 @@ require_once __DIR__ . '/components/header.php';
         const addForm = document.getElementById('add-user-form');
 
         openModalBtn.addEventListener('click', () => {
-            addForm.reset(); 
+            addForm.reset();
+            document.querySelectorAll('#user-modal .material-icons').forEach(icon => icon.textContent = 'visibility_off');
+            document.getElementById('modal-password').type = 'password';
             modal.classList.remove('hidden');
         });
 
@@ -281,6 +306,9 @@ require_once __DIR__ . '/components/header.php';
             document.getElementById('edit-modal-email').value = button.dataset.email;
             document.getElementById('edit-modal-role').value = button.dataset.role;
             document.getElementById('edit-modal-password').value = ''; 
+
+            document.querySelectorAll('#edit-user-modal .material-icons').forEach(icon => icon.textContent = 'visibility_off');
+            document.getElementById('edit-modal-password').type = 'password';
 
             // Configuration de la preview de l'avatar de l'utilisateur concerné
             const currentAvatar = button.dataset.avatar || 'default.png';
