@@ -1345,3 +1345,101 @@ button {
 [data-theme="dark"] .settings .modal-btn .inputField:hover {
     background: rgba(255,255,255,.04);
 }
+
+/* =========================
+   LOGIN PAGE ONLY
+========================= */
+
+.page-login .loginModal {
+  background: var(--color-primary-dark);
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: var(--shadow-modal);
+}
+
+/* TITLES */
+.page-login .titleText {
+  color: var(--color-white);
+}
+
+.page-login .subTitle {
+  color: rgba(255,255,255,0.7);
+}
+
+/* =========================
+   INPUT FIX (IMPORTANT)
+   - light mode bleu clair
+   - dark mode sombre propre
+========================= */
+
+.inputField {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+
+  font-size: 0.95rem;
+
+  transition: 0.2s ease;
+}
+
+/* LIGHT MODE (BLEU CLAIR lisible) */
+[data-theme="light"] .inputField {
+  background: #eaf0ff; /* très clair bleu */
+  border: 1px solid var(--color-primary);
+  color: var(--color-text);
+}
+
+[data-theme="light"] .inputField::placeholder {
+  color: rgba(31,41,55,0.6);
+}
+
+/* DARK MODE */
+[data-theme="dark"] .inputField {
+  background: #1f2937;
+  border: 1px solid #374151;
+  color: var(--color-white);
+}
+
+[data-theme="dark"] .inputField::placeholder {
+  color: rgba(255,255,255,0.5);
+}
+
+/* FOCUS (commun propre) */
+.inputField:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 12px rgba(117, 139, 253, 0.4);
+}
+
+/* =========================
+   LABEL FIX
+========================= */
+
+label {
+  color: rgba(255,255,255,0.75);
+  font-weight: 500;
+}
+
+/* LIGHT MODE LABEL */
+[data-theme="light"] label {
+  color: var(subtitle-color, rgba(31,41,55,0.75));
+}
+
+/* =========================
+   BUTTON CLEAN LOGIN
+========================= */
+
+.page-login .btn {
+  background: var(--color-primary);
+  transition: 0.2s ease;
+}
+
+.page-login .btn:hover {
+  background: var(--color-primary-dark);
+  box-shadow: 0 0 12px rgba(117,139,253,0.4);
+}
+
+/* LOGIN PAGE - DARK MODE ONLY */
+[data-theme="dark"] .page-login .loginModal {
+  background: #0f172a; /* fond plus sombre en dark mode */
+}
