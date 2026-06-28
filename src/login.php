@@ -35,7 +35,12 @@ include "components/header.php";
 
                 <div>
                     <label for="password">Password</label>
-                    <input type="password" id="password" required placeholder="••••••••" class="inputField">
+                    <div class="relative w-full">
+                        <input type="password" id="password" required placeholder="••••••••" class="inputField pr-10 w-full">
+                        <button type="button" id="toggle-password-btn" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-secondary transition focus:outline-none">
+                            <span class="material-icons" id="toggle-password-icon">visibility</span>
+                        </button>
+                    </div>
                 </div>
 
                 <button type="submit" id="submit-btn" class="btn">
@@ -55,6 +60,19 @@ include "components/header.php";
 </div>
 
 <script>
+const passwordInput = document.getElementById('password');
+const togglePasswordBtn = document.getElementById('toggle-password-btn');
+const togglePasswordIcon = document.getElementById('toggle-password-icon');
+
+togglePasswordBtn.addEventListener('click', function () {
+    // Permute le type de champ entre 'password' et 'text'
+    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+    passwordInput.setAttribute('type', type);
+    
+    // Alterne l'icône Material Icons de visibilité
+    togglePasswordIcon.textContent = type === 'password' ? 'visibility' : 'visibility_off';
+});
+
 document.getElementById('login-form').addEventListener('submit', function(e) {
     e.preventDefault();
 

@@ -95,7 +95,7 @@ $user = $stmt->fetch();
                     <div style="position: relative; display: flex; align-items: center;">
                         <input type="password" id="newPassword" required placeholder="••••••••" class="inputField" minlength="8" style="width: 100%; padding-right: 2.5rem;">
                         <button type="button" class="toggle-password-btn" onclick="togglePasswordVisibility('newPassword', this)" style="position: absolute; right: 10px; background: none; border: none; color: #9ca3af; cursor: pointer; display: flex; align-items: center;">
-                            <span class="material-icons">visibility_off</span>
+                            <span class="material-icons visibility">visibility_off</span>
                         </button>
                     </div>
                 </div>
@@ -105,7 +105,7 @@ $user = $stmt->fetch();
                     <div style="position: relative; display: flex; align-items: center;">
                         <input type="password" id="conformPassword" required placeholder="••••••••" class="inputField" minlength="8" style="width: 100%; padding-right: 2.5rem;">
                         <button type="button" class="toggle-password-btn" onclick="togglePasswordVisibility('conformPassword', this)" style="position: absolute; right: 10px; background: none; border: none; color: #9ca3af; cursor: pointer; display: flex; align-items: center;">
-                            <span class="material-icons">visibility_off</span>
+                            <span class="material-icons visibility">visibility_off</span>
                         </button>
                     </div>
                 </div>

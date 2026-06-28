@@ -1183,6 +1183,15 @@ button {
     color: rgba(255,255,255,.85);
 }
 
+.settings span.visibility {
+    color: var(--color-primary);
+}
+
+[data-theme="dark"] .settings span.visibility{
+  color: rgba(255,255,255,.85);
+}
+
+
 .profile-email,
 .profile-role {
     color: rgba(255,255,255,.65);
