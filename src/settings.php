@@ -12,14 +12,21 @@ $stmt->execute([$_SESSION['user_id']]);
 $user = $stmt->fetch();
 ?>
 
-<div style="padding: 1rem;">
+<div class="max-w-5xl mx-auto mt-10 page-settings">
     <div class="titleBoxAdmin">
-        <div>
-            <h1 class="titleText">Account Settings</h1>
-            <p class="subTitle">
-                Logged in as : <strong><?php echo htmlspecialchars($_SESSION['username'] ?? 'Admin', ENT_QUOTES, 'UTF-8'); ?> (<span class="uppercase"><?php echo htmlspecialchars($_SESSION['role'], ENT_QUOTES, 'UTF-8'); ?></span>)</strong>
-            </p>
-        </div>
+
+        <h1 class="bigTitle">
+            Account Settings
+        </h1>
+
+        <p class="subTitle">
+            Logged in as :
+            <strong>
+                <?= htmlspecialchars($_SESSION['username'] ?? 'Admin') ?>
+                (<span class="uppercase"><?= htmlspecialchars($_SESSION['role']) ?></span>)
+            </strong>
+        </p>
+
     </div>
 
     <div class="settings">

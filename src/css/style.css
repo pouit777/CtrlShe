@@ -480,15 +480,21 @@ input:checked + .slider #theme-icon {
 }
 
 .titleBoxAdmin {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1.5rem;
-  margin-bottom: 2rem;
-  background-color: var(--color-black);
-  border-radius: 12px;
-  box-shadow: var(--shadow-modal);
-  padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: .5rem;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    border-radius: 16px;
+    background: var(--color-primary-dark);
+    box-shadow: var(--shadow-modal);
+    text-align: center;
+}
+
+[data-theme="dark"] .titleBoxAdmin {
+    background: #0f172a;
 }
 
 .titleText{
@@ -499,17 +505,21 @@ input:checked + .slider #theme-icon {
 }
 
 .bigTitle{
-  font-size: clamp(1rem, 4vw, 2.5rem);
-  font-weight: 600;
-  color: var(--color-white);
-  text-align: center;
-  line-height: 1.1;
+    font-size: clamp(2rem, 4vw, 2.5rem);
+    font-weight: 600;
+    color: white;
+    margin: 0;
 }
 
 .subTitle{
-  color: grey;
-  max-width: 80%;
-  text-align: center;
+    margin: 0;
+    color: rgba(255,255,255,.85);
+    text-align: center;
+    max-width: 100%;
+}
+
+[data-theme="dark"] .subTitle{
+    color: rgba(255,255,255,.65);
 }
 
 .navbar {
@@ -1135,4 +1145,203 @@ button {
 
 [data-theme="dark"] .page-index .quizCard:hover {
   box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+
+/* SETTINGS PAGE  */
+
+/*  LIGHT MODE  */
+
+.settings .choices,
+.settings .settingPage {
+    background: var(--color-primary-dark);
+    color: var(--color-white);
+    box-shadow: var(--shadow-modal);
+}
+
+/* Menu gauche */
+
+.settings .choices button {
+    color: var(--color-white);
+    border-radius: 10px;
+}
+
+.settings .choices button:hover {
+    background: var(--color-primary);
+    color: var(--color-white);
+}
+
+.settings .choices li.active button {
+    background: var(--color-primary-light);
+    color: var(--color-primary-dark);
+    font-weight: 600;
+}
+
+.settings .choices li.active .material-icons {
+    color: var(--color-primary-dark);
+}
+
+.settings .choices li.active::after {
+    background: var(--color-primary);
+}
+
+/* Titres */
+
+.settings h1,
+.settings h2,
+.settings h3,
+.settings h4 {
+    color: var(--color-white);
+}
+
+/* Texte */
+
+.settings p,
+.settings span {
+    color: rgba(255,255,255,.85);
+}
+
+.profile-email,
+.profile-role {
+    color: rgba(255,255,255,.65);
+}
+
+/* Avatar */
+
+.avatar-section {
+    background: rgba(255,255,255,.05);
+    border-radius: 12px;
+}
+
+.avatar-item {
+    border: 3px solid transparent;
+    transition: .2s;
+}
+
+.avatar-item:hover {
+    border-color: var(--color-primary);
+}
+
+.avatar-selected {
+    border-color: var(--color-primary) !important;
+}
+
+/* Inputs */
+
+.settings .inputField {
+    background: var(--color-primary-light);
+    border: 1px solid var(--color-primary);
+    color: var(--color-text);
+}
+
+.settings .inputField::placeholder {
+    color: rgba(31,41,55,.65);
+}
+
+.settings .inputField:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 10px var(--color-primary);
+}
+
+/* Labels */
+
+.settings label {
+    color: rgba(255,255,255,.75);
+}
+
+/* Boutons */
+
+.settings .btn {
+    background: var(--color-primary);
+}
+
+.settings .btn:hover {
+    background: var(--color-primary-dark);
+}
+
+.settings .modal-btn .inputField {
+    background: transparent;
+    color: var(--color-white);
+    border: 1px solid rgba(255,255,255,.25);
+}
+
+.settings .modal-btn .inputField:hover {
+    background: rgba(255,255,255,.08);
+}
+
+/*  DARK MODE  */
+
+[data-theme="dark"] .settings .choices,
+[data-theme="dark"] .settings .settingPage {
+    background: #0f172a;
+}
+
+[data-theme="dark"] .settings .choices button {
+    color: var(--color-white);
+}
+
+[data-theme="dark"] .settings .choices button:hover {
+    background: #1e3a8a;
+}
+
+[data-theme="dark"] .settings .choices li.active button {
+    background: #1f2937;
+    color: var(--color-primary);
+}
+
+[data-theme="dark"] .settings .choices li.active .material-icons {
+    color: var(--color-primary);
+}
+
+[data-theme="dark"] .settings .choices li.active::after {
+    background: var(--color-primary);
+}
+
+[data-theme="dark"] .settings h1,
+[data-theme="dark"] .settings h2,
+[data-theme="dark"] .settings h3,
+[data-theme="dark"] .settings h4 {
+    color: var(--color-white);
+}
+
+[data-theme="dark"] .settings p,
+[data-theme="dark"] .settings span {
+    color: rgba(255,255,255,.75);
+}
+
+[data-theme="dark"] .profile-email,
+[data-theme="dark"] .profile-role {
+    color: rgba(255,255,255,.55);
+}
+
+[data-theme="dark"] .avatar-section {
+    background: rgba(255,255,255,.03);
+}
+
+[data-theme="dark"] .settings .inputField {
+    background: #1f2937;
+    border: 1px solid #374151;
+    color: var(--color-white);
+}
+
+[data-theme="dark"] .settings .inputField::placeholder {
+    color: rgba(255,255,255,.45);
+}
+
+[data-theme="dark"] .settings .inputField:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 10px var(--color-primary);
+}
+
+[data-theme="dark"] .settings label {
+    color: rgba(255,255,255,.65);
+}
+
+[data-theme="dark"] .settings .modal-btn .inputField {
+    border: 1px solid #374151;
+    color: var(--color-white);
+}
+
+[data-theme="dark"] .settings .modal-btn .inputField:hover {
+    background: rgba(255,255,255,.04);
 }
