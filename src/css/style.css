@@ -362,6 +362,13 @@ main {
     padding: 0.75rem 0;
     justify-content: flex-start;
   }
+
+  .nav-menu a.logout {
+    display: flex;
+    width: 100%;
+    padding: 0.75rem 0;
+    justify-content: flex-start;
+  }
 }
 
 @media (min-width: 1024px) {
