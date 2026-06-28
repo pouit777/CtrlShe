@@ -498,6 +498,14 @@ input:checked + .slider #theme-icon {
   text-align: center;
 }
 
+.bigTitle{
+  font-size: clamp(1rem, 4vw, 2.5rem);
+  font-weight: 600;
+  color: var(--color-white);
+  text-align: center;
+  line-height: 1.1;
+}
+
 .subTitle{
   color: grey;
   max-width: 80%;

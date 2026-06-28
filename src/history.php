@@ -12,7 +12,7 @@ require_once __DIR__ . '/components/header.php';
 
 <div class="page-index">
     <div class="titleBoxAdmin">
-        <h1 class="titleText">
+        <h1 class="bigTitle">
             Game History
         </h1>
         <p class="subTitle">

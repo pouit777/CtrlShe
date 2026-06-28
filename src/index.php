@@ -10,7 +10,7 @@ $categories = $pdo->query("SELECT * FROM categories ORDER BY label")->fetchAll(P
 <div class="page-index">
 
 <div class="titleBoxAdmin">
-    <h1 class="titleText">
+    <h1 class="bigTitle">
         brainSKwiz Quizzes
     </h1>
     <p class="subTitle">
