@@ -272,8 +272,10 @@ $user = $stmt->fetch();
         const newPassword = document.getElementById("newPassword").value;
         const conformPassword = document.getElementById("conformPassword").value;
 
-        if (newPassword.length < 8) {
-            showNotification('error', "Password must be at least 8 characters long.");
+        const passwordRegex = /^(?=.*[0-9])(?=.*[!@#$%^&*(),.?":{}|<>_\-+=]).{8,}$/;
+    
+        if (!passwordRegex.test(newPassword)) {
+            showNotification('error', "Password must be at least 8 characters long, contain a number and a special character.");
             return;
         }
 

@@ -34,17 +34,17 @@ include "components/header.php";
                 <input type="hidden" id="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
 
                 <div>
-                    <label for="username">Username</label>
-                    <input type="text" id="username" required placeholder="john_doe" class="inputField">
+                    <label for="username">Username (3 to 25 chars)</label>
+                    <input type="text" id="username" required minlength="3" maxlength="25" placeholder="john_doe" class="inputField">
                 </div>
 
                 <div>
                     <label for="email">Email Address</label>
-                    <input type="email" id="email" required placeholder="student@school.com" class="inputField">
+                    <input type="email" id="email" required maxlength="255" placeholder="student@school.com" class="inputField">
                 </div>
 
                 <div>
-                    <label for="password">Password</label>
+                    <label for="password">Password (Min 8 chars, 1 number, 1 special)</label>
                     <input type="password" id="password" required placeholder="••••••••" class="inputField">
                 </div>
 
@@ -69,14 +69,34 @@ include "components/header.php";
 document.getElementById('register-form').addEventListener('submit', function(e) {
     e.preventDefault();
 
-    const username = document.getElementById('username').value;
-    const email = document.getElementById('email').value;
+    const username = document.getElementById('username').value.trim();
+    const email = document.getElementById('email').value.trim();
     const password = document.getElementById('password').value;
     const csrfToken = document.getElementById('csrf_token').value;
 
     const errorDiv = document.getElementById('error-message');
     const successDiv = document.getElementById('success-message');
     const submitBtn = document.getElementById('submit-btn');
+
+    if (username.length < 3 || username.length > 25) {
+        errorDiv.textContent = "Username must be between 3 and 25 characters.";
+        errorDiv.classList.remove('hidden');
+        return;
+    }
+
+    if (email.length > 255) {
+        errorDiv.textContent = "Email is too long.";
+        errorDiv.classList.remove('hidden');
+        return;
+    }
+
+    // Regex : Au moins 8 caractères, 1 chiffre, 1 caractère spécial
+    const passwordRegex = /^(?=.*[0-9])(?=.*[!@#$%^&*(),.?":{}|<>_\-+=]).{8,}$/;
+    if (!passwordRegex.test(password)) {
+        errorDiv.textContent = "Password must be at least 8 characters long and contain at least one number and one special character.";
+        errorDiv.classList.remove('hidden');
+        return;
+    }
 
     errorDiv.classList.add('hidden');
     successDiv.classList.add('hidden');
