@@ -98,6 +98,10 @@ label {
   color: rgba(31, 41, 55, 0.75);
 }
 
+[data-theme="light"] label.inputLogin {
+  color: rgb(255, 255, 255);
+}
+
 
 /* =========================
    UTILITIES

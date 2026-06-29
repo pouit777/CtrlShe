@@ -34,17 +34,17 @@ include "components/header.php";
                 <input type="hidden" id="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
 
                 <div>
-                    <label for="username">Username (3 to 25 chars)</label>
+                    <label for="username" class="inputLogin">Username (3 to 25 chars)</label>
                     <input type="text" id="username" required minlength="3" maxlength="25" placeholder="john_doe" class="inputField">
                 </div>
 
                 <div>
-                    <label for="email">Email Address</label>
+                    <label for="email" class="inputLogin">Email Address</label>
                     <input type="email" id="email" required maxlength="255" placeholder="student@school.com" class="inputField">
                 </div>
 
                 <div>
-                    <label for="password">Password (Min 8 chars, 1 number, 1 special)</label>
+                    <label for="password" class="inputLogin">Password (Min 8 chars, 1 number, 1 special)</label>
                     <div class="relative w-full">
                         <input type="password" id="password" required placeholder="••••••••" class="inputField pr-10 w-full">
                         <button type="button" id="toggle-password-btn" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-secondary transition focus:outline-none">

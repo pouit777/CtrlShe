@@ -29,12 +29,12 @@ include "components/header.php";
                 <input type="hidden" id="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
 
                 <div>
-                    <label for="email">Email Address</label>
+                    <label for="email" class="inputLogin">Email Address</label>
                     <input type="email" id="email" required placeholder="student@school.com" class="inputField">
                 </div>
 
                 <div>
-                    <label for="password">Password</label>
+                    <label for="password" class="inputLogin">Password</label>
                     <div class="relative w-full">
                         <input type="password" id="password" required placeholder="••••••••" class="inputField pr-10 w-full">
                         <button type="button" id="toggle-password-btn" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-secondary transition focus:outline-none">
