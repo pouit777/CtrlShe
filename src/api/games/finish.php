@@ -8,6 +8,7 @@ $data = json_decode(file_get_contents("php://input"), true);
 
 $quizId = (int)($data["quiz_id"] ?? 0);
 $answers = $data["answers"] ?? [];
+$duration = (int)($data["duration"] ?? 0); // 🆕 AJOUT
 
 if ($quizId <= 0) {
     echo json_encode([
@@ -62,27 +63,29 @@ if (!$isGuest) {
 
     try {
 
-        /* Save game */
         $stmt = $pdo->prepare("
             INSERT INTO games (
                 user_id,
                 quiz_id,
                 score,
-                total_questions
+                total_questions,
+                duration,
+                points_earned
             )
-            VALUES (?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?)
         ");
 
         $stmt->execute([
             $_SESSION["user_id"],
             $quizId,
             $score,
-            count($questions)
+            count($questions),
+            $duration, // 🆕
+            $pointsEarned
         ]);
 
         $gameId = $pdo->lastInsertId();
 
-        /* Save answers */
         $stmtInsert = $pdo->prepare("
             INSERT INTO game_answers (
                 game_id,
@@ -104,7 +107,6 @@ if (!$isGuest) {
                 AND is_correct = 1
                 LIMIT 1
             ");
-
             $stmtC->execute([$qid]);
 
             $correct = $stmtC->fetchColumn();
@@ -117,7 +119,6 @@ if (!$isGuest) {
             ]);
         }
 
-        /* Add points */
         $stmt = $pdo->prepare("
             UPDATE users
             SET total_points = total_points + ?
@@ -132,7 +133,6 @@ if (!$isGuest) {
         $pdo->commit();
 
     } catch (Exception $e) {
-
         $pdo->rollBack();
 
         echo json_encode([

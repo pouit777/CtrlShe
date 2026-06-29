@@ -17,6 +17,9 @@ const elTimer = document.getElementById("timer");
 const elProgress = document.getElementById("progressBar");
 const elProgressText = document.getElementById("progressText");
 
+// 🆕 START TIME GLOBAL
+let startTime = Date.now();
+
 start();
 
 function start() {
@@ -49,35 +52,33 @@ function render() {
 function selectAnswer(answer, btn) {
 
     if (answersMap[questions[index].id]) return;
+
     clearInterval(timer);
     answersMap[questions[index].id] = answer.id;
 
     const buttons = elAnswers.querySelectorAll("button");
     buttons.forEach(b => b.disabled = true);
 
-    const correct = questions[index].answers.find(a => a.is_correct);
     if (answer.is_correct) {
-        btn.classList.remove("bg-gray-700");
         btn.classList.add("correct");
         score++;
         elScore.textContent = score;
 
     } else {
-        btn.classList.remove("bg-gray-700");
         btn.classList.add("wrong");
         buttons.forEach((b, i) => {
-
             if (questions[index].answers[i].is_correct) {
-                b.classList.remove("bg-gray-700");
                 b.classList.add("correct");
             }
         });
     }
+
     elNext.classList.remove("hidden");
 }
 
 elNext.addEventListener("click", async () => {
     if (finished) return;
+
     if (index === questions.length - 1) {
         finished = true;
         elNext.disabled = true;
@@ -85,6 +86,7 @@ elNext.addEventListener("click", async () => {
         await finish();
         return;
     }
+
     index++;
     render();
 });
@@ -92,12 +94,14 @@ elNext.addEventListener("click", async () => {
 function startTimer() {
     timeLeft = 15;
     elTimer.textContent = timeLeft;
+
     timer = setInterval(() => {
         timeLeft--;
         elTimer.textContent = timeLeft;
 
         if (timeLeft <= 0) {
             clearInterval(timer);
+
             if (index === questions.length - 1) {
                 finish();
             } else {
@@ -112,28 +116,24 @@ async function finish() {
 
     clearInterval(timer);
 
+    // 🆕 DURATION EN SECONDES
+    const duration = Math.floor((Date.now() - startTime) / 1000);
+
     try {
 
         const response = await fetch("/api/games/finish.php", {
-
             method: "POST",
-
             headers: {
                 "Content-Type": "application/json"
             },
-
             body: JSON.stringify({
-
                 quiz_id: quiz.id,
-                answers: answersMap
-
+                answers: answersMap,
+                duration: duration // 🆕
             })
-
         });
 
         const data = await response.json();
-
-        console.log(data);
 
         if (data.status !== "success") {
             alert(data.message || "Unable to finish the quiz.");
@@ -141,13 +141,10 @@ async function finish() {
         }
 
         if (data.guest) {
-
             localStorage.setItem("guest_result", JSON.stringify({
-
                 score: data.score,
                 total: data.total,
                 quiz_id: quiz.id
-
             }));
 
             window.location.href = "/result.php?guest=1&quiz=" + quiz.id;
@@ -157,10 +154,7 @@ async function finish() {
         window.location.href = "/result.php?game=" + data.game_id;
 
     } catch (e) {
-
         console.error(e);
         alert("Server error.");
-
     }
-
 }

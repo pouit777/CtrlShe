@@ -1,20 +1,38 @@
 <?php
 session_start();
-header('Content-Type: application/json');
+header('Content-Type: application/json; charset=utf-8');
 
 require_once __DIR__ . '/../../config/db.php';
+
+if (!isset($_SESSION['user_id'])) {
+    echo json_encode([
+        "best_time" => 0,
+        "avg_time" => 0,
+        "avg_time_per_question" => 0,
+        "best_score" => 0
+    ]);
+    exit;
+}
 
 $userId = $_SESSION['user_id'];
 
 $stmt = $pdo->prepare("
-SELECT
-    MIN(score_users.user_time) AS best_time,
-    MAX(score_users.user_score) AS best_score,
-    ROUND(AVG(score_users.user_time),2) AS avg_time,
-    ROUND(AVG(score_users.user_score / q.question_count) * 100,2) AS success_rate
-FROM score_users
-JOIN quizzes q ON q.id = score_users.quiz_id
-WHERE score_users.user_id = ?
+    SELECT 
+        COALESCE(MIN(NULLIF(duration, 0)), 0) AS best_time,
+        COALESCE(ROUND(AVG(NULLIF(duration, 0)), 2), 0) AS avg_time,
+        COALESCE(
+            ROUND(
+                SUM(NULLIF(duration, 0)) / NULLIF(SUM(total_questions), 0),
+                2
+            ),
+            0
+        ) AS avg_time_per_question,
+        COALESCE(
+            ROUND(MAX((score * 100.0) / NULLIF(total_questions, 0)), 2),
+            0
+        ) AS best_score
+    FROM games
+    WHERE user_id = ?
 ");
 
 $stmt->execute([$userId]);
