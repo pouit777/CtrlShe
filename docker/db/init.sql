@@ -320,4 +320,4 @@ INSERT INTO quiz_questions (quiz_id, question_id) VALUES
 ON DUPLICATE KEY UPDATE quiz_id=VALUES(quiz_id);
 
 INSERT INTO score_users (quiz_id, user_id, user_time, user_score) VALUES
-(1, 4, 9, 3)
+(2, 2, 9, 3)

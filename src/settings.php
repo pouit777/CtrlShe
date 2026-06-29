@@ -117,11 +117,37 @@ $user = $stmt->fetch();
             </form>
         </div>
 
-        <div id="statUser" class="settingPage md:col-span-7 hidden">
-            <h3>Best time : </h3><h3 id="valueTime"></h3>
-            <h3>Best score : </h3><h3 id="valueScore"></h3>
-            <h3>Average response time : </h3><h3 id="valueResponseTime"></h3>
-            <h3>Rate of correct answers : </h3><h3 id="valueResponses"></h3>
+        <div id="statUser" class="settingPage hidden md:col-span-7">
+
+            <h2 class="stats-title">My Statistics</h2>
+            <div class="stats-grid">
+
+                <div class="stat-card">
+                    <span class="material-icons stat-icon">timer</span>
+                    <p class="stat-label">Best time</p>
+                    <h2 id="valueTime">--</h2>
+                </div>
+
+                <div class="stat-card">
+                    <span class="material-icons stat-icon">emoji_events</span>
+                    <p class="stat-label">Best score</p>
+                    <h2 id="valueScore">--</h2>
+                </div>
+
+                <div class="stat-card">
+                    <span class="material-icons stat-icon">schedule</span>
+                    <p class="stat-label">Average response time</p>
+                    <h2 id="valueResponseTime">--</h2>
+                </div>
+
+                <div class="stat-card">
+                    <span class="material-icons stat-icon">check_circle</span>
+                    <p class="stat-label">Correct answers</p>
+                    <h2 id="valueResponses">--</h2>
+                </div>
+
+            </div>
+
         </div>
     </div>
 </div>
@@ -141,6 +167,7 @@ $user = $stmt->fetch();
     async function loadStats() {
         const response = await fetch("/api/stats/get_stats.php");
         const stats = await response.json();
+        console.log(stats)
 
         document.getElementById("valueTime").textContent = stats.best_time ?? "-";
 

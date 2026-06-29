@@ -1086,8 +1086,62 @@ td .flex {
   box-shadow: var(--shadow-modal);
 }
 
-#statUser{
-  color: var(--color-white)
+.stats-title{
+  color: var(--color-white);
+  margin-bottom:1rem;
+  font-size:2rem;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+
+  width: 100%;
+  margin-top: 10px;
+}
+
+.stat-card{
+  background:var(--color-black);
+  border-radius:12px;
+  padding:1rem;
+  text-align:center;
+  transition:.25s;
+  box-shadow: var(--shadow-modal)
+}
+
+.stat-card:hover{
+  transform:translateY(-6px);
+  border-color:var(--color-primary);
+}
+
+.stat-icon{
+  font-size:42px;
+  color:var(--color-primary);
+  margin-bottom:10px;
+}
+
+.stat-label{
+  color:#9ca3af;
+  font-size:.95rem;
+  margin-bottom:15px;
+}
+
+.stat-card h2{
+  color:var(--color-white);
+  font-size:2.2rem;
+  margin:0;
+  font-weight:700;
+}
+
+.stats-header {
+  margin-left: 0;
+  padding-left: 0;
+}
+
+.stats-header h1 {
+  font-size: 2rem;
+  margin: 0;
 }
 
 .choices {
