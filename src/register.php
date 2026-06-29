@@ -4,13 +4,13 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Redirect authenticated users away
+// Pre-Authentication Boundary Guard: Shield routing profiles from active authenticated users
 if (isset($_SESSION['user_id'])) {
     header('Location: /index.php');
     exit;
 }
 
-// CSRF token
+// Generate unique cryptographic anti-CSRF security verification parameters
 if (empty($_SESSION['csrf_token'])) {
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 }
@@ -71,7 +71,7 @@ include "components/header.php";
 </div>
 
 <script>
-// Gestion de l'affichage / masquage du mot de passe
+// Interactive component settings managing explicit password component toggling paths
 const passwordInput = document.getElementById('password');
 const togglePasswordBtn = document.getElementById('toggle-password-btn');
 const togglePasswordIcon = document.getElementById('toggle-password-icon');
@@ -82,6 +82,7 @@ togglePasswordBtn.addEventListener('click', function () {
     togglePasswordIcon.textContent = type === 'password' ? 'visibility' : 'visibility_off';
 });
 
+// Capture registration application flows and execute frontend validation filters
 document.getElementById('register-form').addEventListener('submit', function(e) {
     e.preventDefault();
 
@@ -94,19 +95,21 @@ document.getElementById('register-form').addEventListener('submit', function(e) 
     const successDiv = document.getElementById('success-message');
     const submitBtn = document.getElementById('submit-btn');
 
+    // 1. Client-Side Multibyte length safety confirmation checkpoints
     if (username.length < 3 || username.length > 25) {
         errorDiv.textContent = "Username must be between 3 and 25 characters.";
         errorDiv.classList.remove('hidden');
         return;
     }
 
+    // 2. Strict system metadata length safety bounding parameter validation
     if (email.length > 255) {
         errorDiv.textContent = "Email is too long.";
         errorDiv.classList.remove('hidden');
         return;
     }
 
-    // Regex : Au moins 8 caractères, 1 chiffre, 1 caractère spécial
+    // 3. Client-Side Password Entropy Rule Check (Min 8 chars, 1 digit, 1 special symbol required)
     const passwordRegex = /^(?=.*[0-9])(?=.*[!@#$%^&*(),.?":{}|<>_\-+=]).{8,}$/;
     if (!passwordRegex.test(password)) {
         errorDiv.textContent = "Password must be at least 8 characters long and contain at least one number and one special character.";
@@ -114,12 +117,15 @@ document.getElementById('register-form').addEventListener('submit', function(e) 
         return;
     }
 
+    // Clear dynamic informational container element states before pipeline execution
     errorDiv.classList.add('hidden');
     successDiv.classList.add('hidden');
 
+    // Lock operational interfaces down against repetitive submissions exploits
     submitBtn.disabled = true;
     submitBtn.innerText = "Creating account...";
 
+    // Initiate backend API operations using structural JSON payloads via fetch
     fetch('/api/account/register_process.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -134,6 +140,7 @@ document.getElementById('register-form').addEventListener('submit', function(e) 
             successDiv.textContent = "Account created successfully!";
             successDiv.classList.remove('hidden');
 
+            // Delay user routing loop slightly to present confirmation validation notifications
             setTimeout(() => {
                 window.location.href = '/index.php';
             }, 1500);
