@@ -24,6 +24,11 @@ try {
     $stmt = $pdo->prepare("DELETE FROM categories WHERE id = :id");
     $success = $stmt->execute(['id' => $id]);
 
+    /**
+     * COMPLEX LOGIC EXPLANATION:
+     * $stmt->rowCount() explicitly checks how many rows were modified/removed by the query.
+     * This distinguishes between a successful query statement and a case where the record ID simply does not exist.
+     */
     if ($success && $stmt->rowCount() > 0) {
         echo json_encode(['status' => 'success', 'message' => 'Category deleted successfully.']);
     } else {

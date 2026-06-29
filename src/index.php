@@ -71,10 +71,10 @@ function loadQuizzes() {
 
                 quizGrid.innerHTML += `
                     <div class="quizCard">
-                        <h2 class="titleText mb-2">${q.name}</h2>
-                        <p class="subTitle">${q.description ?? ''}</p>
+                        <h2 class="titleCard mb-2">${q.name}</h2>
+                        <p class="midTitle">${q.description ?? ''}</p>
 
-                        <div class="text-xs text-gray-500 m-auto mt-3">
+                        <div class="text-sm text-gray-100 m-auto mt-3">
                             <span class="${diffColor} uppercase">${q.difficulty}</span> • ${q.question_count ?? '∞'}
                         </div>
 

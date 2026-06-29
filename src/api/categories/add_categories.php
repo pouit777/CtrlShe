@@ -15,11 +15,11 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
 // Link DB 
 require_once __DIR__ . '/../../config/db.php';
 
-// JSON Payload recuperation
+// Capture and process structural payload data from incoming JSON stream
 $input = json_decode(file_get_contents('php://input'), true);
 $label = isset($input['label']) ? trim($input['label']) : '';
 
-// Validation
+// Structural emptiness restriction rule validation
 if (empty($label)) {
     echo json_encode([
         'status' => 'error',
@@ -29,13 +29,14 @@ if (empty($label)) {
 }
 
 try {
+    // Utilize named parameters (:label) to safely run prepared parameterized updates against SQL injections
     $stmt = $pdo->prepare("INSERT INTO categories (label) VALUES (:label)");
     $stmt->execute(['label' => $label]);
 
     echo json_encode([
         'status' => 'success',
         'message' => 'Category successfully created!',
-        'id' => $pdo->lastInsertId()
+        'id' => $pdo->lastInsertId() // Fetch auto-incremented record identifier from current connection context
     ]);
 } catch (\PDOException $e) {
     echo json_encode([

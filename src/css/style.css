@@ -103,8 +103,12 @@ label {
   color: rgb(255, 255, 255);
 }
 
-.skTitle{
-  color:var(--color-warning)
+[data-theme="light"] .skTitle {
+  color:var(--color-warning);
+}
+
+[data-theme="dark"] .skTitle {
+  color:var(--color-primary);
 }
 
 
@@ -683,7 +687,7 @@ input:checked + .slider #theme-icon {
 }
 
 .titleCard {
-  font-size: clamp(1rem, 2vw, 1.5rem);
+  font-size: clamp(1rem, 2vw, 1.4rem);
   font-weight: 600;
   color: var(--color-white);
   text-align: center;
@@ -702,6 +706,19 @@ input:checked + .slider #theme-icon {
   color: rgba(255, 255, 255, .85);
   text-align: center;
   max-width: 100%;
+}
+
+.midTitle {
+  font-size: clamp(1rem, 2vw, 1.1rem);
+  color: white;
+  margin: 0;
+}
+
+.bigTitle {
+  font-size: clamp(2rem, 4vw, 2.5rem);
+  font-weight: 600;
+  color: white;
+  margin: 0;
 }
 
 [data-theme="dark"] .subTitle {
@@ -1446,8 +1463,9 @@ td .flex {
   color: var(--color-white);
 }
 
-.page-index .quizCard .subTitle {
+.page-index .quizCard .midTitle {
   color: rgba(255, 255, 255, 0.75);
+  text-align: center;
 }
 
 .page-index .quizCard:hover {
@@ -1501,6 +1519,19 @@ td .flex {
 /* =========================
    QUIZ / CATEGORIES
 ========================= */
+
+#questionText{
+  max-width: 35rem;
+}
+
+@media (min-width: 768px) {
+
+  #questionText{
+    width: 35rem;
+  }
+
+}
+
 
 .answer-row {
   display: flex;

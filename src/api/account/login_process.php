@@ -25,7 +25,7 @@ if (empty($email) || empty($password)) {
 }
 
 try {
-    // Query parameters explicitly matching provided structures
+    // Query parameters explicitly matching provided structures using prepared statements
     $stmt = $pdo->prepare('SELECT * FROM users WHERE email = :email');
     $stmt->execute(['email' => $email]);
     $userAccount = $stmt->fetch();
@@ -33,7 +33,7 @@ try {
     // SECURITY REQUISITE: Enforcing secure algorithmic runtime checks (No string matches)
     if ($userAccount && password_verify($password, $userAccount['password'])) {
         
-        // Generate new session ID state to completely prevent fixation exposures
+        // Generate new session ID state to completely prevent session fixation exposures
         session_regenerate_id(true);
         
         // Establish state bindings for the active user context
@@ -49,7 +49,7 @@ try {
             'message' => 'Login successful!'
         ]);
     } else {
-        // Generic failure feedback boundary mapping (Does not disclose if email or password was wrong)
+        // Generic failure feedback boundary mapping (Does not disclose whether email or password was incorrect)
         echo json_encode(['status' => 'error', 'message' => 'Invalid email or password.']);
     }
 

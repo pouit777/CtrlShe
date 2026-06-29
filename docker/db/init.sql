@@ -208,60 +208,81 @@ ON DUPLICATE KEY UPDATE question_text=VALUES(question_text);
 
 -- 4. Seed answers / choices for every single question
 INSERT INTO answers (id, question_id, answer_text, is_correct) VALUES 
+-- Cat 1: Web
 (1, 1, 'Cascading Style Sheets', 1), (2, 1, 'Creative Style System', 0),
 (3, 2, 'HTTP', 0), (4, 2, 'HTTPS', 1),
 (5, 3, 'PHP', 0), (6, 3, 'JavaScript', 1),
 (7, 4, 'Hypertext Transfer Protocol', 1), (8, 4, 'High Tech Text Protocol', 0),
-(9, 5, '<video>', 1), (10, 5, '<media>', 0),
-(11, 6, 'Apple', 1), (12, 6, 'Microsoft', 0),
+(9, 5, '<media>', 0), (10, 5, '<video>', 1),
+
+-- Cat 2: General Knowledge
+(11, 6, 'Microsoft', 0), (12, 6, 'Apple', 1),
 (13, 7, 'Euro', 1), (14, 7, 'Dollar', 0),
-(15, 8, 'India', 1), (16, 8, 'Egypt', 0),
+(15, 8, 'Egypt', 0), (16, 8, 'India', 1),
 (17, 9, '366', 1), (18, 9, '365', 0),
-(19, 10, 'Mandarin Chinese', 1), (20, 10, 'English', 0),
+(19, 10, 'English', 0), (20, 10, 'Mandarin Chinese', 1),
+
+-- Cat 3: Sciences & Astronomy
 (21, 11, '300,000 km/s', 1), (22, 11, '150,000 km/s', 0),
 (23, 12, 'Mars', 0), (24, 12, 'Saturn', 1),
-(25, 13, 'Oxygen', 0), (26, 13, 'Nitrogen', 1),
-(27, 14, 'H2O', 1), (28, 14, 'CO2', 0),
+(25, 13, 'Nitrogen', 1), (26, 13, 'Oxygen', 0),
+(27, 14, 'CO2', 0), (28, 14, 'H2O', 1),
 (29, 15, 'Heart', 1), (30, 15, 'Lungs', 0),
-(31, 16, '1789', 1), (32, 16, '1799', 0),
+
+-- Cat 4: History & Geo
+(31, 16, '1799', 0), (32, 16, '1789', 1),
 (33, 17, 'Sydney', 0), (34, 17, 'Canberra', 1),
-(35, 18, 'Amazon River', 0), (36, 18, 'Nile River', 1),
-(37, 19, 'France', 1), (38, 19, 'United Kingdom', 0),
+(35, 18, 'Nile River', 1), (36, 18, 'Amazon River', 0),
+(37, 19, 'United Kingdom', 0), (38, 19, 'France', 1),
 (39, 20, 'Vatican City', 1), (40, 20, 'Monaco', 0),
+
+-- Cat 5: Pop Culture & Gaming
 (41, 21, 'Sony', 0), (42, 21, 'Nintendo', 1),
-(43, 22, 'Minecraft', 1), (44, 22, 'Roblox', 0),
+(43, 22, 'Roblox', 0), (44, 22, 'Minecraft', 1),
 (45, 23, '4', 1), (46, 23, '3', 0),
-(47, 24, 'Azeroth', 1), (48, 24, 'Pandaria', 0),
+(47, 24, 'Pandaria', 0), (48, 24, 'Azeroth', 1),
 (49, 25, 'PlayStation 2', 1), (50, 25, 'Nintendo Wii', 0),
+
+-- Cat 6: Movies & TV Shows
 (51, 26, 'Steven Spielberg', 0), (52, 26, 'Christopher Nolan', 1),
-(53, 27, 'Avatar', 1), (54, 27, 'Avengers: Endgame', 0),
+(53, 27, 'Avengers: Endgame', 0), (54, 27, 'Avatar', 1),
 (55, 28, '11', 1), (56, 28, '8', 0),
-(57, 29, 'Westeros', 1), (58, 29, 'Essos', 0),
+(57, 29, 'Essos', 0), (58, 29, 'Westeros', 1),
 (59, 30, 'Hugh Jackman', 1), (60, 30, 'Robert Downey Jr.', 0),
-(61, 31, '11', 1), (62, 31, '9', 0),
+
+-- Cat 7: Sports
+(61, 31, '9', 0), (62, 31, '11', 1),
 (63, 32, '4 years', 1), (64, 32, '2 years', 0),
-(65, 33, 'Love', 1), (66, 33, 'Zero', 0),
+(65, 33, 'Zero', 0), (66, 33, 'Love', 1),
 (67, 34, 'Brazil', 1), (68, 34, 'Germany', 0),
-(69, 35, '2 points', 1), (70, 35, '3 points', 0),
-(71, 36, 'Leonardo da Vinci', 1), (72, 36, 'Vincent van Gogh', 0),
+(69, 35, '3 points', 0), (70, 35, '2 points', 1),
+
+-- Cat 8: Music & Arts
+(71, 36, 'Vincent van Gogh', 0), (72, 36, 'Leonardo da Vinci', 1),
 (73, 37, '4 strings', 1), (74, 37, '6 strings', 0),
-(75, 38, 'Michael Jackson', 1), (76, 38, 'Elvis Presley', 0),
+(75, 38, 'Elvis Presley', 0), (76, 38, 'Michael Jackson', 1),
 (77, 39, 'Piano', 1), (78, 39, 'Harp', 0),
-(79, 40, 'Ludwig van Beethoven', 1), (80, 40, 'Wolfgang Amadeus Mozart', 0),
+(79, 40, 'Wolfgang Amadeus Mozart', 0), (80, 40, 'Ludwig van Beethoven', 1),
+
+-- Cat 9: Literature & Myths
 (81, 41, 'William Shakespeare', 1), (82, 41, 'Charles Dickens', 0),
-(83, 42, 'Zeus', 1), (84, 42, 'Hades', 0),
-(85, 43, 'Sherlock Holmes', 1), (86, 43, 'Hercule Poirot', 0),
+(83, 42, 'Hades', 0), (84, 42, 'Zeus', 1),
+(85, 43, 'Hercule Poirot', 0), (86, 43, 'Sherlock Holmes', 1),
 (87, 44, 'Albus Dumbledore', 1), (88, 44, 'Severus Snape', 0),
-(89, 45, 'Mjolnir', 1), (90, 45, 'Gungnir', 0),
-(91, 46, 'Blue Whale', 1), (92, 46, 'African Elephant', 0),
+(89, 45, 'Gungnir', 0), (90, 45, 'Mjolnir', 1),
+
+-- Cat 10: Nature & Animals
+(91, 46, 'African Elephant', 0), (92, 46, 'Blue Whale', 1),
 (93, 47, 'Lion', 1), (94, 47, 'Tiger', 0),
-(95, 48, '3', 1), (96, 48, '1', 0),
+(95, 48, '1', 0), (96, 48, '3', 1),
 (97, 49, 'Hummingbird', 1), (98, 49, 'Eagle', 0),
-(99, 50, 'Bat', 1), (100, 50, 'Flying Squirrel', 0),
-(101, 51, 'Tokyo', 1), (102, 51, 'Kyoto', 0),
+(99, 50, 'Flying Squirrel', 0), (100, 50, 'Bat', 1),
+
+-- Bulk Expansion
+(101, 51, 'Kyoto', 0), (102, 51, 'Tokyo', 1),
 (103, 52, 'Mercury', 1), (104, 52, 'Venus', 0),
-(105, 53, 'Nectar', 1), (106, 53, 'Pollen', 0),
-(107, 54, '3', 1), (108, 54, '5', 0),
+(105, 53, 'Pollen', 0), (106, 53, 'Nectar', 1),
+(107, 54, '5', 0), (108, 54, '3', 1),
 (109, 55, 'Titanic', 1), (110, 55, 'Lusitania', 0)
 ON DUPLICATE KEY UPDATE answer_text=VALUES(answer_text);
 
