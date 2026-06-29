@@ -12,16 +12,16 @@ $stmt->execute([$_SESSION['user_id']]);
 $user = $stmt->fetch();
 ?>
 
-<div class="max-w-5xl mx-auto mt-10 page-settings">
+<div class="page-container page-settings">
 
     <div class="titleBoxAdmin">
         <h1 class="bigTitle">Account Settings</h1>
     </div>
 
-    <div class="settings grid grid-cols-1 md:grid-cols-10 gap-4 items-start">
+    <div class="settings">
 
         <!-- MENU -->
-        <div class="choices md:col-span-3">
+        <div class="choices">
             <ul>
                 <li id="profileSettingBtn" class="active">
                     <button onclick="setActive('profileSetting')">Profile<span class="material-icons">person</span></button>
@@ -36,7 +36,7 @@ $user = $stmt->fetch();
         </div>
 
         <!-- PROFILE -->
-        <div id="profileSetting" class="settingPage activeWindow md:col-span-7">
+        <div id="profileSetting" class="settingPage activeWindow">
             <h1 class="textWhite">My Profile</h1>
 
             <div class="profile-header">
@@ -83,7 +83,7 @@ $user = $stmt->fetch();
         </div>
 
         <!-- PASSWORD -->
-        <div id="passwordSetting" class="settingPage hidden md:col-span-7">
+        <div id="passwordSetting" class="settingPage hidden">
 
             <div class="titleText modal-header">
                 <h3>Change password</h3>
@@ -122,11 +122,11 @@ $user = $stmt->fetch();
         </div>
 
         <!-- STATS -->
-        <div id="statUser" class="settingPage hidden md:col-span-7">
+        <div id="statUser" class="settingPage hidden">
 
             <h2 class="bigTitle text-white mb-4">My Statistics</h2>
 
-            <div class="stats-grid grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="stats-grid">
 
                 <!-- BEST TIME -->
                 <div class="stat-card">
