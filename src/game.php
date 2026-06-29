@@ -24,7 +24,7 @@ $stmt->execute([$quiz_id]);
 $quiz = $stmt->fetch();
 
 if (!$quiz) {
-    die("Quiz introuvable");
+    die("Quiz not found");
 }
 
 /* Questions : Fetch Questions bounded to the active Quiz relational map */
