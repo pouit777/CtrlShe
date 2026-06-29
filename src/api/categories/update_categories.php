@@ -3,7 +3,7 @@
 session_start();
 header('Content-Type: application/json');
 
-// Protection
+// Check active session bounds for admin status clearance
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     echo json_encode(['status' => 'error', 'message' => 'Unauthorized access.']);
     exit;
@@ -17,13 +17,14 @@ $input = json_decode(file_get_contents('php://input'), true);
 $id = isset($input['id']) ? intval($input['id']) : 0;
 $label = isset($input['label']) ? trim($input['label']) : '';
 
-// Validation
+// Combined condition validation parameters (ensure non-empty fields and positive ID constraints)
 if ($id <= 0 || empty($label)) {
     echo json_encode(['status' => 'error', 'message' => 'Invalid or incomplete input data.']);
     exit;
 }
 
 try {
+    // Bind updates securely to isolate inputs safely away from the logical SQL framework execution
     $stmt = $pdo->prepare("UPDATE categories SET label = :label WHERE id = :id");
     $stmt->execute([
         'label' => $label,
