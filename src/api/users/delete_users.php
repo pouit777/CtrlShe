@@ -1,7 +1,7 @@
 <?php
+// src/api/users/delete_users.php
 header('Content-Type: application/json');
 
-// Admin verification
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -20,7 +20,7 @@ if (empty($data['id'])) {
     exit;
 }
 
-// Bycrypt securisation password
+// Anti-Self-Deletion Safe-Lock rule: Blocks active administrators from locking themselves out
 if (intval($data['id']) === intval($_SESSION['user_id'] ?? 0)) {
     echo json_encode(['status' => 'error', 'message' => 'You cannot delete your own admin account.']);
     exit;

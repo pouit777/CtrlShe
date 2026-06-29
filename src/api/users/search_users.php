@@ -9,17 +9,15 @@ try {
     $search = isset($_GET['search']) ? trim($_GET['search']) : '';
     $role = isset($_GET['role']) ? trim($_GET['role']) : '';
 
-    // Structure de base de la requête
     $sql = "SELECT id, username, email, role, created_at FROM users WHERE 1=1";
     $params = [];
 
-    // Filtre dynamique par rôle (admin / user)
     if (!empty($role)) {
         $sql .= " AND role = :role";
         $params['role'] = $role;
     }
 
-    // Filtre dynamique textuel sur le nom d'utilisateur OU l'adresse email
+    // Dynamic pattern mapping execution searching against user handle OR structural email fragments
     if (!empty($search)) {
         $sql .= " AND (username LIKE :search OR email LIKE :search)";
         $params['search'] = "%" . $search . "%";
