@@ -117,11 +117,12 @@ INSERT INTO categories (id, label) VALUES
 (10, 'Nature & Animals')
 ON DUPLICATE KEY UPDATE label = VALUES(label);
 
--- 2. Test Accounts (password: admin123 hashed using PASSWORD_BCRYPT)
+-- 2. Test Accounts (password hashed using PASSWORD_BCRYPT)
 INSERT INTO users (id, username, email, password, role, avatar) VALUES 
 (1, 'Admin', 'admin@quiz.fr', '$2y$10$K9R7MrgYvPcdQdAsLdP1fuAFMVhTvVui5JHa8hg/BfB4fyjtmFX5m', 'admin', 'racoon.png'),
 (2, 'student', 'student@school.com', '$2y$10$K9R7MrgYvPcdQdAsLdP1fuAFMVhTvVui5JHa8hg/BfB4fyjtmFX5m', 'user', 'bee.png'),
-(3, 'player_one', 'player1@gmail.com', '$2y$10$K9R7MrgYvPcdQdAsLdP1fuAFMVhTvVui5JHa8hg/BfB4fyjtmFX5m', 'user', 'monkey.png')
+(3, 'pouit', 'pouit@gmail.com', '$2y$10$K9R7MrgYvPcdQdAsLdP1fuAFMVhTvVui5JHa8hg/BfB4fyjtmFX5m', 'user', 'rabbit.png'),
+(4, 'Barnabe', 'barnabe-incredible@gmail.com', '$2y$10$K9R7MrgYvPcdQdAsLdP1fuAFMVhTvVui5JHa8hg/BfB4fyjtmFX5m', 'user', 'pink_flamingo.png')
 ON DUPLICATE KEY UPDATE username=VALUES(username);
 
 -- 3. Seed extensive list of questions across all 10 categories (35 questions)
@@ -274,7 +275,7 @@ INSERT INTO answers (id, question_id, answer_text, is_correct) VALUES
 (109, 55, 'Titanic', 1), (110, 55, 'Lusitania', 0)
 ON DUPLICATE KEY UPDATE answer_text=VALUES(answer_text);
 
--- 5. Seed EXACTLY 10 Quiz configurations with custom sizes (3, 5, 10, 20 questions)
+-- 5. Seed 10 Quiz configurations with custom sizes (3, 5, 10, 20 questions)
 INSERT INTO quizzes (id, name, description, difficulty, question_count, is_active) VALUES 
 (1, 'Quick Web Check', 'A quick test on modern web definitions.', 'easy', 3, 1),
 (2, 'Classic Myths & Lore', 'Greek, Roman and British literature milestones.', 'medium', 3, 1),
@@ -312,18 +313,29 @@ INSERT INTO quiz_questions (quiz_id, question_id) VALUES
 (7, 11), (7, 12), (7, 13), (7, 14), (7, 15),
 -- Quiz 8 : 5 Questions (History/Geo)
 (8, 16), (8, 17), (8, 18), (8, 19), (8, 20),
-
--- $quizId = $pdo->lastInsertId();
-
--- Link quiz → categories
--- INSERT INTO quiz_categories (quiz_id, category_id)
--- VALUES (?, ?);
 -- Quiz 9 : 10 Questions (Gaming + Extra Web)
 (9, 21), (9, 22), (9, 23), (9, 24), (9, 25), (9, 1), (9, 2), (9, 3), (9, 4), (9, 5),
-
 -- Quiz 10 : 20 Questions Marathon (Cross-categories bulk)
 (10, 6), (10, 7), (10, 8), (10, 9), (10, 10), 
 (10, 51), (10, 52), (10, 53), (10, 54), (10, 55),
 (10, 11), (10, 16), (10, 21), (10, 26), (10, 31),
 (10, 36), (10, 41), (10, 46), (10, 12), (10, 17)
 ON DUPLICATE KEY UPDATE quiz_id=VALUES(quiz_id);
+
+-- 8. History and Leaderboard
+INSERT INTO games (user_id, quiz_id, score, points_earned, total_questions, duration) VALUES
+-- Admin (Total: 7 points, Best Score: 4, Best Time: 1 second)
+(1, 1, 3, 3, 3, 2),       -- score = 3 (correct answers), points_earned = 3, duration = 2
+(1, 4, 4, 4, 5, 1),       -- score = 4 (correct answers), points_earned = 4, duration = 1
+
+-- student (Total: 7 points, Best Score: 4, Best Time: 2 seconds)
+(2, 1, 2, 3, 3, 2),       -- score = 2 (correct answers), points_earned = 3, duration = 2
+(2, 4, 1, 4, 5, 2),       -- score = 1 (correct answer), points_earned = 4, duration = 2
+
+-- pouit (Total: 15 points, Best Score: 10, Best Time: 2 seconds)
+(3, 2, 2, 10, 3, 2),       -- score = 2 (correct answers), points_earned = 10, duration = 2
+(3, 10, 1, 5, 5, 2),       -- score = 1 (correct answer), points_earned = 5, duration = 2
+
+-- Barnabe (Total: 8888 points, Best Score: 5000, Best Time: 8 seconds)
+(4, 10, 20, 5000, 20, 8),  -- score = 20/20 (perfect score!), points_earned = 5000 (legendary bonus), duration = 8
+(4, 9, 10, 3888, 10, 72);  -- score = 10/10 (perfect score!), points_earned = 3888 (lucky score), duration = 72

@@ -2,6 +2,14 @@
 session_start();
 header('Content-Type: application/json');
 
+If (!isset($_SESSION['user_id'])) {
+    http_response_code(401);
+    echo json_encode([
+        'status' => 'error',
+        'message' => 'Unauthorized access'
+    ]);
+    exit;
+}
 require_once __DIR__ . '/../../config/db.php';
 
 try {
@@ -11,7 +19,7 @@ try {
             u.id,
             u.username,
             u.avatar,
-            SUM(g.score) AS total_points,
+            SUM(g.points_earned) AS total_points,
             COUNT(g.id) AS games_played
         FROM users u
         LEFT JOIN games g ON g.user_id = u.id

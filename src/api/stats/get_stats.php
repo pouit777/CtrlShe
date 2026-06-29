@@ -9,7 +9,8 @@ if (!isset($_SESSION['user_id'])) {
         "best_time" => 0,
         "avg_time" => 0,
         "avg_time_per_question" => 0,
-        "best_score" => 0
+        "best_score" => 0,
+        "total_score" => 0
     ]);
     exit;
 }
@@ -29,10 +30,8 @@ $stmt = $pdo->prepare("
             ),
             0
         ) AS avg_time_per_question,
-        COALESCE(
-            ROUND(MAX((score * 100.0) / NULLIF(total_questions, 0)), 2),
-            0
-        ) AS best_score
+        COALESCE(MAX(points_earned), 0) AS best_score,
+        COALESCE(SUM(points_earned), 0) AS total_score
     FROM games
     WHERE user_id = ?
 ");

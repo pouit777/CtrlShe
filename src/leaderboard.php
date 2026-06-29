@@ -18,6 +18,14 @@ require_once __DIR__ . '/components/header.php';
         loadLeaderboard();
     });
 
+    function escapeHTML(str) {
+        if (!str) return '';
+        return str.replace(/[&<>"']/g, function(match) {
+            const chars = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+            return chars[match];
+        });
+    }
+
     async function loadLeaderboard(){
         const res = await fetch("/api/leaderboard/get_leaderboard.php", {
             credentials: "include"
@@ -37,7 +45,6 @@ require_once __DIR__ . '/components/header.php';
         leaderboard.innerHTML = "";
         players.forEach((player, index) => {
             const isMe = player.id == currentUser;
-            console.log(currentUser)
 
             let icon = index + 1;
             let className = "";
@@ -67,7 +74,7 @@ require_once __DIR__ . '/components/header.php';
                     <div class="player">
                         <img src="/public/avatars/${player.avatar}">
                         <span>
-                            ${player.username}
+                            ${escapeHTML(player.username)}
                         </span>
                     </div>
 

@@ -92,7 +92,6 @@ $gameData = [
      * Rendering the payload inside JSON.parse() mitigates direct script evaluation within the DOM framework.
      */
     const GAME_DATA = JSON.parse(<?= json_encode(json_encode($gameData, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)); ?>);
-    console.log(GAME_DATA);
 </script>
 
 <!-- GAME UI -->

@@ -16,11 +16,21 @@ Welcome to **brainSKwiz**, a modern interactive quiz web application. This repos
 * **History & Global Leaderboard:** 
   * **Match History:** A detailed log of past games for users to review their previous performances.
   * **Global Ranking:** A dynamic leaderboard showcasing top players to foster competition.
+
 * **User Authentication & Security:** Secure login, session management, and robust client/server-side password validation rules.
 * **Dynamic Account Settings:** Custom profile management allowing users to update their usernames, change passwords (with dynamic visibility toggle), and select custom pre-loaded avatars.
-* **Interactive User Dashboard:** Visual presentation of user statistics (best time, average response time, success rate, and global ranking).
+* **Interactive User Dashboard:** A dedicated "Stats" tab in settings pulling real-time data:
+  * **Best Time:** The fastest record to complete a quiz perfectly.
+  * **Best Score:** Highest amount of points scored in a single run.
+  * **Average Response Time:** Calculated asynchronously per question to measure cognitive speed.
+  * **Total Points:** Lifetime accumulated score across all played sessions.
 * **Comprehensive Admin Panel:** A dedicated dashboard for administrators to asynchronously manage the entire platform ecosystem: view, create, edit, and delete **quizzes, question categories, questions**, and **user accounts**.
 
+### Ranking & Leaderboard Logic
+The global leaderboard aggregates statistics from the `games` table using an optimized `LEFT JOIN` and tracking queries:
+* **Score Accumulation:** Ranked by `SUM(points_earned)` in descending order.
+* **Tie-Breaker:** In case of equal points, the algorithm prioritizes the user with the lower `Average Response Time` or higher `Success Rate`.
+* **Scale:** Limited to the Top 100 players globally via an asynchronous API endpoint (`/api/stats/get_stats.php`).
 ---
 
 ## Tech Stack
@@ -41,6 +51,13 @@ The layout maps the connection between your machine, the HTTP Web Server, and th
 (http://localhost:8080)               (Apache + PHP)         (MySQL 8.0)
 |                                     |                      |
 |<--- Returns HTML/Tailwind <---------|<-- Returns DB data --|
+
+### Relational Database Schema Overview
+* `users`: `id`, `username`, `email`, `password` (hashed), `avatar`, `role`, `created_at`.
+* `quizzes`: `id`, `title`, `category_id`, `difficulty`.
+* `questions`: `id`, `quiz_id`, `question_text`, `points_value`.
+* `answers`: `id`, `question_id`, `answer_text`, `is_correct` (boolean).
+* `games`: `id`, `user_id`, `quiz_id`, `points_earned`, `time_spent`, `played_at`.
 
 * **Front-End Integration:** Responsive layout handled via Tailwind CSS utility classes.
 * **Asynchronous Updates:** Client-side components communicate with the PHP backend API endpoints using structured JSON payloads via the `Fetch API`, preventing unnecessary page reloads.
@@ -91,5 +108,9 @@ The automatic initialization script injects a complete relational schema into yo
 
 * **Categories & Quizzes:** Pre-defined topics (e.g., Science, History, Pop Culture) with structured quizzes.
 * **Questions & Answers:** Multiple-choice questions mapped to a 15-second timer format with explicit correct/incorrect flags.
-* **Users & Roles:** Separate user profiles (Admin/Standard) to test different access control layers right out of the box.
+* **Users & Roles:** Separate user profiles (Admin/Standard) to test access controls out of the box:
+  * **Admin Account:** `admin@quiz.fr` / Password: `MonSuperMotDePasse123!` (Access to `/admin`)
+  * **Player Account 1:** `student@school.com` / Password: `MonSuperMotDePasse123!`
+  * **Player Account 2:** `pouit@gmail.com` / Password: `MonSuperMotDePasse123!`
+  * **Player Account 3:** `barnabe-incredible@gmail.com` / Password: `MonSuperMotDePasse123!`
 * **Pre-linked History:** Sample game records to instantly populate the Leaderboard and History tabs upon your first login.

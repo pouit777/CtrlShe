@@ -7,7 +7,13 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
-$stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
+$stmt = $pdo->prepare("
+    SELECT u.*, COALESCE(SUM(g.points_earned), 0) AS total_points 
+    FROM users u 
+    LEFT JOIN games g ON g.user_id = u.id 
+    WHERE u.id = ?
+    GROUP BY u.id
+");
 $stmt->execute([$_SESSION['user_id']]);
 $user = $stmt->fetch();
 ?>
