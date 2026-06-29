@@ -104,7 +104,7 @@ if (!$guestMode) {
             <?= htmlspecialchars($game["name"] ?? "Guest Quiz") ?>
         </h2>
 
-        <div class="text-5xl font-bold <?= $scoreClass ?>">
+        <div class="text-5xl font-bold <?= $guestMode ? 'text-white' : $scoreClass ?>">
             <?= (int)$game["score"] ?> / <?= (int)$game["total_questions"] ?>
         </div>
 
