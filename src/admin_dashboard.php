@@ -36,7 +36,7 @@ require_once __DIR__ . '/components/header.php';
     <div>
         <h1 class="bigTitle">Quiz management</h1>
         <div class="modal-btn">
-            <button id="open-quiz-modal-btn" class="btn">+ Add New Quiz</button>
+            <button id="open-quiz-modal-btn" class="btn m-auto">+ Add New Quiz</button>
         </div>
     </div>
 </div>

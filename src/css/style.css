@@ -215,6 +215,11 @@ button {
 
 #open-modal-btn {
   background-color: var(--color-warning);
+  max-width: 15rem;
+}
+
+#open-quiz-modal-btn {
+  max-width: 15rem;
 }
 
 #open-modal-btn:hover {
@@ -709,6 +714,7 @@ td .flex {
   align-items: center;
   gap: 1rem;
   margin-top: 1rem;
+  justify-content: center;
 }
 
 .modal-btn .btn {
