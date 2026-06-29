@@ -103,8 +103,12 @@ label {
   color: rgb(255, 255, 255);
 }
 
-.skTitle{
-  color:var(--color-warning)
+[data-theme="light"] .skTitle {
+  color:var(--color-warning);
+}
+
+[data-theme="dark"] .skTitle {
+  color:var(--color-primary);
 }
 
 
