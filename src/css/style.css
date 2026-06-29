@@ -1437,12 +1437,6 @@ td .flex {
   gap: 1rem;
 }
 
-#history-container{
-  display: flex;
-  justify-content: center;
-  margin:auto;
-}
-
 @media (max-width: 768px) {
   .quizzes {
     grid-template-columns: repeat(1, 1fr);
