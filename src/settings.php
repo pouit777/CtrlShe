@@ -174,6 +174,7 @@ $user = $stmt->fetch();
 </div>
 
 <script>
+// Fetches the computed metric data payload from get_stats.php to populate DOM text elements asynchronously
 async function loadStats() {
     const response = await fetch("/api/stats/get_stats.php");
     const stats = await response.json();
@@ -185,6 +186,7 @@ async function loadStats() {
 
 loadStats();
 
+// Hides all inactive functional panels and applies active tab markup styling to the navigation choice
 function setActive(idWindow) {
     document.querySelectorAll('.settingPage').forEach(p => {
         p.classList.add('hidden');
@@ -199,6 +201,7 @@ function setActive(idWindow) {
     document.getElementById(idWindow + 'Btn')?.classList.add('active');
 }
 
+// Dynamically toggles input context between password and plain-text string formatting
 function togglePasswordVisibility(inputId, button) {
     const input = document.getElementById(inputId);
     const icon = button.querySelector('.material-icons');
