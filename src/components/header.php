@@ -104,7 +104,7 @@ $preview_mode = $is_admin && ($_SESSION['preview_mode'] ?? false);
                 </a>
             </li>
             <li>
-                <a href="/logout.php" class="logout">
+                <a href="/logout.php" class="logout flex justify-center items-center gap-2 m-0">
                     Logout  
                     <span class="material-icons logout">logout</span>
                 </a>
