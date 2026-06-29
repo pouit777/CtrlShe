@@ -555,7 +555,7 @@ input:checked + .slider #theme-icon {
 }
 
 .titleCard {
-  font-size: clamp(1rem, 2vw, 1.5rem);
+  font-size: clamp(1rem, 2vw, 1.4rem);
   font-weight: 600;
   color: var(--color-white);
   text-align: center;
@@ -577,7 +577,7 @@ input:checked + .slider #theme-icon {
 }
 
 .midTitle {
-  font-size: clamp(1rem, 2vw, 1.3rem);
+  font-size: clamp(1rem, 2vw, 1.1rem);
   color: white;
   margin: 0;
 }
