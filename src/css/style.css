@@ -576,6 +576,19 @@ input:checked + .slider #theme-icon {
   max-width: 100%;
 }
 
+.midTitle {
+  font-size: clamp(1rem, 2vw, 1.3rem);
+  color: white;
+  margin: 0;
+}
+
+.bigTitle {
+  font-size: clamp(2rem, 4vw, 2.5rem);
+  font-weight: 600;
+  color: white;
+  margin: 0;
+}
+
 [data-theme="dark"] .subTitle {
   color: rgba(255, 255, 255, .65);
 }
@@ -1241,7 +1254,7 @@ td .flex {
   color: var(--color-white);
 }
 
-.page-index .quizCard .subTitle {
+.page-index .quizCard .midTitle {
   color: rgba(255, 255, 255, 0.75);
   text-align: center;
 }
@@ -1309,6 +1322,7 @@ td .flex {
   }
 
 }
+
 
 .answer-row {
   display: flex;
