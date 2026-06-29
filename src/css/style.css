@@ -971,6 +971,36 @@ td .flex {
    SETTINGS PAGE
 ========================= */
 
+.page-container{
+  width: min(1200px, calc(100% - 2rem));
+  margin: 2rem auto;
+}
+
+.settings{
+  display:grid;
+  grid-template-columns:280px 1fr;
+  gap:1.5rem;
+  align-items:start;
+}
+
+@media (max-width:768px){
+  .settings{
+    grid-template-columns:1fr;
+  }
+}
+
+.stats-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:1rem;
+}
+
+@media (max-width:768px){
+  .stats-grid{
+    grid-template-columns:1fr;
+  }
+}
+
 .settingPage {
   padding: 1rem;
   background-color: var(--color-black);
