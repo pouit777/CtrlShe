@@ -6,7 +6,7 @@ require_once __DIR__ . "/components/header.php";
 
 $guestMode = isset($_GET["guest"]) && $_GET["guest"] == 1;
 
-/* GUEST MODE */
+/* GUEST MODE : Evaluate Guest State Isolation Routing Path */
 if ($guestMode) {
 
     $game = [
@@ -18,6 +18,7 @@ if ($guestMode) {
 
 } else {
 
+    // Session state verification perimeter guard
     if (!isset($_SESSION["user_id"])) {
         header("Location: /login.php");
         exit;
@@ -29,6 +30,7 @@ if ($guestMode) {
         die("Invalid game");
     }
 
+    // Parameterized lookup preventing information leaking across distinct user environments
     $stmt = $pdo->prepare("
         SELECT g.*, q.name
         FROM games g
@@ -44,6 +46,7 @@ if ($guestMode) {
     }
 }
 
+// Compute percentage metrics to determine UI color mappings safely
 $percent = (!$guestMode && $game["total_questions"] > 0)
     ? round(($game["score"] / $game["total_questions"]) * 100)
     : null;
@@ -64,6 +67,7 @@ if ($percent !== null) {
 
 $corrections = [];
 
+/* Fetch Historical Review Modifications for Authenticated Users */
 if (!$guestMode) {
 
     $stmt = $pdo->prepare("
