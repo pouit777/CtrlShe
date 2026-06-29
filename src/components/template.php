@@ -1,4 +1,5 @@
 <?php 
+// Import layout dependency structure configurations
 require_once __DIR__ . '/header.php'; 
 
 ?>
@@ -65,20 +66,23 @@ require_once __DIR__ . '/header.php';
 
 
 <script>
+    // Interface Countdown Timer Initialization Definitions
     let timeLeft = 15;
     const totalTime = 15;
     const timerText = document.getElementById('timerText');
     const timerBar = document.getElementById('timerBar');
 
+    // Run interval processing loop tracking remaining seconds
     const countdown = setInterval(() => {
         timeLeft--;
         
-
         timerText.innerText = timeLeft + 's';
         
+        // Calculate proportional scale metrics relative to total execution windows
         const percentage = (timeLeft / totalTime) * 100;
         timerBar.style.width = percentage + '%';
 
+        // High-Alert Visual Warning State: Alters context styles once below the 5-second boundary line
         if (timeLeft <= 5) {
             timerText.classList.remove('text-[#281373]');
             timerText.classList.add('text-red-500');
@@ -86,6 +90,7 @@ require_once __DIR__ . '/header.php';
             timerBar.classList.add('bg-red-500');
         }
 
+        // Handle termination events once execution timelines cross zero parameters
         if (timeLeft <= 0) {
             clearInterval(countdown);
             timerText.innerText = '0s';
@@ -95,19 +100,23 @@ require_once __DIR__ . '/header.php';
 </script>
 
 <script>
+    // Extract query sets targeting multiple choice button arrays
     const answerButtons = document.querySelectorAll('.answer-btn');
-    let hasAnswered = false; 
+    let hasAnswered = false; // State lock variable preventing double submission exploits
 
     answerButtons.forEach(button => {
         button.addEventListener('click', function() {
            
+            // Guard clause blocking subsequent selections after initial answer commit
             if (hasAnswered) return; 
             hasAnswered = true;
 
+            // Instantly halt runtime background intervals upon click validation events
             if (typeof countdown !== 'undefined') {
                 clearInterval(countdown);
             }
 
+            // Read attribute schemas to isolate system matching answers evaluations
             const isCorrect = this.getAttribute('data-correct') === 'true';
 
             if (isCorrect) {
@@ -115,20 +124,28 @@ require_once __DIR__ . '/header.php';
             } else {
                 changeButtonColor(this, 'red');
                 
+                // UX Correction Assist: Auto-expose correct configuration vectors on wrong inputs
                 const correctBtn = document.querySelector('.answer-btn[data-correct="true"]');
                 changeButtonColor(correctBtn, 'green');
             }
         });
     });
 
+    /**
+     * Utility Color Modifier: Manages active Tailwind styling mutations
+     * to safely handle component feedback color transitions (Correct vs Incorrect)
+     */
+
     function changeButtonColor(btn, color) {
         const circle = btn.querySelector('.circle-letter');
         const text = btn.querySelector('.answer-text');
 
+        // Strip structural theme configurations to avoid runtime style priority collisions
         btn.classList.remove('bg-[#8A96FF]', 'hover:bg-[#7885FF]');
         circle.classList.remove('text-[#A3ADFF]');
         text.classList.remove('text-black');
 
+        // Inject appropriate color tokens based on selected evaluation metrics
         if (color === 'green') {
             btn.classList.add('bg-green-500');
             circle.classList.add('text-green-500');
@@ -141,4 +158,6 @@ require_once __DIR__ . '/header.php';
     }
 </script>
 
-<?php require_once __DIR__ . '/footer.php'; ?>
+<?php 
+    require_once __DIR__ . '/footer.php'; 
+?>

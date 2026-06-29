@@ -1,4 +1,5 @@
 <?php
+// src/api/users/update_users.php
 header('Content-Type: application/json');
 
 if (session_status() === PHP_SESSION_NONE) {
@@ -25,22 +26,20 @@ $id = (int)$data['id'];
 $username = trim($data['username']);
 $email = trim($data['email']);
 $role = trim($data['role']);
-$avatar = basename($data['avatar']); // Évite les injections de chemin (Path Traversal)
+// Secure Path Traversal Mitigation: strips relative paths keeping purely file components
+$avatar = basename($data['avatar']);
 $password = isset($data['password']) ? $data['password'] : '';
 
-// 1. Validation du Pseudo (3 à 25 caractères)
 if (mb_strlen($username) < 3 || mb_strlen($username) > 25) {
     echo json_encode(['status' => 'error', 'message' => 'Username must be between 3 and 25 characters.']);
     exit;
 }
 
-// 2. Validation du format de l'email
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
     echo json_encode(['status' => 'error', 'message' => 'Invalid email address format.']);
     exit;
 }
 
-// 3. Validation du rôle autorisé
 if (!in_array($role, ['user', 'admin'])) {
     echo json_encode(['status' => 'error', 'message' => 'Invalid role assigned.']);
     exit;
@@ -48,7 +47,7 @@ if (!in_array($role, ['user', 'admin'])) {
 
 try {
     if (!empty($password)) {
-        // Validation de force du mot de passe UNIQUE_MENT s'il est fourni
+        // Branching logic path: conditionally overrides encryption sets ONLY when an updated passphrase parameter is provided
         if (strlen($password) < 8 || !preg_match('#[0-9]#', $password) || !preg_match('#[^a-zA-Z0-9]#', $password)) {
             echo json_encode([
                 'status' => 'error',
@@ -65,7 +64,7 @@ try {
         $stmt->execute([$username, $email, $role, $avatar, $id]);
     }
 
-    // Mise à jour de la session de l'admin s'il s'auto-édite
+    // Dynamic Synchronisation Rule: Syncs runtime context parameters instantly if the admin self-updates
     if (isset($_SESSION['user_id']) && $_SESSION['user_id'] == $id) {
         $_SESSION['username'] = $username;
         $_SESSION['avatar']   = $avatar;

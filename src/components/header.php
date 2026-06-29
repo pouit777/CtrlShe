@@ -1,19 +1,20 @@
 <?php
+// Initialize session state parameters if not active
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+// Import persistent structural database abstraction layer
 require_once __DIR__ . '/../config/db.php';
 
-// Gestion des bascules de mode via l'URL (?action=toggle_preview)
+// RBAC Safe-Guard: Intercept administrative URL actions to toggle user preview mode layout configurations
 if (isset($_GET['action']) && $_GET['action'] === 'toggle_preview' && isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
     $_SESSION['preview_mode'] = !($_SESSION['preview_mode'] ?? false);
     
-    // Redirection propre pour nettoyer l'URL après le clic
+   // Clean query streams using HTTP redirections to prevent refresh cycles or layout loops
     $redirect = $_SERVER['PHP_SELF'];
     if (!empty($_SERVER['QUERY_STRING'])) {
-        // On retire l'action de la query string pour éviter les boucles
         parse_str($_SERVER['QUERY_STRING'], $query_params);
-        unset($query_params['action']);
+        unset($query_params['action']); // Remove action verb from parameters list
         if (!empty($query_params)) {
             $redirect .= '?' . http_build_query($query_params);
         }
@@ -22,12 +23,12 @@ if (isset($_GET['action']) && $_GET['action'] === 'toggle_preview' && isset($_SE
     exit;
 }
 
-// Détection du statut réel
+// Map logical runtime state flags based on verified session footprints
 $is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
 $is_user = isset($_SESSION['role']) && $_SESSION['role'] === 'user';
 $is_logged = isset($_SESSION['user_id']);
 
-// Est-ce que l'admin a activé la vue utilisateur ?
+// Determine if an administrator is currently simulating a standard user environment
 $preview_mode = $is_admin && ($_SESSION['preview_mode'] ?? false);
 ?>
 
@@ -104,14 +105,13 @@ $preview_mode = $is_admin && ($_SESSION['preview_mode'] ?? false);
                 </a>
             </li>
             <li>
-                <a href="/logout.php" class="logout">
+                <a href="/logout.php" class="logout flex justify-center items-center gap-2 m-0">
                     Logout  
                     <span class="material-icons logout">logout</span>
                 </a>
             </li>
         <?php else: ?>
             <li><a href="/login.php">Login</a></li>
-            <!-- <li><a href="/register.php">Register</a></li> -->
         <?php endif; ?>
 
         <li>
@@ -129,12 +129,13 @@ $preview_mode = $is_admin && ($_SESSION['preview_mode'] ?? false);
 
 <main class="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col">
 
-
 <script>
+    // Theme switching management references
     const toggle = document.getElementById('theme-toggle');
     const icon = document.getElementById('theme-icon');
     const logo = document.getElementById('logoNavBar');
 
+    // Pull or establish base user viewport preferences out of localStorage parameters
     const savedTheme = localStorage.getItem('theme') || 'light';
 
     document.documentElement.setAttribute('data-theme', savedTheme);
@@ -143,6 +144,7 @@ $preview_mode = $is_admin && ($_SESSION['preview_mode'] ?? false);
     updateIcon(savedTheme);
     updateLogo(savedTheme);
 
+    // Bind event hooks to store updated theme preferences dynamically
     toggle.addEventListener('change', () => {
         const theme = toggle.checked ? 'dark' : 'light';
 
@@ -153,19 +155,21 @@ $preview_mode = $is_admin && ($_SESSION['preview_mode'] ?? false);
         updateLogo(theme);
     });
 
+    // Helper routine managing accessibility icon swaps
     function updateIcon(theme) {
         icon.textContent = theme === 'dark'
             ? 'dark_mode'
             : 'sunny';
     }
 
+    // Helper routine handling active logo file extension swaps based on contrast modes
     function updateLogo(theme) {
     logo.src = theme === 'dark'
         ? '/public/logo-dark-theme.png'
         : '/public/logo.png';
     }
 
-    //navBar script
+    // Interactive component script handling small viewport adaptive responsive navbar states
     const hamburger = document.getElementById('hamburger');
     const navMenu = document.getElementById('nav-menu');
 
