@@ -118,10 +118,36 @@ $user = $stmt->fetch();
         </div>
 
         <div id="statUser" class="settingPage hidden md:col-span-7">
-            <h3>Meilleur temps</h3>
-            <h3>Temps moyen de réponse</h3>
-            <h3>Taux de bonnes réponses</h3>
-            <h3>Classement mondial</h3>
+
+            <h2 class="stats-title">My Statistics</h2>
+            <div class="stats-grid">
+
+                <div class="stat-card">
+                    <span class="material-icons stat-icon">timer</span>
+                    <p class="stat-label">Best time</p>
+                    <h2 id="valueTime">--</h2>
+                </div>
+
+                <div class="stat-card">
+                    <span class="material-icons stat-icon">emoji_events</span>
+                    <p class="stat-label">Best score</p>
+                    <h2 id="valueScore">--</h2>
+                </div>
+
+                <div class="stat-card">
+                    <span class="material-icons stat-icon">schedule</span>
+                    <p class="stat-label">Average response time</p>
+                    <h2 id="valueResponseTime">--</h2>
+                </div>
+
+                <div class="stat-card">
+                    <span class="material-icons stat-icon">check_circle</span>
+                    <p class="stat-label">Correct answers</p>
+                    <h2 id="valueResponses">--</h2>
+                </div>
+
+            </div>
+
         </div>
     </div>
 </div>
@@ -138,6 +164,22 @@ $user = $stmt->fetch();
 </div>
 
 <script>
+    async function loadStats() {
+        const response = await fetch("/api/stats/get_stats.php");
+        const stats = await response.json();
+        console.log(stats)
+
+        document.getElementById("valueTime").textContent = stats.best_time ?? "-";
+
+        document.getElementById("valueScore").textContent = stats.best_score ?? "-";
+
+        document.getElementById("valueResponseTime").textContent = stats.avg_time ?? "-";
+
+        document.getElementById("valueResponses").textContent = (stats.success_rate ?? 0) + " %";
+    }
+
+    loadStats();
+
     function setActive(idWindow) {
         const pages = document.querySelectorAll('.settingPage');
         const buttons = document.querySelectorAll('.choices li');

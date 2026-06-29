@@ -23,7 +23,7 @@ $categories = $pdo->query("SELECT * FROM categories ORDER BY label")->fetchAll(P
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[2fr_1fr] gap-4 items-center w-full">
         <input id="search-input"
                class="inputField"
-               placeholder="🔍 Quiz name...">
+               placeholder="Quiz name...">
 
         <select id="category-select"
                 class="inputField">

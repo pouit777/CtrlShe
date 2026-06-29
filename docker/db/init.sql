@@ -62,6 +62,20 @@ CREATE TABLE IF NOT EXISTS quiz_categories (
         ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE IF NOT EXISTS score_users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    quiz_id INT NOT NULL,
+    user_id INT NOT NULL,
+    user_time INT NOT NULL,
+    user_score INT NOT NULL,
+    FOREIGN KEY (quiz_id)
+        REFERENCES quizzes(id)
+        ON DELETE CASCADE,
+    FOREIGN KEY (user_id)
+        REFERENCES users(id)
+        ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 -- Create the answers multiple-choice options table with relation to questions
 CREATE TABLE IF NOT EXISTS answers (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -311,6 +325,11 @@ INSERT INTO quiz_questions (quiz_id, question_id) VALUES
 -- Quiz 8 : 5 Questions (History/Geo)
 (8, 16), (8, 17), (8, 18), (8, 19), (8, 20),
 
+-- $quizId = $pdo->lastInsertId();
+
+-- Link quiz → categories
+-- INSERT INTO quiz_categories (quiz_id, category_id)
+-- VALUES (?, ?);
 -- Quiz 9 : 10 Questions (Gaming + Extra Web)
 (9, 21), (9, 22), (9, 23), (9, 24), (9, 25), (9, 1), (9, 2), (9, 3), (9, 4), (9, 5),
 
@@ -320,3 +339,6 @@ INSERT INTO quiz_questions (quiz_id, question_id) VALUES
 (10, 11), (10, 16), (10, 21), (10, 26), (10, 31),
 (10, 36), (10, 41), (10, 46), (10, 12), (10, 17)
 ON DUPLICATE KEY UPDATE quiz_id=VALUES(quiz_id);
+
+INSERT INTO score_users (quiz_id, user_id, user_time, user_score) VALUES
+(2, 2, 9, 3)
