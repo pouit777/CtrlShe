@@ -92,7 +92,7 @@ async function loadHistory() {
             // Utilisation de escapeHTML() pour sécuriser l'affichage
             return `
                 <div class="quizCard">
-                    <h2 class="titleText mb-2">
+                    <h2 class="titleCard mb-2">
                         ${escapeHTML(game.quiz_name ?? "Unknown Quiz")}
                     </h2>
 
@@ -110,7 +110,7 @@ async function loadHistory() {
                     </div>
 
                     <div class="m-auto flex justify-center text-center">
-                        <a href="/result.php?game=${parseInt(game.id)}" class="btn mt-4">
+                        <a href="/result.php?game=${parseInt(game.id)}" class="btndark mt-4">
                             View Result
                         </a>
                     </div>
