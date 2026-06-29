@@ -1,6 +1,35 @@
-# brainSKwiz - Docker Development Environment
+# brainSKwiz - Interactive Quiz Web Application
 
 Welcome to **brainSKwiz**, a modern interactive quiz web application. This repository bundles a fully containerized stack using Docker and Docker Compose, achieving a production-ready infrastructure development setup with automatic local data seeding.
+
+---
+
+## Project Overview
+
+`brainSKwiz` is a web-based quiz platform designed to test users' knowledge and tracking their performance. 
+
+### Key Features
+
+* **General Knowledge Quiz Engine:** An interactive quiz system featuring various general knowledge questions. 
+  * **Time Constraint:** Players face a strict **15-second countdown** per question to boost engagement.
+  * **Real-Time Feedback:** Live tracking of the total current score and instant display of mistakes made during the active session.
+* **History & Global Leaderboard:** 
+  * **Match History:** A detailed log of past games for users to review their previous performances.
+  * **Global Ranking:** A dynamic leaderboard showcasing top players to foster competition.
+* **User Authentication & Security:** Secure login, session management, and robust client/server-side password validation rules.
+* **Dynamic Account Settings:** Custom profile management allowing users to update their usernames, change passwords (with dynamic visibility toggle), and select custom pre-loaded avatars.
+* **Interactive User Dashboard:** Visual presentation of user statistics (best time, average response time, success rate, and global ranking).
+* **Comprehensive Admin Panel:** A dedicated dashboard for administrators to asynchronously manage the entire platform ecosystem: view, create, edit, and delete **quizzes, question categories, questions**, and **user accounts**.
+
+---
+
+## Tech Stack
+
+* **Back-End:** PHP 8.2 (Native, OOP concepts, PDO for secure database interactions).
+* **Database:** MySQL 8.0 (Relational schema with foreign key constraints).
+* **Front-End:** Vanilla JavaScript (ES6+, asynchronous operations via Native Fetch API & JSON payloads), HTML5, Tailwind CSS.
+* **Icons:** Google Material Icons.
+* **DevOps:** Docker & Docker Compose.
 
 ---
 
@@ -13,8 +42,8 @@ The layout maps the connection between your machine, the HTTP Web Server, and th
 |                                     |                      |
 |<--- Returns HTML/Tailwind <---------|<-- Returns DB data --|
 
-* **Front-End Integration:** Tailwind CSS built via CDN handling adaptive UI states.
-* **Asynchronous Updates:** Client-side interactions communicate via Native Fetch API using structured JSON representations payloads.
+* **Front-End Integration:** Responsive layout handled via Tailwind CSS utility classes.
+* **Asynchronous Updates:** Client-side components communicate with the PHP backend API endpoints using structured JSON payloads via the `Fetch API`, preventing unnecessary page reloads.
 
 ---
 
@@ -46,6 +75,8 @@ Make sure you have [Docker Desktop](https://www.docker.com/products/docker-deskt
 2. Fire up the configuration stack by executing the automatic build routine:
 > docker-compose up --build
 
+Open your browser and navigate to: http://localhost:8080
+
 ### Data Management (Persistence)
 
 To close the application while preserving your changes :
@@ -53,3 +84,12 @@ To close the application while preserving your changes :
 
 To completely reset the application and reload the initial test data :
 > docker-compose down -v && docker-compose up -d
+
+### Seeded Database Structure & Sample Data
+
+The automatic initialization script injects a complete relational schema into your MySQL instance, pre-loaded with:
+
+* **Categories & Quizzes:** Pre-defined topics (e.g., Science, History, Pop Culture) with structured quizzes.
+* **Questions & Answers:** Multiple-choice questions mapped to a 15-second timer format with explicit correct/incorrect flags.
+* **Users & Roles:** Separate user profiles (Admin/Standard) to test different access control layers right out of the box.
+* **Pre-linked History:** Sample game records to instantly populate the Leaderboard and History tabs upon your first login.
