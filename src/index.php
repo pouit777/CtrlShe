@@ -11,7 +11,7 @@ $categories = $pdo->query("SELECT * FROM categories ORDER BY label")->fetchAll(P
 
 <div class="titleBoxAdmin">
     <h1 class="bigTitle">
-        brainSKwiz Quizzes
+        brain<span class="skTitle">SK</span>wiz Quizzes
     </h1>
     <p class="subTitle">
         Choose a quiz and start playing

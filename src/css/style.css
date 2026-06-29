@@ -102,6 +102,10 @@ label {
   color: rgb(255, 255, 255);
 }
 
+.skTitle{
+  color:var(--color-warning)
+}
+
 
 /* =========================
    UTILITIES
