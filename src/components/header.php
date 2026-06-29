@@ -65,7 +65,7 @@ $preview_mode = $is_admin && ($_SESSION['preview_mode'] ?? false);
             <li><a href="/index.php">Home</a></li>
             <?php if ($is_user || $preview_mode): ?>
                 <li><a href="/history.php">History</a></li>
-                <li><a href="/index.php">Rank</a></li>
+                <li><a href="/leaderboard.php">Rank</a></li>
             <?php endif; ?>
         <?php endif; ?>
         
