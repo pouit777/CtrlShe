@@ -6,6 +6,7 @@
   --color-primary: #758bfd;
   --color-primary-light: #aeb8fe;
   --color-primary-dark: #27187e;
+  --color-primary-mid: #5e4dc0;
 
   --color-bg: #f1f2f6;
   --color-text: #1f2937;
@@ -186,6 +187,16 @@ button {
   width: 100%;
   padding: 0.65rem 1rem;
   background-color: var(--color-primary);
+  border-radius: 10px;
+  color: var(--color-white);
+  font-size: 0.95rem;
+  outline: none;
+}
+
+.btndark {
+  width: 100%;
+  padding: 0.65rem 1rem;
+  background-color: var(--color-primary-dark);
   border-radius: 10px;
   color: var(--color-white);
   font-size: 0.95rem;
@@ -528,6 +539,14 @@ input:checked + .slider #theme-icon {
   font-weight: bold;
   color: var(--color-white);
   text-align: center;
+}
+
+.titleCard {
+  font-size: clamp(1rem, 2vw, 1.5rem);
+  font-weight: 600;
+  color: var(--color-white);
+  text-align: center;
+  font-family: Arial, sans-serif;
 }
 
 .bigTitle {
@@ -1199,7 +1218,7 @@ td .flex {
 }
 
 .page-index .quizCard {
-  background: var(--color-primary-dark);
+  background: var(--color-primary-mid);
   color: var(--color-white);
   box-shadow: var(--shadow-modal);
 }
