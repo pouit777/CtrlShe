@@ -20,7 +20,7 @@ if ($question_id <= 0) {
 }
 
 try {
-    // The ON DELETE CASCADE constraint on SQL engine layer deletes child answer components automatically!
+    // The ON DELETE CASCADE constraint on SQL engine layer deletes child answer components automatically
     $stmt = $pdo->prepare("DELETE FROM questions WHERE id = :id");
     $success = $stmt->execute(['id' => $question_id]);
 
