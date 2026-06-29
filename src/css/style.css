@@ -1512,3 +1512,46 @@ label {
 .next-btn-primary:hover {
   filter: brightness(1.1);
 }
+
+/* ===========================
+   GAME - Réponses
+   =========================== */
+
+/* Réponse normale */
+.answer-btn {
+    width: 100%;
+    padding: 1rem;
+    border-radius: 12px;
+    border: 2px solid #d1d5db;
+    background: #f3f4f6;      /* Gris clair */
+    color: #1f2937;           /* Gris très foncé */
+    font-weight: 600;
+    text-align: left;
+    transition: all .2s ease;
+    cursor: pointer;
+}
+
+/* Hover */
+.answer-btn:hover:not(:disabled) {
+    background: #e5e7eb;
+    border-color: var(--color-primary);
+}
+
+/* Bouton désactivé */
+.answer-btn:disabled {
+    cursor: default;
+}
+
+/* Bonne réponse */
+.answer-btn.correct {
+    background: #22c55e !important;
+    color: white !important;
+    border-color: #16a34a !important;
+}
+
+/* Mauvaise réponse */
+.answer-btn.wrong {
+    background: #ef4444 !important;
+    color: white !important;
+    border-color: #dc2626 !important;
+}

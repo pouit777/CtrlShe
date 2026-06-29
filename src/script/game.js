@@ -37,7 +37,7 @@ function render() {
     q.answers.forEach(answer => {
         const btn = document.createElement("button");
 
-        btn.className = "p-3 bg-gray-700 rounded-lg text-white hover:bg-gray-600 transition";
+        btn.className = "answer-btn";
         btn.textContent = answer.answer_text;
         btn.onclick = () => selectAnswer(answer, btn);
         elAnswers.appendChild(btn);
@@ -58,18 +58,18 @@ function selectAnswer(answer, btn) {
     const correct = questions[index].answers.find(a => a.is_correct);
     if (answer.is_correct) {
         btn.classList.remove("bg-gray-700");
-        btn.classList.add("bg-green-600");
+        btn.classList.add("correct");
         score++;
         elScore.textContent = score;
 
     } else {
         btn.classList.remove("bg-gray-700");
-        btn.classList.add("bg-red-600");
+        btn.classList.add("wrong");
         buttons.forEach((b, i) => {
 
             if (questions[index].answers[i].is_correct) {
                 b.classList.remove("bg-gray-700");
-                b.classList.add("bg-green-600");
+                b.classList.add("correct");
             }
         });
     }
