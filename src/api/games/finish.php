@@ -4,11 +4,12 @@ header('Content-Type: application/json; charset=utf-8');
 
 require_once __DIR__ . '/../../config/db.php';
 
+// Reads raw input payload sent via JavaScript fetch body rather than standard form parameters
 $data = json_decode(file_get_contents("php://input"), true);
 
 $quizId = (int)($data["quiz_id"] ?? 0);
 $answers = $data["answers"] ?? [];
-$duration = (int)($data["duration"] ?? 0); // AJOUT
+$duration = (int)($data["duration"] ?? 0); 
 
 if ($quizId <= 0) {
     echo json_encode([
@@ -27,12 +28,14 @@ $stmt = $pdo->prepare("
 ");
 $stmt->execute([$quizId]);
 
+// FETCH_COLUMN converts resource into a flat indexed array containing only question IDs
 $questions = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
 $isGuest = !isset($_SESSION["user_id"]);
 
 $score = 0;
 
+// Loops through each legal question in the quiz to fetch and compare its database truth-value against the submitted data
 foreach ($questions as $qid) {
 
     $userAnswer = $answers[$qid] ?? null;
@@ -59,6 +62,7 @@ $gameId = null;
 /* SAVE USER GAME */
 if (!$isGuest) {
 
+    // Opens transaction block to prevent partial execution hazards if any internal database command breaks down
     $pdo->beginTransaction();
 
     try {
@@ -80,10 +84,11 @@ if (!$isGuest) {
             $quizId,
             $score,
             count($questions),
-            $duration, // 🆕
+            $duration,
             $pointsEarned
         ]);
 
+        // Retains generated auto-increment record identity to act as the relational bridge key for detail items
         $gameId = $pdo->lastInsertId();
 
         $stmtInsert = $pdo->prepare("
@@ -96,6 +101,7 @@ if (!$isGuest) {
             VALUES (?, ?, ?, ?)
         ");
 
+        // Loop execution tracking details using the persistent shared prepared statement configuration
         foreach ($questions as $qid) {
 
             $userAnswer = $answers[$qid] ?? null;
@@ -130,9 +136,11 @@ if (!$isGuest) {
             $_SESSION["user_id"]
         ]);
 
+        // Safely applies write operations to the physical storage space following complete loop verification
         $pdo->commit();
 
     } catch (Exception $e) {
+        // Automatically reverts state variables to their pre-transaction values if anything crashes inside the try-catch ecosystem
         $pdo->rollBack();
 
         echo json_encode([

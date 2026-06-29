@@ -1193,6 +1193,13 @@ td .flex {
   color: rgba(255, 255, 255, 0.65);
 }
 
+[data-theme="light"] .eyeIcon{
+  color:var(--color-primary-dark);
+}
+
+[data-theme="dark"] .eyeIcon{
+  color:var(--color-white);
+}
 
 .choices {
   padding: 1rem;

@@ -16,6 +16,8 @@ if (!isset($_SESSION['user_id'])) {
 
 $userId = $_SESSION['user_id'];
 
+// NULLIF(duration, 0) avoids capturing unfinished/broken games (duration = 0) in averages and minimums.
+// COALESCE(..., 0) ensures a fallback value of 0 is returned if the user has no recorded games yet.
 $stmt = $pdo->prepare("
     SELECT 
         COALESCE(MIN(NULLIF(duration, 0)), 0) AS best_time,
