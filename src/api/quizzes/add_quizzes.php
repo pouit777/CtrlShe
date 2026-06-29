@@ -88,6 +88,22 @@ try {
         foreach ($questions as $qId) {
             $stmtQ->execute([(int)$quizId, (int)$qId]);
         }
+    } else {
+        $limit = $questionCount ?? 10;
+        $placeholders = implode(',', array_fill(0, count($categories), '?'));
+        $stmtQ = $pdo->prepare("
+            SELECT id FROM questions 
+            WHERE category_id IN ($placeholders)
+            ORDER BY RAND()
+            LIMIT $limit
+        ");
+        $stmtQ->execute(array_map('intval', $categories));
+        $autoQuestions = $stmtQ->fetchAll(PDO::FETCH_COLUMN);
+
+        $stmtInsert = $pdo->prepare("INSERT INTO quiz_questions (quiz_id, question_id) VALUES (?, ?)");
+        foreach ($autoQuestions as $qId) {
+            $stmtInsert->execute([(int)$quizId, (int)$qId]);
+        }
     }
 
     // Persist all staging records safely to disk storage

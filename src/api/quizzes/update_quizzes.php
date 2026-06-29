@@ -72,13 +72,40 @@ try {
         'allow_custom' => !empty($data['allow_custom_question_count']) ? 1 : 0
     ]);
 
-    // Wipe out historical mapping records to prepare clean relational overwrites
+    // wipe + re-insert categories
     $pdo->prepare("DELETE FROM quiz_categories WHERE quiz_id = ?")->execute([$id]);
 
-    // Insert updated relative index parameters inside categorical junction matrices
     $stmtCat = $pdo->prepare("INSERT INTO quiz_categories (quiz_id, category_id) VALUES (?, ?)");
     foreach ($categories as $catId) {
         $stmtCat->execute([$id, (int)$catId]);
+    }
+
+    // wipe + re-sync quiz_questions
+    $pdo->prepare("DELETE FROM quiz_questions WHERE quiz_id = ?")->execute([$id]);
+
+    $questions = $data['questions'] ?? [];
+
+    if (!empty($questions)) {
+        $stmtQ = $pdo->prepare("INSERT INTO quiz_questions (quiz_id, question_id) VALUES (?, ?)");
+        foreach ($questions as $qId) {
+            $stmtQ->execute([$id, (int)$qId]);
+        }
+    } else {
+        $limit = !empty($data['question_count']) ? (int)$data['question_count'] : 10;
+        $placeholders = implode(',', array_fill(0, count($categories), '?'));
+        $stmtQ = $pdo->prepare("
+            SELECT id FROM questions
+            WHERE category_id IN ($placeholders)
+            ORDER BY RAND()
+            LIMIT $limit
+        ");
+        $stmtQ->execute(array_map('intval', $categories));
+        $autoQuestions = $stmtQ->fetchAll(PDO::FETCH_COLUMN);
+
+        $stmtInsert = $pdo->prepare("INSERT INTO quiz_questions (quiz_id, question_id) VALUES (?, ?)");
+        foreach ($autoQuestions as $qId) {
+            $stmtInsert->execute([$id, (int)$qId]);
+        }
     }
 
     $pdo->commit();
