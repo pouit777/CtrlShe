@@ -115,7 +115,7 @@ if (!$guestMode) {
             </div>
             
             <div class="mt-3 text-lg font-semibold text-yellow-400">
-                +<?= $pointsEarned ?> point<?= $pointsEarned > 1 ? "s" : "" ?> ?>
+                +<?= $pointsEarned ?> point<?= $pointsEarned > 1 ? "s" : "" ?>
             </div>
         <?php endif; ?>
 
