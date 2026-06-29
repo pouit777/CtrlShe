@@ -11,7 +11,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
 
 require_once __DIR__ . '/config/db.php';
 
-// Ajout de la colonne 'avatar' à la récupération
+// Fetch user data profiles sorted by the newest registration entries first
 $query = "SELECT id, username, email, role, avatar, created_at FROM users ORDER BY id DESC";
 $users = $pdo->query($query)->fetchAll();
 
@@ -150,6 +150,8 @@ require_once __DIR__ . '/components/header.php';
                     <label class="block mb-2 font-medium">Choose user's avatar</label>
                     <div class="avatar-grid flex flex-wrap gap-2 p-2 bg-lightBlue rounded-xl border border-gray-200 max-h-[150px] overflow-y-auto">
                         <?php
+                        // glob() reads the server file system path to catch all assets matching the pattern *.png.
+                        // basename() strips down the directory path, keeping only the raw file name string.
                         $files = glob(__DIR__ . "/public/avatars/*.png");
                         foreach ($files as $file):
                             $filename = basename($file);
@@ -206,218 +208,233 @@ require_once __DIR__ . '/components/header.php';
         </div>
     </div>
 
-    <script>
-        function togglePasswordVisibility(inputId, button) {
-            const passwordInput = document.getElementById(inputId);
-            const icon = button.querySelector('.material-icons');
+<script>
+    /**
+    * Switches target input layout from obscured password ciphertext into human-readable plaintext
+    */
+    function togglePasswordVisibility(inputId, button) {
+        const passwordInput = document.getElementById(inputId);
+        const icon = button.querySelector('.material-icons');
             
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
-                icon.textContent = 'visibility';
-            } else {
-                passwordInput.type = 'password';
-                icon.textContent = 'visibility_off';
-            }
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            icon.textContent = 'visibility';
+        } else {
+            passwordInput.type = 'password';
+            icon.textContent = 'visibility_off';
         }
+    }
 
-        const modal = document.getElementById('user-modal');
-        const openModalBtn = document.getElementById('open-modal-btn');
-        const closeModalBtn = document.getElementById('close-modal-btn');
-        const cancelModalBtn = document.getElementById('cancel-modal-btn');
-        const addForm = document.getElementById('add-user-form');
+    // Cache persistent variables assigned to target interface components
+    const modal = document.getElementById('user-modal');
+    const openModalBtn = document.getElementById('open-modal-btn');
+    const closeModalBtn = document.getElementById('close-modal-btn');
+    const cancelModalBtn = document.getElementById('cancel-modal-btn');
+    const addForm = document.getElementById('add-user-form');
 
-        openModalBtn.addEventListener('click', () => {
-            addForm.reset();
-            document.querySelectorAll('#user-modal .material-icons').forEach(icon => icon.textContent = 'visibility_off');
-            document.getElementById('modal-password').type = 'password';
-            modal.classList.remove('hidden');
-        });
+    openModalBtn.addEventListener('click', () => {
+        addForm.reset();
+        document.querySelectorAll('#user-modal .material-icons').forEach(icon => icon.textContent = 'visibility_off');
+        document.getElementById('modal-password').type = 'password';
+        modal.classList.remove('hidden');
+    });
 
-        const hideModal = () => modal.classList.add('hidden');
-        closeModalBtn.addEventListener('click', hideModal);
-        cancelModalBtn.addEventListener('click', hideModal);
+    const hideModal = () => modal.classList.add('hidden');
+    closeModalBtn.addEventListener('click', hideModal);
+    cancelModalBtn.addEventListener('click', hideModal);
 
-        const editModal = document.getElementById('edit-user-modal');
-        const closeEditModalBtn = document.getElementById('close-edit-modal-btn');
-        const cancelEditModalBtn = document.getElementById('cancel-edit-modal-btn');
-        const editForm = document.getElementById('edit-user-form');
+    const editModal = document.getElementById('edit-user-modal');
+    const closeEditModalBtn = document.getElementById('close-edit-modal-btn');
+    const cancelEditModalBtn = document.getElementById('cancel-edit-modal-btn');
+    const editForm = document.getElementById('edit-user-form');
 
-        const hideEditModal = () => editModal.classList.add('hidden');
-        closeEditModalBtn.addEventListener('click', hideEditModal);
-        cancelEditModalBtn.addEventListener('click', hideEditModal);
+    const hideEditModal = () => editModal.classList.add('hidden');
+    closeEditModalBtn.addEventListener('click', hideEditModal);
+    cancelEditModalBtn.addEventListener('click', hideEditModal);
 
-        const notifModal = document.getElementById('notification-modal');
-        const notifIconContainer = document.getElementById('notif-icon-container');
-        const notifIcon = document.getElementById('notif-icon');
-        const notifTitle = document.getElementById('notif-title');
-        const notifMessage = document.getElementById('notif-message');
-        const notifButtons = document.getElementById('notif-buttons');
+    const notifModal = document.getElementById('notification-modal');
+    const notifIconContainer = document.getElementById('notif-icon-container');
+    const notifIcon = document.getElementById('notif-icon');
+    const notifTitle = document.getElementById('notif-title');
+    const notifMessage = document.getElementById('notif-message');
+    const notifButtons = document.getElementById('notif-buttons');
 
-        const notifTypes = {
-            info: { title: "Information", bg: "bg-blue-900/30", text: "text-blue-400", border: "border-blue-800", svg: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />' },
-            success_create: { title: "User Created!", bg: "bg-emerald-950", text: "text-emerald-400", border: "border-emerald-800", svg: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />' },
-            success_update: { title: "User Updated!", bg: "bg-blue-950", text: "text-blue-400", border: "border-blue-800", svg: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />' },
-            success_delete: { title: "User Deleted!", bg: "bg-orange-950", text: "text-orange-400", border: "border-orange-800", svg: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />' },
-            info_delete: { title: "Delete Confirmation", bg: "bg-blue-900/30", text: "text-blue-400", border: "border-blue-800", svg: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />' },
-            error: { title: "An Error Occurred", bg: "bg-red-950", text: "text-red-400", border: "border-red-800", svg: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />' }
-        };
+    // Style configuration object structure used to render themes across alerts
+    const notifTypes = {
+        info: { title: "Information", bg: "bg-blue-900/30", text: "text-blue-400", border: "border-blue-800", svg: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />' },
+        success_create: { title: "User Created!", bg: "bg-emerald-950", text: "text-emerald-400", border: "border-emerald-800", svg: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />' },
+        success_update: { title: "User Updated!", bg: "bg-blue-950", text: "text-blue-400", border: "border-blue-800", svg: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />' },
+        success_delete: { title: "User Deleted!", bg: "bg-orange-950", text: "text-orange-400", border: "border-orange-800", svg: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />' },
+        info_delete: { title: "Delete Confirmation", bg: "bg-blue-900/30", text: "text-blue-400", border: "border-blue-800", svg: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />' },
+        error: { title: "An Error Occurred", bg: "bg-red-950", text: "text-red-400", border: "border-red-800", svg: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />' }
+    };
 
-        function showNotification(type, message, onConfirm = null) {
-            const config = notifTypes[type] || notifTypes.info;
-            notifIconContainer.className = `mx-auto flex items-center justify-center h-12 w-12 rounded-full mb-4 ${config.bg} ${config.text} border ${config.border}`;
-            notifIcon.innerHTML = config.svg;
-            notifTitle.innerText = config.title;
-            notifTitle.className = `text-lg font-bold mb-2 ${config.text}`;
-            notifMessage.innerText = message;
-            notifButtons.innerHTML = '';
+    /**
+    * A versatile notification injector function. If an `onConfirm` callback function argument is supplied, 
+    * it converts the UI window into a blocking confirmation prompt (injecting Cancel/Confirm buttons).
+    * Otherwise, it builds a simple dismissible informative acknowledgment view ('Ok' button).
+    */
+    function showNotification(type, message, onConfirm = null) {
+        const config = notifTypes[type] || notifTypes.info;
+        notifIconContainer.className = `mx-auto flex items-center justify-center h-12 w-12 rounded-full mb-4 ${config.bg} ${config.text} border ${config.border}`;
+        notifIcon.innerHTML = config.svg;
+        notifTitle.innerText = config.title;
+        notifTitle.className = `text-lg font-bold mb-2 ${config.text}`;
+        notifMessage.innerText = message;
+        notifButtons.innerHTML = '';
 
-            if (onConfirm) {
-                const cancelBtn = document.createElement('button');
-                cancelBtn.innerText = "Cancel";
-                cancelBtn.className = "bg-gray-700 hover:bg-gray-600 text-white font-medium px-4 py-2 rounded-lg transition w-full";
-                cancelBtn.onclick = () => notifModal.classList.add('hidden');
+        if (onConfirm) {
+            const cancelBtn = document.createElement('button');
+            cancelBtn.innerText = "Cancel";
+            cancelBtn.className = "bg-gray-700 hover:bg-gray-600 text-white font-medium px-4 py-2 rounded-lg transition w-full";
+            cancelBtn.onclick = () => notifModal.classList.add('hidden');
 
-                const actionBtn = document.createElement('button');
-                actionBtn.innerText = "Confirm";
-                actionBtn.className = "bg-red-600 hover:bg-red-700 text-white font-bold px-4 py-2 rounded-lg transition w-full";
-                actionBtn.onclick = () => {
-                    notifModal.classList.add('hidden');
-                    onConfirm();
-                };
-                notifButtons.appendChild(cancelBtn);
-                notifButtons.appendChild(actionBtn);
-            } else {
-                const okBtn = document.createElement('button');
-                okBtn.innerText = "Ok";
-                okBtn.className = "bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-2 rounded-lg transition w-full";
-                okBtn.onclick = () => notifModal.classList.add('hidden');
-                notifButtons.appendChild(okBtn);
-            }
-            notifModal.classList.remove('hidden');
+            const actionBtn = document.createElement('button');
+            actionBtn.innerText = "Confirm";
+            actionBtn.className = "bg-red-600 hover:bg-red-700 text-white font-bold px-4 py-2 rounded-lg transition w-full";
+            actionBtn.onclick = () => {
+                notifModal.classList.add('hidden');
+                onConfirm(); // Fire operational custom callback
+            };
+            notifButtons.appendChild(cancelBtn);
+            notifButtons.appendChild(actionBtn);
+        } else {
+            const okBtn = document.createElement('button');
+            okBtn.innerText = "Ok";
+            okBtn.className = "bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-2 rounded-lg transition w-full";
+            okBtn.onclick = () => notifModal.classList.add('hidden');
+            notifButtons.appendChild(okBtn);
         }
+        notifModal.classList.remove('hidden');
+    }
 
-        // INITIALISATION DE LA MODALE D'ÉDITION AVEC LA COPIE DE L'AVATAR
-        const editHiddenInput = document.getElementById("edit-selectedAvatar");
-        const editAvatarPreview = document.getElementById("edit-avatarPreview");
+    const editHiddenInput = document.getElementById("edit-selectedAvatar");
+    const editAvatarPreview = document.getElementById("edit-avatarPreview");
 
-        function initEditModal(button) {
-            document.getElementById('edit-user-id').value = button.dataset.id;
-            document.getElementById('edit-modal-username').value = button.dataset.username;
-            document.getElementById('edit-modal-email').value = button.dataset.email;
-            document.getElementById('edit-modal-role').value = button.dataset.role;
-            document.getElementById('edit-modal-password').value = ''; 
+    /**
+    * Pre-fills inputs in the edit modal container utilizing dataset attributes cached on row click events
+    */
+    function initEditModal(button) {
+        document.getElementById('edit-user-id').value = button.dataset.id;
+        document.getElementById('edit-modal-username').value = button.dataset.username;
+        document.getElementById('edit-modal-email').value = button.dataset.email;
+        document.getElementById('edit-modal-role').value = button.dataset.role;
+        document.getElementById('edit-modal-password').value = ''; // Keep password field empty for preservation defaults
 
-            document.querySelectorAll('#edit-user-modal .material-icons').forEach(icon => icon.textContent = 'visibility_off');
-            document.getElementById('edit-modal-password').type = 'password';
+        document.querySelectorAll('#edit-user-modal .material-icons').forEach(icon => icon.textContent = 'visibility_off');
+        document.getElementById('edit-modal-password').type = 'password';
 
-            // Configuration de la preview de l'avatar de l'utilisateur concerné
-            const currentAvatar = button.dataset.avatar || 'default.png';
-            editHiddenInput.value = currentAvatar;
-            editAvatarPreview.src = `/public/avatars/${currentAvatar}`;
+        const currentAvatar = button.dataset.avatar || 'default.png';
+        editHiddenInput.value = currentAvatar;
+        editAvatarPreview.src = `/public/avatars/${currentAvatar}`;
 
-            // Sélection visuelle de l'avatar dans la grille
-            document.querySelectorAll(".admin-avatar-item").forEach(img => {
-                if (img.dataset.avatar === currentAvatar) {
-                    img.classList.add("border-secondary");
-                } else {
-                    img.classList.remove("border-secondary");
-                }
-            });
-            
-            editModal.classList.remove('hidden');
-        }
-
-        // GESTION DU CLIC SUR LA GRILLE D'AVATARS (MODALE ADMIN)
+        // Reset visual active outlines across thumbnail grid elements before highlighting the targeted choice
         document.querySelectorAll(".admin-avatar-item").forEach(img => {
-            img.addEventListener("click", () => {
-                const avatar = img.dataset.avatar;
-                editHiddenInput.value = avatar;
-                editAvatarPreview.src = `/public/avatars/${avatar}`;
-
-                document.querySelectorAll(".admin-avatar-item").forEach(i => {
-                    i.classList.remove("border-secondary");
-                });
+            if (img.dataset.avatar === currentAvatar) {
                 img.classList.add("border-secondary");
+            } else {
+                img.classList.remove("border-secondary");
+            }
+        });
+            
+        editModal.classList.remove('hidden');
+    }
+
+    // Active grid click handlers modifying internal selections for avatar values
+    document.querySelectorAll(".admin-avatar-item").forEach(img => {
+        img.addEventListener("click", () => {
+            const avatar = img.dataset.avatar;
+            editHiddenInput.value = avatar;
+            editAvatarPreview.src = `/public/avatars/${avatar}`;
+
+            document.querySelectorAll(".admin-avatar-item").forEach(i => {
+                i.classList.remove("border-secondary");
             });
+            img.classList.add("border-secondary");
         });
+    });
 
-        // --- FETCH : ENVOI ÉDITION (AVEC PARAMÈTRE AVATAR INCLUS) ---
-        editForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const id = document.getElementById('edit-user-id').value;
-            const username = document.getElementById('edit-modal-username').value;
-            const email = document.getElementById('edit-modal-email').value;
-            const role = document.getElementById('edit-modal-role').value;
-            const password = document.getElementById('edit-modal-password').value;
-            const avatar = editHiddenInput.value; // Récupération de l'avatar choisi
+    // --- FETCH : UPDATE DISPATCH ACTION ---
+    editForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const id = document.getElementById('edit-user-id').value;
+        const username = document.getElementById('edit-modal-username').value;
+        const email = document.getElementById('edit-modal-email').value;
+        const role = document.getElementById('edit-modal-role').value;
+        const password = document.getElementById('edit-modal-password').value;
+        const avatar = editHiddenInput.value;
 
-            fetch('/api/users/update_users.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id, username, email, role, password, avatar }) // Ajout à la payload
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    hideEditModal();
-                    showNotification('success_update', 'The user has been updated successfully.');
-                    setTimeout(() => location.reload(), 1500);
-                } else {
-                    showNotification('error', data.message || 'Error occurred during updating.');
-                }
-            })
-            .catch(() => showNotification('error', 'An unexpected error occurred during update.'));
+        fetch('/api/users/update_users.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id, username, email, role, password, avatar }) // Ajout à la payload
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 'success') {
+                hideEditModal();
+                showNotification('success_update', 'The user has been updated successfully.');
+                setTimeout(() => location.reload(), 1500);
+            } else {
+                showNotification('error', data.message || 'Error occurred during updating.');
+            }
+        })
+        .catch(() => showNotification('error', 'An unexpected error occurred during update.'));
+    });
+
+    function confirmDeleteUser(id) {
+        // Passes execution sequence through confirmation prompts before dispatching destruction events
+        showNotification('info_delete', 'Are you absolutely sure you want to delete this user? This will also wipe their game sessions history.', () => {
+            executeDelete(id);
         });
+    }
+    
+    // --- FETCH : DELETE OPERATION DISPATCHER ---
+    function executeDelete(id) {
+        fetch('/api/users/delete_users.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: id })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 'success') {
+                // Instantly drop the HTML node row element directly out of active layout tree context without manual hard refreshes
+                const row = document.getElementById(`user-row-${id}`);
+                if (row) row.remove();
+                showNotification('success_delete', 'The user has been deleted successfully.');
+            } else {
+                showNotification('error', data.message || 'Error while trying to delete.');
+            }
+        })
+        .catch(() => showNotification('error', 'An error occurred during deletion.'));
+    }
 
-        function confirmDeleteUser(id) {
-            showNotification('info_delete', 'Are you absolutely sure you want to delete this user? This will also wipe their game sessions history.', () => {
-                executeDelete(id);
-            });
-        }
+    // --- FETCH : INSERT OPERATION DISPATCHER ---
+    addForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const username = document.getElementById('modal-username').value;
+        const email = document.getElementById('modal-email').value;
+        const password = document.getElementById('modal-password').value;
+        const role = document.getElementById('modal-role').value;
 
-        function executeDelete(id) {
-            fetch('/api/users/delete_users.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id: id })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    const row = document.getElementById(`user-row-${id}`);
-                    if (row) row.remove();
-                    showNotification('success_delete', 'The user has been deleted successfully.');
-                } else {
-                    showNotification('error', data.message || 'Error while trying to delete.');
-                }
-            })
-            .catch(() => showNotification('error', 'An error occurred during deletion.'));
-        }
-
-        addForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const username = document.getElementById('modal-username').value;
-            const email = document.getElementById('modal-email').value;
-            const password = document.getElementById('modal-password').value;
-            const role = document.getElementById('modal-role').value;
-
-            fetch('/api/users/add_users.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, email, password, role })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    hideModal();
-                    showNotification('success_create', 'The user has been successfully created.');
-                    setTimeout(() => location.reload(), 1500);
-                } else {
-                    showNotification('error', data.message || 'Failed to create the user.');
-                }
-            })
-            .catch(() => showNotification('error', 'An error occurred during save.'));
-        });
-    </script>
+        fetch('/api/users/add_users.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, email, password, role })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 'success') {
+                hideModal();
+                showNotification('success_create', 'The user has been successfully created.');
+                setTimeout(() => location.reload(), 1500);
+            } else {
+                showNotification('error', data.message || 'Failed to create the user.');
+            }
+        })
+        .catch(() => showNotification('error', 'An error occurred during save.'));
+    });
+</script>
 
 <?php require_once __DIR__ . '/components/footer.php'; ?>
