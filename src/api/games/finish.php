@@ -8,7 +8,7 @@ $data = json_decode(file_get_contents("php://input"), true);
 
 $quizId = (int)($data["quiz_id"] ?? 0);
 $answers = $data["answers"] ?? [];
-$duration = (int)($data["duration"] ?? 0); // 🆕 AJOUT
+$duration = (int)($data["duration"] ?? 0); // AJOUT
 
 if ($quizId <= 0) {
     echo json_encode([

@@ -562,7 +562,6 @@ input:checked + .slider #theme-icon {
   font-weight: 600;
   color: var(--color-white);
   text-align: center;
-  font-family: Arial, sans-serif;
 }
 
 .bigTitle {
@@ -607,6 +606,141 @@ input:checked + .slider #theme-icon {
     /* text-align: left; */
   }
 }
+
+/* =========================
+   LEADERBOARD
+========================= */
+
+.leaderboard{
+  display:flex;
+  flex-direction:column;
+  gap:1rem;
+}
+
+.leaderboard-item{
+  display: grid;
+  grid-template-columns: 70px 1fr 130px;
+  align-items: center;
+  padding: 1rem;
+  border-radius: 12px;
+  background: var(--color-primary-mid);
+  box-shadow: var(--shadow-modal);
+  transition:.2s;
+}
+
+.leaderboard-item:hover{
+  transform:translateY(-2px);
+}
+
+[data-theme="dark"] .leaderboard-item{
+  background: var(--color-bg);
+}
+
+.rank{
+  font-size:1.3rem;
+  font-weight:bold;
+  text-align:center;
+}
+
+.player{
+  display:flex;
+  align-items:center;
+  gap:1rem;
+}
+
+.player img{
+  width:55px;
+  height:55px;
+  border-radius:50%;
+  border:3px solid var(--color-primary);
+  object-fit:cover;
+}
+
+.player span{
+  font-size:1.05rem;
+  font-weight:600;
+  color:var(--color-white);
+}
+
+.score{
+  text-align:right;
+  color:var(--color-text);
+  font-size:1.1rem;
+  font-weight:bold;
+}
+
+/* ---------- TOP 3 ---------- */
+
+.first{
+  border-left:6px solid gold;
+}
+
+.second{
+  border-left:6px solid silver;
+}
+
+.third{
+  color: #cd7f32;
+  border-left:6px solid #cd7f32;
+}
+
+/* ---------- Responsive ---------- */
+
+@media(max-width:700px){
+
+  .leaderboard-header{
+    display:none;
+  }
+
+  .leaderboard-item{
+    grid-template-columns:60px 1fr;
+    gap:1rem;
+  }
+
+  .score{
+    grid-column:2;
+    text-align:left;
+    margin-top:.5rem;
+  }
+
+}
+
+.rank .material-icons{
+  font-size:34px;
+}
+
+.gold{
+  color:#FFD700;
+}
+
+.silver{
+  color:#C0C0C0;
+}
+
+.bronze{
+  color:#CD7F32;
+}
+
+.leaderboard-item.me{
+  border:2px solid var(--color-primary);
+  box-shadow:0 0 15px rgba(117,139,253,.5);
+  transform:scale(1.02);
+  position:relative;
+}
+
+.leaderboard-item.me::before{
+  content:"YOU";
+  position:absolute;
+  top:-10px;
+  right:12px;
+  background:var(--color-primary);
+  color:white;
+  font-size:.7rem;
+  padding:2px 8px;
+  border-radius:999px;
+  font-weight:bold;
+}
+
 
 
 /* =========================
@@ -1047,7 +1181,7 @@ td .flex {
 }
 
 [data-theme="dark"] .stat-card {
-  background: #0f172a; /* same as quizCard dark */
+  background: var(--color-bg); /* same as quizCard dark */
   color: var(--color-white);
 }
 

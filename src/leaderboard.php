@@ -1,58 +1,82 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Classement Quiz</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
+<?php
+session_start();
 
-  <div class="container">
+// Authentication Perimeter Guard: Restrict route access strictly to logged-in user environments
+if (!isset($_SESSION['user_id'])) {
+    header("Location: /login.php");
+    exit;
+}
 
-    <h1>🏆 Classement général</h1>
+$page_title = "Leaderboard";
+require_once __DIR__ . '/components/header.php';
+?>
 
-    <div class="leaderboard">
+<div id="leaderboard" class="leaderboard"></div>
 
-      <div class="row header">
-        <span>#</span>
-        <span>Joueur</span>
-        <span>Score</span>
-      </div>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        loadLeaderboard();
+    });
 
-      <div class="row first">
-        <span>🥇 1</span>
-        <span>Alice</span>
-        <span>980</span>
-      </div>
+    async function loadLeaderboard(){
+        const res = await fetch("/api/leaderboard/get_leaderboard.php", {
+            credentials: "include"
+        });
+        const json = await res.json();
 
-      <div class="row second">
-        <span>🥈 2</span>
-        <span>Bob</span>
-        <span>870</span>
-      </div>
+        if(json.status !== "success") return;
+        const leaderboard = document.getElementById("leaderboard");
 
-      <div class="row third">
-        <span>🥉 3</span>
-        <span>Clara</span>
-        <span>820</span>
-      </div>
+        if(!leaderboard){
+            console.error("Leaderboard container not found");
+            return;
+        }
 
-      <div class="row">
-        <span>4</span>
-        <span>David</span>
-        <span>760</span>
-      </div>
+        const currentUser = json.currentUser;
+        const players = json.data;
+        leaderboard.innerHTML = "";
+        players.forEach((player, index) => {
+            const isMe = player.id == currentUser;
+            console.log(currentUser)
 
-      <div class="row">
-        <span>5</span>
-        <span>Emma</span>
-        <span>700</span>
-      </div>
+            let icon = index + 1;
+            let className = "";
 
-    </div>
+            if(index === 0){
+                icon = `<span class="material-icons gold">emoji_events</span>`;
+                className = "first";
+            }
 
-  </div>
+            if(index === 1){
+                icon = `<span class="material-icons silver">emoji_events</span>`;
+                className = "second";
+            }
 
-</body>
-</html>
+            if(index === 2){
+                icon = `<span class="material-icons bronze">emoji_events</span>`;
+                className = "third";
+            }
+
+            leaderboard.innerHTML += `
+                <div class="leaderboard-item ${className} ${isMe ? 'me' : ''}">
+
+                    <div class="rank">
+                        ${icon}
+                    </div>
+
+                    <div class="player">
+                        <img src="/public/avatars/${player.avatar}">
+                        <span>
+                            ${player.username}
+                        </span>
+                    </div>
+
+                    <div class="score">
+                        ${(player.total_points ?? 0).toLocaleString()} pts
+                    </div>
+
+                </div>
+            `;
+        });
+    }
+</script>
