@@ -15,7 +15,7 @@ require_once __DIR__ . '/config/db.php';
 $quiz_id = (int)($_GET['quiz'] ?? 0);
 
 if ($quiz_id <= 0) {
-    die("Quiz invalide");
+    die("Invalid quiz");
 }
 
 /* Quiz : Fetch Quiz Context Parameters */
@@ -39,7 +39,7 @@ $stmt->execute([$quiz_id]);
 $questions = $stmt->fetchAll();
 
 if (!$questions) {
-    die("Aucune question trouvée");
+    die("No questions found");
 }
 
 /* Answers : Extract multiple choice options assigned to individual questions */
