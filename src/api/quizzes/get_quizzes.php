@@ -1,5 +1,5 @@
 <?php
-
+// src/api/quizzes/get_quizzes.php
 header('Content-Type: application/json');
 require_once __DIR__ . '/../../config/db.php';
 
@@ -13,7 +13,8 @@ if ($quizId <= 0) {
     exit;
 }
 
-/* 1. Quiz */
+/* 1. Fetch Quiz Details */
+// Query bounded parameters isolate lookups strictly against validated active entities
 $stmt = $pdo->prepare("
     SELECT *
     FROM quizzes
@@ -32,7 +33,8 @@ if (!$quiz) {
     exit;
 }
 
-/* 2. Questions du quiz (IMPORTANT FIX) */
+/* 2. Fetch Associated Questions */
+// INNER JOIN fetches multi-to-multi dynamic dependencies across joining schema records
 $stmt = $pdo->prepare("
     SELECT q.*
     FROM questions q
@@ -43,7 +45,8 @@ $stmt = $pdo->prepare("
 $stmt->execute([$quizId]);
 $questions = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-/* 3. Answers */
+/* 3. Fetch Answer Options Sequentially */
+// Loops through child indices to bind related multiple-choice representations
 foreach ($questions as &$question) {
 
     $stmtAnswers = $pdo->prepare("
@@ -57,6 +60,7 @@ foreach ($questions as &$question) {
     $question['answers'] = $stmtAnswers->fetchAll(PDO::FETCH_ASSOC);
 }
 
+// Re-package nested relational records back into the structural parent data map
 $quiz['questions'] = $questions;
 
 echo json_encode([

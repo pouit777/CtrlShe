@@ -3,7 +3,6 @@
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *'); 
 
-// Admin verification
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -16,10 +15,10 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
 require_once __DIR__ . '/../../config/db.php';
 
 try {
-    // Data selection (without the password field)
+    // Explicit projection targeting: intentionally omits sensitive password hash footprints from transit contexts
     $baseQuery = "SELECT id, username, email, role, created_at FROM users";
 
-    // Filter by role if provided in the query parameters
+    // Conditional path separation based on target role parameters parsing
     if (!empty($_GET['role'])) {
         $stmt = $pdo->prepare($baseQuery . ' WHERE role = :role ORDER BY id DESC');
         $stmt->execute(['role' => $_GET['role']]);

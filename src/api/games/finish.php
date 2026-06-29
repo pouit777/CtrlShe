@@ -8,9 +8,13 @@ $data = json_decode(file_get_contents("php://input"), true);
 
 $quizId = (int)($data["quiz_id"] ?? 0);
 $answers = $data["answers"] ?? [];
+$duration = (int)($data["duration"] ?? 0); // 🆕 AJOUT
 
 if ($quizId <= 0) {
-    echo json_encode(["status" => "error", "message" => "Invalid quiz"]);
+    echo json_encode([
+        "status" => "error",
+        "message" => "Invalid quiz"
+    ]);
     exit;
 }
 
@@ -28,7 +32,6 @@ $questions = $stmt->fetchAll(PDO::FETCH_COLUMN);
 $isGuest = !isset($_SESSION["user_id"]);
 
 $score = 0;
-$corrections = [];
 
 foreach ($questions as $qid) {
 
@@ -37,40 +40,107 @@ foreach ($questions as $qid) {
     $stmtC = $pdo->prepare("
         SELECT id
         FROM answers
-        WHERE question_id = ? AND is_correct = 1
+        WHERE question_id = ?
+        AND is_correct = 1
         LIMIT 1
     ");
     $stmtC->execute([$qid]);
+
     $correct = $stmtC->fetchColumn();
 
-    $isCorrect = ($userAnswer == $correct);
-
-    if ($isCorrect) $score++;
-
-    $corrections[] = [
-        "question_id" => $qid,
-        "user_answer" => $userAnswer,
-        "correct_answer" => $correct,
-        "is_correct" => $isCorrect
-    ];
+    if ($userAnswer == $correct) {
+        $score++;
+    }
 }
 
-/* SAVE DB ONLY IF USER */
+$pointsEarned = $score;
+$gameId = null;
+
+/* SAVE USER GAME */
 if (!$isGuest) {
 
-    $stmt = $pdo->prepare("
-        INSERT INTO games (user_id, quiz_id, score, total_questions)
-        VALUES (?, ?, ?, ?)
-    ");
+    $pdo->beginTransaction();
 
-    $stmt->execute([
-        $_SESSION["user_id"],
-        $quizId,
-        $score,
-        count($questions)
-    ]);
+    try {
 
-    $gameId = $pdo->lastInsertId();
+        $stmt = $pdo->prepare("
+            INSERT INTO games (
+                user_id,
+                quiz_id,
+                score,
+                total_questions,
+                duration,
+                points_earned
+            )
+            VALUES (?, ?, ?, ?, ?, ?)
+        ");
+
+        $stmt->execute([
+            $_SESSION["user_id"],
+            $quizId,
+            $score,
+            count($questions),
+            $duration, // 🆕
+            $pointsEarned
+        ]);
+
+        $gameId = $pdo->lastInsertId();
+
+        $stmtInsert = $pdo->prepare("
+            INSERT INTO game_answers (
+                game_id,
+                question_id,
+                answer_id,
+                is_correct
+            )
+            VALUES (?, ?, ?, ?)
+        ");
+
+        foreach ($questions as $qid) {
+
+            $userAnswer = $answers[$qid] ?? null;
+
+            $stmtC = $pdo->prepare("
+                SELECT id
+                FROM answers
+                WHERE question_id = ?
+                AND is_correct = 1
+                LIMIT 1
+            ");
+            $stmtC->execute([$qid]);
+
+            $correct = $stmtC->fetchColumn();
+
+            $stmtInsert->execute([
+                $gameId,
+                $qid,
+                $userAnswer,
+                $userAnswer == $correct ? 1 : 0
+            ]);
+        }
+
+        $stmt = $pdo->prepare("
+            UPDATE users
+            SET total_points = total_points + ?
+            WHERE id = ?
+        ");
+
+        $stmt->execute([
+            $pointsEarned,
+            $_SESSION["user_id"]
+        ]);
+
+        $pdo->commit();
+
+    } catch (Exception $e) {
+        $pdo->rollBack();
+
+        echo json_encode([
+            "status" => "error",
+            "message" => "Database error."
+        ]);
+        exit;
+    }
 }
 
 /* RESPONSE */
@@ -79,5 +149,6 @@ echo json_encode([
     "guest" => $isGuest,
     "score" => $score,
     "total" => count($questions),
-    "game_id" => $gameId ?? null
+    "points_earned" => $pointsEarned,
+    "game_id" => $gameId
 ]);

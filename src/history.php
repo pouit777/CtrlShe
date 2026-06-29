@@ -1,12 +1,13 @@
 <?php
 session_start();
 
+// Authentication Perimeter Guard: Restrict route access strictly to logged-in user environments
 if (!isset($_SESSION['user_id'])) {
     header("Location: /login.php");
     exit;
 }
 
-// Génération d'un token CSRF sécurisé s'il n'existe pas déjà
+// Security Checkpoint: Generate a cryptographically secure pseudo-random anti-CSRF token if none exists
 if (empty($_SESSION['csrf_token'])) {
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 }
@@ -25,7 +26,10 @@ require_once __DIR__ . '/components/header.php';
 </div>
 
 <script>
-// Fonction essentielle pour bloquer les failles XSS (injection de scripts dans le nom des quiz)
+/**
+ * Sanitizes raw user-generated string sequences to mitigate Stored XSS 
+ * (Cross-Site Scripting) vulnerabilities by escaping active HTML syntax characters.
+ */
 function escapeHTML(str) {
     if (!str) return '';
     return str.replace(/[&<>"']/g, function(match) {
@@ -40,9 +44,12 @@ function escapeHTML(str) {
     });
 }
 
+/**
+ * Asynchronously dispatches a secure request payload fetching aggregated game performance statistics.
+ */
 async function loadHistory() {
     try {
-        // On passe le token CSRF dans les headers de la requête fetch
+        // Anti-CSRF Token Enforcement: Pass the active token string directly inside custom HTTP header properties
         const response = await fetch("/api/games/get_history.php", {
             method: "GET",
             headers: {
@@ -53,6 +60,7 @@ async function loadHistory() {
         const data = await response.json();
         const container = document.getElementById("history-container");
 
+        // Handle operational API response failures gracefully within the UI layout
         if (data.status !== "success") {
             container.innerHTML = `
                 <div class="quizCard">
@@ -64,6 +72,7 @@ async function loadHistory() {
             return;
         }
 
+        // Empty set handling condition: fallback display configuration when no records exist
         if (data.data.length === 0) {
             container.innerHTML = `
                 <div class="quizCard">
@@ -73,15 +82,20 @@ async function loadHistory() {
             return;
         }
 
+        // Map over response arrays and compile structural UI template segments dynamically
         container.innerHTML = data.data.map(game => {
+            
+            // Normalize database UTC time indicators to local European/Paris regional zone parameters
             const date = new Date(game.played_at + " UTC").toLocaleString("fr-FR", {
                 timeZone: "Europe/Paris"
             });
 
+            // Calculate percentage ratings to establish adaptive color score models
             const percent = game.total_questions
                 ? Math.round((game.score / game.total_questions) * 100)
                 : 0;
 
+            // Determine appropriate style color tokens matching specific threshold boundaries
             let color = "text-green-400";
             if (percent < 50) {
                 color = "text-red-400";
@@ -89,7 +103,7 @@ async function loadHistory() {
                 color = "text-amber-400";
             }
 
-            // Utilisation de escapeHTML() pour sécuriser l'affichage
+            // Append sanitized attributes safely within structural layout strings
             return `
                 <div class="quizCard">
                     <h2 class="titleCard mb-2">
@@ -119,6 +133,7 @@ async function loadHistory() {
         }).join("");
 
     } catch (error) {
+        // Shield operational infrastructure maps by substituting detailed crash strings with generic errors
         document.getElementById("history-container").innerHTML = `
             <div class="quizCard">
                 <p class="subTitle text-red-400">Server error.</p>
@@ -128,6 +143,7 @@ async function loadHistory() {
     }
 }
 
+// Trigger history payload acquisition loop sequence automatically upon file compilation
 loadHistory();
 </script>
 

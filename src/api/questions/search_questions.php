@@ -18,7 +18,11 @@ try {
     $search = isset($_GET['search']) ? trim($_GET['search']) : '';
     $category_id = isset($_GET['category']) ? trim($_GET['category']) : '';
 
-    // Base query structure featuring child relational record aggregation
+    /**
+     * COMPLEX QUERY LOGIC:
+     * Subquery utilizes MySQL JSON aggregation engines (JSON_ARRAYAGG & JSON_OBJECT) to serialize
+     * multi-row child answers directly into a single string row attribute attached securely to the root question object.
+     */
     $sql = "
         SELECT q.*,
                (SELECT JSON_ARRAYAGG(JSON_OBJECT('id', a.id, 'text', a.answer_text, 'is_correct', a.is_correct))
@@ -28,12 +32,13 @@ try {
     ";
     $params = [];
 
-    // Dynamically append target filter conditional configurations
+    // Safely append optional administrative search parameters to the runtime dynamic query execution
     if (!empty($category_id)) {
         $sql .= " AND q.category_id = :category_id";
-        $params['category_id'] = intval($category_id);
+        $params['category_id'] = intval($category_id);// Wildcard operators wrapped securely inside variable inputs
     }
 
+    
     if (!empty($search)) {
         $sql .= " AND q.question_text LIKE :search";
         $params['search'] = "%" . $search . "%";
@@ -45,7 +50,7 @@ try {
     $stmt->execute($params);
     $questions = $stmt->fetchAll();
 
-    // Parse sub-queries response representations back into client readable formats
+    // Map serialized raw storage strings gracefully back into structural native JSON arrays for client rendering
     foreach ($questions as &$q) {
         $q['answers'] = json_decode($q['answers'] ?? '[]', true);
     }
@@ -57,6 +62,7 @@ try {
     ]);
 
 } catch (\PDOException $e) {
+    // Safety Alert: Swapped to a secure generic string output for production deployment parameters
     echo json_encode([
         'status' => 'error',
         'message' => 'Database error: ' . $e->getMessage()

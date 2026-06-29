@@ -3,6 +3,7 @@ session_start();
 
 $guestMode = false;
 
+// Determine if the current visitor is authenticated or browsing as a guest
 if (!isset($_SESSION['user_id'])) {
     $guestMode = true;
 }
@@ -17,7 +18,7 @@ if ($quiz_id <= 0) {
     die("Quiz invalide");
 }
 
-/* Quiz */
+/* Quiz : Fetch Quiz Context Parameters */
 $stmt = $pdo->prepare("SELECT * FROM quizzes WHERE id = ? AND is_active = 1");
 $stmt->execute([$quiz_id]);
 $quiz = $stmt->fetch();
@@ -26,7 +27,7 @@ if (!$quiz) {
     die("Quiz introuvable");
 }
 
-/* Questions */
+/* Questions : Fetch Questions bounded to the active Quiz relational map */
 $stmt = $pdo->prepare("
     SELECT q.*
     FROM questions q
@@ -41,21 +42,20 @@ if (!$questions) {
     die("Aucune question trouvée");
 }
 
-/* Answers */
+/* Answers : Extract multiple choice options assigned to individual questions */
 foreach ($questions as &$q) {
-
     $stmtA = $pdo->prepare("
         SELECT id, answer_text, is_correct
         FROM answers
         WHERE question_id = ?
         ORDER BY id ASC
     ");
-
     $stmtA->execute([$q['id']]);
     $q['answers'] = $stmtA->fetchAll();
 }
-unset($q);
+unset($q); // Break pointer reference memory bindings
 
+// Build a clean aggregate payload representation map for frontend parsing
 $gameData = [
     "guest" => $guestMode,
     "quiz" => [
@@ -86,9 +86,12 @@ $gameData = [
 ];
 ?>
 
-<!-- GAME DATA -->
 <script>
-    const GAME_DATA = <?= json_encode($gameData, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>;
+    /**
+     * SECURITY NOTE: Double encoding the JSON payload prevents Stored XSS exploits.
+     * Rendering the payload inside JSON.parse() mitigates direct script evaluation within the DOM framework.
+     */
+    const GAME_DATA = JSON.parse(<?= json_encode(json_encode($gameData, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)); ?>);
     console.log(GAME_DATA);
 </script>
 

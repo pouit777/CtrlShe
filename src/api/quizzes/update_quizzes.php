@@ -1,7 +1,9 @@
 <?php
+// src/api/quizzes/update_quizzes.php
 session_start();
 header('Content-Type: application/json');
 
+// Strict session-state authority check
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     http_response_code(403);
     echo json_encode(['status' => 'error', 'message' => 'Unauthorized']);
@@ -30,6 +32,7 @@ $description = trim($data['description'] ?? '');
 $difficulty = $data['difficulty'] ?? 'medium';
 $categories = $data['categories'] ?? [];
 
+// Structural constraints assertion validation
 if ($name === '') {
     http_response_code(400);
     echo json_encode(['status' => 'error', 'message' => 'Quiz name is required']);
@@ -47,6 +50,7 @@ if (!in_array($difficulty, ['easy', 'medium', 'hard'])) {
 }
 
 try {
+    // Open atomic transaction block to avoid orphaned child mapping associations
     $pdo->beginTransaction();
 
     $stmt = $pdo->prepare("
@@ -68,8 +72,10 @@ try {
         'allow_custom' => !empty($data['allow_custom_question_count']) ? 1 : 0
     ]);
 
+    // Wipe out historical mapping records to prepare clean relational overwrites
     $pdo->prepare("DELETE FROM quiz_categories WHERE quiz_id = ?")->execute([$id]);
 
+    // Insert updated relative index parameters inside categorical junction matrices
     $stmtCat = $pdo->prepare("INSERT INTO quiz_categories (quiz_id, category_id) VALUES (?, ?)");
     foreach ($categories as $catId) {
         $stmtCat->execute([$id, (int)$catId]);

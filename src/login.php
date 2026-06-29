@@ -3,11 +3,13 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+// Pre-Authentication Boundary Guard: Redirect already authenticated sessions away from login routes
 if (isset($_SESSION['user_id'])) {
     header('Location: /index.php');
     exit;
 }
 
+// Anti-CSRF Token generation for state verification procedures
 if (empty($_SESSION['csrf_token'])) {
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 }
@@ -64,15 +66,17 @@ const passwordInput = document.getElementById('password');
 const togglePasswordBtn = document.getElementById('toggle-password-btn');
 const togglePasswordIcon = document.getElementById('toggle-password-icon');
 
+// Event listener managing interactive hidden password visibility mutations
 togglePasswordBtn.addEventListener('click', function () {
-    // Permute le type de champ entre 'password' et 'text'
+    // Permute input stream types dynamically between standard password masks and readable text fields
     const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
     passwordInput.setAttribute('type', type);
     
-    // Alterne l'icône Material Icons de visibilité
+    // Toggle corresponding visual font icons matching visibility state requirements
     togglePasswordIcon.textContent = type === 'password' ? 'visibility' : 'visibility_off';
 });
 
+// Capture authentication lifecycle form submissions asynchronously
 document.getElementById('login-form').addEventListener('submit', function(e) {
     e.preventDefault();
 
@@ -82,11 +86,14 @@ document.getElementById('login-form').addEventListener('submit', function(e) {
     const errorDiv = document.getElementById('error-message');
     const submitBtn = document.getElementById('submit-btn');
 
+    // Reset visual error state notification bounds
     errorDiv.classList.add('hidden');
 
+    // Freeze structural interface control bounds to intercept submission duplicate requests
     submitBtn.disabled = true;
     submitBtn.innerText = "Signing in...";
 
+    // Dispatch credentials securely encoded within an asynchronous JSON stream
     fetch('/api/account/login_process.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -94,17 +101,22 @@ document.getElementById('login-form').addEventListener('submit', function(e) {
     })
     .then(res => res.json())
     .then(data => {
+        // Evaluate API verification response states
         if (data.status === 'success') {
+            // Enforce conditional route mapping targeting authorization privileges
             window.location.href = data.role === 'admin' ? '/admin_dashboard.php' : '/index.php';
         } else {
+            // Map validation errors back inside the allocated error container alert boxes
             errorDiv.textContent = data.message || "Invalid credentials.";
             errorDiv.classList.remove('hidden');
 
+            // Restore form control interactive capabilities
             submitBtn.disabled = false;
             submitBtn.innerText = "Sign In";
         }
     })
     .catch(() => {
+        // Fallback catch boundary shielding systems from network connectivity failures
         errorDiv.textContent = "An error occurred. Please try again.";
         errorDiv.classList.remove('hidden');
 

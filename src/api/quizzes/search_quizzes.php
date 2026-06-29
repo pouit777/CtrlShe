@@ -1,4 +1,5 @@
 <?php
+// src/api/quizzes/search_quizzes.php
 session_start();
 header('Content-Type: application/json');
 require_once __DIR__ . '/../../config/db.php';
@@ -7,6 +8,7 @@ try {
     $search = trim($_GET['search'] ?? '');
     $category = (int)($_GET['category'] ?? 0);
 
+    // Dynamic relational framework query initialization using safety joins
     $sql = "
         SELECT DISTINCT q.id, q.name, q.description, q.difficulty, q.question_count
         FROM quizzes q
@@ -16,16 +18,19 @@ try {
 
     $params = [];
 
+    // Safely structure optional wildcard string matching parameters
     if ($search !== '') {
         $sql .= " AND q.name LIKE :search";
         $params['search'] = '%' . $search . '%';
     }
 
+    // Safely append categorical filter parameters
     if ($category > 0) {
         $sql .= " AND qc.category_id = :category";
         $params['category'] = $category;
     }
 
+    // Prepare and execute compiled parameterized query securely
     $sql .= " ORDER BY q.id DESC";
 
     $stmt = $pdo->prepare($sql);
