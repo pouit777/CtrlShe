@@ -7,7 +7,11 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
 }
 
 require_once __DIR__ . '/config/db.php';
+
+// Retrieve all product categories for selection fields
 $categories = $pdo->query('SELECT * FROM categories')->fetchAll();
+
+// Fetch quizzes with their aggregated category IDs and category labels via many-to-many relationship
 $quizzes = $pdo->query("SELECT 
         q.*,
         GROUP_CONCAT(c.id) AS category_ids,
@@ -18,6 +22,7 @@ $quizzes = $pdo->query("SELECT
     GROUP BY q.id
     ORDER BY q.id DESC")->fetchAll();
 
+// Retrieve all questions alongside their structured answers payload inside a single JSON array
 $query = "
     SELECT q.*, c.label as category_label,
            (SELECT JSON_ARRAYAGG(JSON_OBJECT('id', a.id, 'text', a.answer_text, 'is_correct', a.is_correct))
@@ -28,6 +33,7 @@ $query = "
 ";
 $questions = $pdo->query($query)->fetchAll();
 
+// --- VIEW CONFIGURATION ---
 $page_title = "brainSKwiz - Admin Panel";
 require_once __DIR__ . '/components/header.php';
 ?>
@@ -197,8 +203,7 @@ require_once __DIR__ . '/components/header.php';
 </div>
 
 <script>
-    // Le code JavaScript reste identique à votre logique d'origine.
-    // L'injection de dépendances et la sécurité ont été résolues côté rendu HTML.
+    // --- MODAL POPUP VISIBILITY MANAGERS ---
     const quizModal = document.getElementById('quiz-modal');
     document.getElementById('open-quiz-modal-btn').addEventListener('click', () => {
         document.getElementById('add-quiz-form').reset();
@@ -207,6 +212,7 @@ require_once __DIR__ . '/components/header.php';
     document.getElementById('close-quiz-modal-btn').addEventListener('click', () => { quizModal.classList.add('hidden'); });
     document.getElementById('close-edit-quiz-modal-btn').addEventListener('click', () => { document.getElementById('edit-quiz-modal').classList.add('hidden'); });  
 
+    // --- POPUP NOTIFICATION CONFIGURATIONS ---
     const notifModal = document.getElementById('notification-modal');
     const notifIconContainer = document.getElementById('notif-icon-container');
     const notifIcon = document.getElementById('notif-icon');
@@ -223,6 +229,7 @@ require_once __DIR__ . '/components/header.php';
         error: { title: "An Error Occurred", bg: "bg-red-950", text: "text-red-400", border: "border-red-800", svg: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />' }
     };
 
+    // Global utility function displaying success, failure notifications or dual-button context prompts
     function showNotification(type, message, onConfirm = null) {
         const config = notifTypes[type] || notifTypes.info;
         notifIconContainer.className = `mx-auto flex items-center justify-center h-12 w-12 rounded-full mb-4 ${config.bg} ${config.text} border ${config.border}`;
@@ -257,6 +264,7 @@ require_once __DIR__ . '/components/header.php';
         notifModal.classList.remove('hidden');
     }
 
+    // --- SUBMIT COMPONENT: ADD QUIZ BACKEND CALL ---
     document.getElementById('add-quiz-form').addEventListener('submit', function (e) {
         e.preventDefault();
         try {
@@ -297,6 +305,7 @@ require_once __DIR__ . '/components/header.php';
         }
     });
 
+    // --- SUBMIT COMPONENT: UPDATE QUIZ BACKEND CALL ---
     document.getElementById('edit-quiz-form').addEventListener('submit', async (e) => {
         e.preventDefault();
         const name = document.getElementById('edit-quiz-name').value.trim();
@@ -340,6 +349,8 @@ require_once __DIR__ . '/components/header.php';
         }
     });
 
+    // --- INTERACTION COMPONENT: EDIT DATA POPULATION ---
+    // Extract row configuration data directly from element properties to assign into update fields
     function editQuiz(btn) {
         document.getElementById('edit-quiz-id').value = btn.dataset.id;
         document.getElementById('edit-quiz-name').value = btn.dataset.name;
@@ -353,6 +364,7 @@ require_once __DIR__ . '/components/header.php';
         document.getElementById('edit-quiz-modal').classList.remove('hidden');
     }
 
+    // --- INTERACTION COMPONENT: DELETION HANDLING ---
     function deleteQuiz(id) {
         showNotification('info_delete', 'Are you sure you want to delete this quiz? This action cannot be undone.',
             async () => {

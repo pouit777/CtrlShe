@@ -9,8 +9,12 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
 }
 
 require_once __DIR__ . '/config/db.php';
+
+// Fetch all available categories for the dropdown selections
 $categories = $pdo->query('SELECT * FROM categories')->fetchAll();
 
+// Complex query to fetch all questions along with their category label
+// and an aggregated JSON array containing all linked answer options
 $query = "
     SELECT q.*, c.label as category_label,
            (SELECT JSON_ARRAYAGG(JSON_OBJECT('id', a.id, 'text', a.answer_text, 'is_correct', a.is_correct))
@@ -21,6 +25,7 @@ $query = "
 ";
 $questions = $pdo->query($query)->fetchAll();
 
+// --- PAGE HEADER ---
 $page_title = "brainSKwiz - Admin Questions";
 require_once __DIR__ . '/components/header.php';
 ?>
@@ -192,6 +197,8 @@ require_once __DIR__ . '/components/header.php';
     </div>
 
 <script>
+
+        // --- DOM ELEMENTS SELECTION ---
         const modal = document.getElementById('question-modal');
         const openModalBtn = document.getElementById('open-modal-btn');
         const closeModalBtn = document.getElementById('close-modal-btn');
@@ -200,7 +207,9 @@ require_once __DIR__ . '/components/header.php';
         const addAnswersContainer = document.getElementById('add-answers-container');
         const editAnswersContainer = document.getElementById('edit-answers-container');
 
-        // --- FONCTION DE GESTION DYNAMIQUE DES CHAMPS (MIN 2, MAX 7) ---
+        // --- DYNAMIC ANSWER FIELDS MANAGEMENT (MIN 2, MAX 7) ---
+
+        // Generates the HTML structure for a single answer row (Radio button + Text Input + Remove button)
         function createAnswerRowHtml(radioName, textValue = '', isCorrect = false) {
             const div = document.createElement('div');
             div.className = "flex items-center gap-3 answer-row";
@@ -215,6 +224,7 @@ require_once __DIR__ . '/components/header.php';
             return div;
         }
 
+        // Appends a new answer field to the targeted container up to a max of 7 rows
         function addAnswerField(containerId, radioName, textValue = '', isCorrect = false) {
             const container = document.getElementById(containerId);
             if (container.children.length >= 7) {
@@ -225,6 +235,7 @@ require_once __DIR__ . '/components/header.php';
             updateRadioValues(container);
         }
 
+        // Removes an answer field from the container, keeping a minimum constraint of 2 rows
         function removeAnswerField(button) {
             const container = button.parentElement.parentElement;
             if (container.children.length <= 2) {
@@ -235,15 +246,17 @@ require_once __DIR__ . '/components/header.php';
             updateRadioValues(container);
         }
 
+        // Re-calculates and binds correct index values (0, 1, 2...) to radio inputs whenever fields change
         function updateRadioValues(container) {
-            // Assigne l'index dynamique aux boutons radio (0, 1, 2, ...)
             Array.from(container.children).forEach((row, idx) => {
                 const radio = row.querySelector('.input-radio-target');
                 if(radio) radio.value = idx;
             });
         }
 
-        // Initialisation de la modale d'ajout avec 2 champs vides
+        // --- MODAL TOGGLES & INITIALIZATION ---
+
+        // Open Creation Modal with 2 default blank answer options
         openModalBtn.addEventListener('click', () => {
             addForm.reset(); 
             addAnswersContainer.innerHTML = '';
@@ -265,6 +278,7 @@ require_once __DIR__ . '/components/header.php';
         closeEditModalBtn.addEventListener('click', hideEditModal);
         cancelEditModalBtn.addEventListener('click', hideEditModal);
 
+        // --- NOTIFICATION SYSTEM CONFIGURATION ---
         const notifModal = document.getElementById('notification-modal');
         const notifIconContainer = document.getElementById('notif-icon-container');
         const notifIcon = document.getElementById('notif-icon');
@@ -281,6 +295,7 @@ require_once __DIR__ . '/components/header.php';
             error: { title: "An Error Occurred", bg: "bg-red-950", text: "text-red-400", border: "border-red-800", svg: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />' }
         };
 
+        // Renders either an alert modal or a confirm modal based on the presence of an 'onConfirm' callback
         function showNotification(type, message, onConfirm = null) {
             const config = notifTypes[type] || notifTypes.info;
             notifIconContainer.className = `mx-auto flex items-center justify-center h-12 w-12 rounded-full mb-4 ${config.bg} ${config.text} border ${config.border}`;
@@ -315,6 +330,9 @@ require_once __DIR__ . '/components/header.php';
             notifModal.classList.remove('hidden');
         }
 
+        // --- EDIT MODAL POPULATION ---
+
+        // Reads data-* payload from the clicked row button and sets up the Edit Form
         function initEditModal(button) {
             const id = button.dataset.id;
             const catId = button.dataset.category;
@@ -333,21 +351,23 @@ require_once __DIR__ . '/components/header.php';
             document.getElementById('edit-modal-category').value = catId;
             document.getElementById('edit-modal-difficulty').value = difficulty;
 
-            // Remplissage dynamique des réponses existantes
+            // Dynamically rebuild previous choices
             editAnswersContainer.innerHTML = '';
             if(Array.isArray(answers) && answers.length > 0) {
                 answers.forEach((ans) => {
                     addAnswerField('edit-answers-container', 'edit_correct_answer', ans.text, parseInt(ans.is_correct) === 1);
                 });
             } else {
-                // Secours si aucune réponse trouvée
+                // Fallback state if database records are empty
                 addAnswerField('edit-answers-container', 'edit_correct_answer', '', true);
                 addAnswerField('edit-answers-container', 'edit_correct_answer', '', false);
             }
             editModal.classList.remove('hidden');
         }
 
-        // --- ENVOI ÉDITION ---
+        // --- API COMMUNICATIONS (SUBMISSIONS) ---
+
+        // Handle Edit Form Submission via Fetch API (JSON)
         editForm.addEventListener('submit', function(e) {
             e.preventDefault();
             const id = document.getElementById('edit-question-id').value;
@@ -355,7 +375,7 @@ require_once __DIR__ . '/components/header.php';
             const categoryId = document.getElementById('edit-modal-category').value;
             const difficulty = document.getElementById('edit-modal-difficulty').value;
 
-            // Collecte dynamique de toutes les valeurs textes présentes
+            // Parse inputs text and evaluate checked answer index
             const textInputs = editAnswersContainer.querySelectorAll('.input-text-target');
             const answers = Array.from(textInputs).map(input => input.value);
             
@@ -384,12 +404,14 @@ require_once __DIR__ . '/components/header.php';
             .catch(() => showNotification('error', 'An unexpected error occurred during update.'));
         });
 
+        // Prompt confirmation dialog before calling deletion script
         function confirmDeleteQuestion(id) {
             showNotification('info_delete', 'Are you absolutely sure you want to delete this question? This action cannot be undone.', () => {
                 executeDelete(id);
             });
         }
 
+        // Sends Delete payload and physically removes DOM target row on success
         function executeDelete(id) {
             fetch('/api/questions/delete_questions.php', {
                 method: 'POST',
@@ -409,14 +431,13 @@ require_once __DIR__ . '/components/header.php';
             .catch(() => showNotification('error', 'An error occurred during deletion.'));
         }
 
-        // --- ENVOI CRÉATION ---
+        // Handle Add New Question Form Submission via Fetch API (JSON)
         addForm.addEventListener('submit', function(e) {
             e.preventDefault();
             const questionText = document.getElementById('modal-question-text').value;
             const categoryId = document.getElementById('modal-category').value;
             const difficulty = document.getElementById('modal-difficulty').value;
 
-            // Collecte dynamique de toutes les valeurs textes présentes
             const textInputs = addAnswersContainer.querySelectorAll('.input-text-target');
             const answers = Array.from(textInputs).map(input => input.value);
             

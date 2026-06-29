@@ -3,6 +3,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+// Access Control: Only allow users with the 'admin' role
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     header('Location: /index.php');
     exit;
@@ -10,6 +11,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
 
 require_once __DIR__ . '/config/db.php';
 
+// SQL Query: Fetch all categories alongside their total number of linked questions
 $query = '
     SELECT c.*, COUNT(q.id) AS total_questions 
     FROM categories c
@@ -17,16 +19,20 @@ $query = '
     GROUP BY c.id
     ORDER BY c.id DESC
 ';
+
+// SQL Query: Fetch all questions with their current category labels to populate the linking modal
 $orphan_query = "
     SELECT q.id, q.question_text, q.difficulty, q.category_id, c.label AS current_category_label 
     FROM questions q 
     LEFT JOIN categories c ON q.category_id = c.id 
     ORDER BY q.id DESC
 ";
-$orphan_questions = $pdo->query($orphan_query)->fetchAll();
 
+// Execute queries and fetch results
+$orphan_questions = $pdo->query($orphan_query)->fetchAll();
 $categories = $pdo->query($query)->fetchAll();
 
+// Page settings and layout header inclusion
 $page_title = "brainSKwiz - Admin Categories";
 require_once __DIR__ . '/components/header.php';
 ?>
@@ -189,7 +195,7 @@ require_once __DIR__ . '/components/header.php';
     </div>
 
     <script>
-        // Management modals (Add)
+        // --- Dom Elements & Listeners for Create Category Modal ---
         const modal = document.getElementById('category-modal');
         const openModalBtn = document.getElementById('open-modal-btn');
         const closeModalBtn = document.getElementById('close-modal-btn');
@@ -227,6 +233,10 @@ require_once __DIR__ . '/components/header.php';
         closeManageModalBtn.addEventListener('click', hideManageModal);
         cancelManageModalBtn.addEventListener('click', hideManageModal);
 
+        /**
+         * Dynamically initializes and filters the questions modal based on the target category.
+         * Hides questions that are already linked to this category.
+         */
         function initManageQuestionsModal(button) {
             const id = parseInt(button.dataset.id);
             const label = button.dataset.label;
@@ -234,14 +244,14 @@ require_once __DIR__ . '/components/header.php';
             document.getElementById('manage-category-id').value = id;
             document.getElementById('target-category-name').innerText = label;
             
-            // Décocher toutes les cases
+            // Uncheck all previous checkboxes
             manageForm.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
 
-            // Retirer un éventuel message d'erreur précédent
+            // Clear any previously generated "No questions available" message
             const existingNoDataMsg = document.getElementById('js-no-questions-msg');
             if (existingNoDataMsg) existingNoDataMsg.remove();
 
-            // Filtrer dynamiquement les questions affichées
+            // Filter questions UI list dynamically
             const questionItems = manageForm.querySelectorAll('.question-item');
             let visibleCount = 0;
 
@@ -249,14 +259,14 @@ require_once __DIR__ . '/components/header.php';
                 const itemCatId = parseInt(item.dataset.currentCatId);
                 
                 if (itemCatId === id) {
-                    item.classList.add('hidden');
+                    item.classList.add('hidden'); // Already assigned to this category
                 } else {
                     item.classList.remove('hidden');
                     visibleCount++;
                 }
             });
 
-            // Si aucune question n'est disponible après filtrage
+            // Handle the state where no valid questions are remaining to link
             if (visibleCount === 0) {
                 const noDataParagraph = document.createElement('p');
                 noDataParagraph.id = 'js-no-questions-msg';
@@ -264,7 +274,7 @@ require_once __DIR__ . '/components/header.php';
                 noDataParagraph.innerText = 'No questions available to link to this category.';
                 questionsContainer.appendChild(noDataParagraph);
                 
-                // Désactiver le bouton de validation car il n'y a rien à faire
+                // Disable submit since there are no actions to perform
                 submitManageBtn.disabled = true;
             } else {
                 submitManageBtn.disabled = false;
@@ -273,7 +283,7 @@ require_once __DIR__ . '/components/header.php';
             manageModal.classList.remove('hidden');
         }
 
-        // Types of notifications
+        // --- Notification Configuration Types ---
         const notifModal = document.getElementById('notification-modal');
         const notifIconContainer = document.getElementById('notif-icon-container');
         const notifIcon = document.getElementById('notif-icon');
@@ -290,6 +300,9 @@ require_once __DIR__ . '/components/header.php';
             error: { title: "An Error Occurred", bg: "bg-red-950", text: "text-red-400", border: "border-red-800", svg: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />' }
         };
 
+        /**
+         * Reusable utility function to trigger a styled modal window for alert or confirmation.
+         */
         function showNotification(type, message, onConfirm = null) {
             const config = notifTypes[type] || notifTypes.info;
             notifIconContainer.className = `mx-auto flex items-center justify-center h-12 w-12 rounded-full mb-4 ${config.bg} ${config.text} border ${config.border}`;
@@ -299,6 +312,7 @@ require_once __DIR__ . '/components/header.php';
             notifMessage.innerText = message;
             notifButtons.innerHTML = '';
 
+            // Handle dual-option action confirmation dialogs
             if (onConfirm) {
                 const cancelBtn = document.createElement('button');
                 cancelBtn.innerText = "Cancel";
@@ -315,6 +329,7 @@ require_once __DIR__ . '/components/header.php';
                 notifButtons.appendChild(cancelBtn);
                 notifButtons.appendChild(actionBtn);
             } else {
+                // Handle basic alert/info confirmation dialogs
                 const okBtn = document.createElement('button');
                 okBtn.innerText = "Ok";
                 okBtn.className = "bg-gray-700 hover:bg-gray-600 text-white font-medium px-5 py-2 rounded-lg transition w-full";
@@ -324,6 +339,9 @@ require_once __DIR__ . '/components/header.php';
             notifModal.classList.remove('hidden');
         }
 
+        /**
+         * Open Edit Category Modal and pre-fill its form fields.
+         */
         function initEditModal(button) {
             const id = button.dataset.id;
             const label = button.dataset.label;
@@ -334,6 +352,7 @@ require_once __DIR__ . '/components/header.php';
             editModal.classList.remove('hidden');
         }
 
+        // --- Fetch AJAX request: Update existing Category ---
         editForm.addEventListener('submit', function(e) {
             e.preventDefault();
             const id = document.getElementById('edit-category-id').value;
@@ -357,12 +376,16 @@ require_once __DIR__ . '/components/header.php';
             .catch(() => showNotification('error', 'An unexpected error occurred during update.'));
         });
 
+        /**
+         * Triggers a delete confirmation warning modal.
+         */
         function confirmDeleteCategory(id) {
             showNotification('info_delete', 'Are you sure you want to delete this category? Warning: This might impact questions linked to it.', () => {
                 executeDelete(id);
             });
         }
 
+        // --- Fetch AJAX request: Execute deletion of Category ---
         function executeDelete(id) {
             fetch('/api/categories/delete_categories.php', {
                 method: 'POST',
@@ -382,6 +405,7 @@ require_once __DIR__ . '/components/header.php';
             .catch(() => showNotification('error', 'An error occurred during deletion.'));
         }
 
+        // --- Fetch AJAX request: Create new Category ---
         addForm.addEventListener('submit', function(e) {
             e.preventDefault();
             const label = document.getElementById('modal-category-label').value;
@@ -404,6 +428,7 @@ require_once __DIR__ . '/components/header.php';
             .catch(() => showNotification('error', 'An error occurred during save.'));
         });
 
+        // --- Fetch AJAX request: Bind/Link selected questions to Category ---
         manageForm.addEventListener('submit', function(e) {
             e.preventDefault();
             const category_id = document.getElementById('manage-category-id').value;
