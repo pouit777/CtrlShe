@@ -112,15 +112,30 @@ $user = $stmt->fetch();
         </div>
 
         <div id="statUser" class="settingPage hidden">
-            <h3>Meilleur temps</h3>
-            <h3>Temps moyen de réponse</h3>
-            <h3>Taux de bonnes réponses</h3>
-            <h3>Classement mondial</h3>
+            <h3>Best time : </h3><h3 id="valueTime"></h3>
+            <h3>Best score : </h3><h3 id="valueScore"></h3>
+            <h3>Average response time : </h3><h3 id="valueResponseTime"></h3>
+            <h3>Rate of correct answers : </h3><h3 id="valueResponses"></h3>
         </div>
     </div>
 </div>
 
 <script>
+    async function loadStats() {
+        const response = await fetch("/api/stats/get_stats.php");
+        const stats = await response.json();
+
+        document.getElementById("valueTime").textContent = stats.best_time ?? "-";
+
+        document.getElementById("valueScore").textContent = stats.best_score ?? "-";
+
+        document.getElementById("valueResponseTime").textContent = stats.avg_time ?? "-";
+
+        document.getElementById("valueResponses").textContent = (stats.success_rate ?? 0) + " %";
+    }
+
+    loadStats();
+
     function setActive(idWindow) {
         const pages = document.querySelectorAll('.settingPage');
         const buttons = document.querySelectorAll('.choices li');

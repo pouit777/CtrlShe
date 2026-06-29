@@ -61,6 +61,20 @@ CREATE TABLE IF NOT EXISTS quiz_categories (
         ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE IF NOT EXISTS score_users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    quiz_id INT NOT NULL,
+    user_id INT NOT NULL,
+    user_time INT NOT NULL,
+    user_score INT NOT NULL,
+    FOREIGN KEY (quiz_id)
+        REFERENCES quizzes(id)
+        ON DELETE CASCADE,
+    FOREIGN KEY (user_id)
+        REFERENCES users(id)
+        ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 -- Create the answers multiple-choice options table with relation to questions
 CREATE TABLE IF NOT EXISTS answers (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -100,7 +114,7 @@ ON DUPLICATE KEY UPDATE label = VALUES(label);
 -- INSERT INTO users (username, email, password, role) VALUES 
 -- ('admin', 'admin@quiz.fr', '$2y$10$K9R7MrgYvPcdQdAsLdP1fuAFMVhTvVui5JHa8hg/BfB4fyjtmFX5m', 'admin'),
 -- ('student', 'student@school.com', '$2y$10$K9R7MrgYvPcdQdAsLdP1fuAFMVhTvVui5JHa8hg/BfB4fyjtmFX5m', 'user');
-INSERT INTO users (id, username, email, password, role, avatar) VALUES 
+INSERT INTO users (id, username, email, password, role, avatar, nb_quizzes, best_time, best_score) VALUES 
 (1, 'Admin', 'admin@quiz.fr', '$2y$10$K9R7MrgYvPcdQdAsLdP1fuAFMVhTvVui5JHa8hg/BfB4fyjtmFX5m', 'admin', 'racoon.png'),
 (2, 'student', 'student@school.com', '$2y$10$K9R7MrgYvPcdQdAsLdP1fuAFMVhTvVui5JHa8hg/BfB4fyjtmFX5m', 'user', 'bee.png'),
 (3, 'player_one', 'player1@gmail.com', '$2y$10$K9R7MrgYvPcdQdAsLdP1fuAFMVhTvVui5JHa8hg/BfB4fyjtmFX5m', 'user', 'monkey.png'),
@@ -174,6 +188,9 @@ INSERT INTO quiz_questions (quiz_id, question_id) VALUES
 (2, 5), 
 (2, 6)
 ON DUPLICATE KEY UPDATE quiz_id=VALUES(quiz_id);
+
+INSERT INTO score_users (quiz_id, user_id, user_time, user_score) VALUES
+(1, 4, 9, 3)
 
 -- $quizId = $pdo->lastInsertId();
 

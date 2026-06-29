@@ -214,8 +214,7 @@ main {
 
   background: var(--color-bg);
 
-  border-bottom: 1px solid rgba(255,255,255,.08);
-
+  border-bottom: var(--shadow-modal);
   z-index: 1000;
 }
 
@@ -315,15 +314,6 @@ main {
     width: 100%;
     padding: 0.75rem 0;
     justify-content: flex-start;
-  }
-
-  td, th {
-    padding: 10px;
-    font-size: 0.8rem;
-  }
-
-  .table {
-    border-radius: 8px;
   }
 
   .avatar-grid {
@@ -453,7 +443,9 @@ input:checked + .slider #theme-icon {
 /* Table style */
 .table {
   width: 100%;
+  max-width: 100%;
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
   border-radius: 12px;
   background: var(--color-bg);
   box-shadow: var(--shadow-modal);
@@ -463,6 +455,7 @@ table {
   width: 100%;
   border-collapse: collapse;
   font-family: inherit;
+  min-width: 700px;
 }
 
 thead.tableTitle {
@@ -505,6 +498,23 @@ td span {
   padding: 4px 8px;
   border-radius: 6px;
   white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .table {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 8px;
+  }
+
+  table {
+    min-width: 700px;
+  }
+
+  td, th {
+    padding: 10px;
+    font-size: 0.8rem;
+  }
 }
 
 .easy {
@@ -577,7 +587,7 @@ button {
   justify-content: center;
 
   padding: 1rem;
-  z-index: 50;
+  z-index: 10001;
 }
 
 .modal.hidden {
@@ -647,6 +657,10 @@ button {
   background-color: var(--color-black);
   border-radius: 12px;
   box-shadow: var(--shadow-modal);
+}
+
+#statUser{
+  color: var(--color-white)
 }
 
 .choices {
