@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS users (
     password VARCHAR(255) NOT NULL,
     role ENUM('admin', 'user') DEFAULT 'user',
     avatar VARCHAR(100) NOT NULL DEFAULT 'bee.png',
+    total_points INT NOT NULL DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -62,20 +63,6 @@ CREATE TABLE IF NOT EXISTS quiz_categories (
         ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE IF NOT EXISTS score_users (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    quiz_id INT NOT NULL,
-    user_id INT NOT NULL,
-    user_time INT NOT NULL,
-    user_score INT NOT NULL,
-    FOREIGN KEY (quiz_id)
-        REFERENCES quizzes(id)
-        ON DELETE CASCADE,
-    FOREIGN KEY (user_id)
-        REFERENCES users(id)
-        ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
 -- Create the answers multiple-choice options table with relation to questions
 CREATE TABLE IF NOT EXISTS answers (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -91,6 +78,7 @@ CREATE TABLE IF NOT EXISTS games (
     user_id INT NOT NULL,
     quiz_id INT NOT NULL,
     score INT NOT NULL,
+    points_earned INT NOT NULL DEFAULT 0,
     total_questions INT NOT NULL,
     duration INT NOT NULL DEFAULT 0,
     played_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -339,6 +327,3 @@ INSERT INTO quiz_questions (quiz_id, question_id) VALUES
 (10, 11), (10, 16), (10, 21), (10, 26), (10, 31),
 (10, 36), (10, 41), (10, 46), (10, 12), (10, 17)
 ON DUPLICATE KEY UPDATE quiz_id=VALUES(quiz_id);
-
-INSERT INTO score_users (quiz_id, user_id, user_time, user_score) VALUES
-(2, 2, 9, 3)

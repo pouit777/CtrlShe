@@ -48,7 +48,9 @@ $percent = (!$guestMode && $game["total_questions"] > 0)
     ? round(($game["score"] / $game["total_questions"]) * 100)
     : null;
 
-/* 🎯 SCORE COLOR LOGIC */
+$pointsEarned = !$guestMode ? (int)$game["score"] : 0;
+
+/*  SCORE COLOR LOGIC */
 $scoreClass = "";
 if ($percent !== null) {
     if ($percent >= 80) {
@@ -106,6 +108,10 @@ if (!$guestMode) {
             <div style="color: rgba(255,255,255,0.75);"
                  class="text-xl mt-2">
                 <?= $percent ?>%
+            </div>
+            
+            <div class="mt-3 text-lg font-semibold text-yellow-400">
+                +<?= $pointsEarned ?> point<?= $pointsEarned > 1 ? "s" : "" ?> gagné<?= $pointsEarned > 1 ? "s" : "" ?>
             </div>
         <?php endif; ?>
 
