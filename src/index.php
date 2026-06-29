@@ -7,23 +7,23 @@ include "components/header.php";
 $categories = $pdo->query("SELECT * FROM categories ORDER BY label")->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
-<div class="titleBox">
-    <h1 class="titleText">
-        brainSKwiz Quizzes
+<div class="page-index">
+
+<div class="titleBoxAdmin">
+    <h1 class="bigTitle">
+        brain<span class="skTitle">SK</span>wiz Quizzes
     </h1>
     <p class="subTitle">
         Choose a quiz and start playing
     </p>
 </div>
 
-
 <!-- FILTER -->
-<div class="titleBox">
-    <div>
+<div class="titleBoxAdmin w-full">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[2fr_1fr] gap-4 items-center w-full">
         <input id="search-input"
                class="inputField"
-               style="margin-bottom: 1rem"
-               placeholder="Quiz name...">
+               placeholder="🔍 Quiz name...">
 
         <select id="category-select"
                 class="inputField">
@@ -42,7 +42,6 @@ $categories = $pdo->query("SELECT * FROM categories ORDER BY label")->fetchAll(P
 <div id="quiz-grid" class="quizzes"></div>
 
 <script>
-
 const searchInput = document.getElementById('search-input');
 const categorySelect = document.getElementById('category-select');
 const quizGrid = document.getElementById('quiz-grid');
@@ -72,15 +71,15 @@ function loadQuizzes() {
 
                 quizGrid.innerHTML += `
                     <div class="quizCard">
-                        <h2 class="titleText">${q.name}</h2>
+                        <h2 class="titleText mb-2">${q.name}</h2>
                         <p class="subTitle">${q.description ?? ''}</p>
 
-                        <div class="text-xs text-gray-500 mt-3">
+                        <div class="text-xs text-gray-500 m-auto mt-3">
                             <span class="${diffColor} uppercase">${q.difficulty}</span> • ${q.question_count ?? '∞'}
                         </div>
 
                         <a href="/game.php?quiz=${q.id}"
-                        class="btn" style="width: fit-content; margin-top: 1rem;">
+                        class="btn m-auto" style="width: fit-content; margin-top: 1rem;">
                             Start
                         </a>
                     </div>
@@ -98,7 +97,8 @@ searchInput.addEventListener('input', () => {
 categorySelect.addEventListener('change', loadQuizzes);
 
 loadQuizzes();
-
 </script>
+
+</div>
 
 <?php require_once __DIR__ . '/components/footer.php'; ?>

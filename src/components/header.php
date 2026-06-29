@@ -70,10 +70,10 @@ $preview_mode = $is_admin && ($_SESSION['preview_mode'] ?? false);
         <?php endif; ?>
         
         <?php if ($preview_mode): ?>
-            <li>
-                <a href="?action=toggle_preview" class="bg-amber-500/20 text-amber-400 border border-amber-500/30 px-3 py-1 rounded-lg hover:bg-amber-500 hover:text-black transition font-bold flex items-center gap-1">
-                    <span class="material-icons text-sm mr-1">admin_panel_settings</span> 
-                    Admin Mode
+            <li class="">
+                <a href="admin_dashboard.php?action=toggle_preview" class="bg-primary/20 text-primary border border-primary/30 px-3 py-1.5 rounded-lg hover:bg-primary hover:text-white transition font-medium inline-flex items-center gap-2">
+                    <span class="material-icons text-base">admin_panel_settings</span> 
+                    <span>Admin Mode</span>
                 </a>
             </li>
         <?php endif; ?>
@@ -83,11 +83,10 @@ $preview_mode = $is_admin && ($_SESSION['preview_mode'] ?? false);
             <li><a href="/admin_questions.php">Questions</a></li>
             <li><a href="/admin_categories.php">Categories</a></li>
             <li><a href="/admin_users.php">Users</a></li>
-            <li>
-                <!-- TODO -->
-                <a href="?action=toggle_preview" class="bg-primary/20 text-primary border border-primary/30 px-3 py-1 rounded-lg hover:bg-primary hover:text-white transition font-medium flex items-center gap-1">
-                    <span class="material-icons text-sm mr-2">visibility</span> 
-                    User Mode
+            <li class="">
+                <a href="index.php?action=toggle_preview" class="bg-primary/20 text-primary border border-primary/30 px-3 py-1.5 rounded-lg hover:bg-primary hover:text-white transition font-medium inline-flex items-center gap-2">
+                    <span class="material-icons text-base">visibility</span> 
+                    <span>User Mode</span>
                 </a>
             </li>
         <?php endif; ?>

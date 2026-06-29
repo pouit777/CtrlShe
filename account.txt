@@ -3,10 +3,7 @@ Accounts Admin
 email : admin@quiz.fr
 password : MonSuperMotDePasse123!
 
-email : master@brain.com
-password : MonSuperMotDePasse123!
-
-Account User 
+Accounts User 
 
 email : student@school.com
 password : MonSuperMotDePasse123!

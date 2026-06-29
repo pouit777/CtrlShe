@@ -1,91 +1,172 @@
 <?php
-
 session_start();
 
-if (!isset($_SESSION["user_id"])) {
-    header("Location: /login.php");
-    exit;
-}
-
 require_once __DIR__ . "/config/db.php";
-include __DIR__ . "/components/header.php";
+require_once __DIR__ . "/components/header.php";
 
-$gameId = (int)($_GET["game"] ?? 0);
+$guestMode = isset($_GET["guest"]) && $_GET["guest"] == 1;
 
-$stmt = $pdo->prepare("
-SELECT
-    g.score,
-    g.total_questions,
-    g.quiz_id,
-    g.played_at,
-    q.name
+/* GUEST MODE */
+if ($guestMode) {
 
-FROM games g
+    $game = [
+        "name" => "Guest Quiz",
+        "score" => 0,
+        "total_questions" => 0,
+        "quiz_id" => 0
+    ];
 
-LEFT JOIN quizzes q
-ON q.id = g.quiz_id
+} else {
 
-WHERE g.id = ?
-AND g.user_id = ?
-");
+    if (!isset($_SESSION["user_id"])) {
+        header("Location: /login.php");
+        exit;
+    }
 
-$stmt->execute([
-    $gameId,
-    $_SESSION["user_id"]
-]);
+    $gameId = (int)($_GET["game"] ?? 0);
 
-$game = $stmt->fetch();
+    if ($gameId <= 0) {
+        die("Invalid game");
+    }
 
-if (!$game) {
-    die("Game not found");
+    $stmt = $pdo->prepare("
+        SELECT g.*, q.name
+        FROM games g
+        INNER JOIN quizzes q ON q.id = g.quiz_id
+        WHERE g.id = ? AND g.user_id = ?
+    ");
+
+    $stmt->execute([$gameId, $_SESSION["user_id"]]);
+    $game = $stmt->fetch();
+
+    if (!$game) {
+        die("Game not found");
+    }
 }
 
-$percent = round(($game["score"] / $game["total_questions"]) * 100);
+$percent = (!$guestMode && $game["total_questions"] > 0)
+    ? round(($game["score"] / $game["total_questions"]) * 100)
+    : null;
+
+/* 🎯 SCORE COLOR LOGIC */
+$scoreClass = "";
+if ($percent !== null) {
+    if ($percent >= 80) {
+        $scoreClass = "score-high";
+    } elseif ($percent >= 50) {
+        $scoreClass = "score-mid";
+    } else {
+        $scoreClass = "score-low";
+    }
+}
+
+$corrections = [];
+
+if (!$guestMode) {
+
+    $stmt = $pdo->prepare("
+        SELECT 
+            ga.question_id,
+            ga.answer_id,
+            ga.is_correct,
+            q.question_text,
+            ua.answer_text AS user_answer,
+            ca.answer_text AS correct_answer
+        FROM game_answers ga
+        INNER JOIN questions q ON q.id = ga.question_id
+        LEFT JOIN answers ua ON ua.id = ga.answer_id
+        LEFT JOIN answers ca ON ca.question_id = q.id AND ca.is_correct = 1
+        WHERE ga.game_id = ?
+    ");
+
+    $stmt->execute([$gameId]);
+    $corrections = $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
 ?>
 
-<div class="max-w-xl mx-auto mt-10 bg-gray-800 p-8 rounded-xl text-center">
+<div class="max-w-4xl mx-auto mt-10 space-y-6">
 
-    <h1 class="text-4xl font-bold text-cyan-400 mb-4">
-        Quiz Finished!
-    </h1>
+    <!-- HEADER -->
+    <div class="p-6 rounded-xl text-center page-result">
 
-    <h2 class="text-xl text-white mb-6">
-        <?= htmlspecialchars($game["name"]) ?>
-    </h2>
+        <h1 style="color: var(--color-primary);"
+            class="text-3xl font-bold mb-2">
+            Quiz Finished
+        </h1>
 
-    <div class="text-6xl font-bold text-green-400 mb-4">
-        <?= $game["score"] ?> / <?= $game["total_questions"] ?>
+        <h2 class="text-xl text-white mb-4">
+            <?= htmlspecialchars($game["name"] ?? "Guest Quiz") ?>
+        </h2>
+
+        <div class="text-5xl font-bold <?= $scoreClass ?>">
+            <?= (int)$game["score"] ?> / <?= (int)$game["total_questions"] ?>
+        </div>
+
+        <?php if (!$guestMode): ?>
+            <div style="color: rgba(255,255,255,0.75);"
+                 class="text-xl mt-2">
+                <?= $percent ?>%
+            </div>
+        <?php endif; ?>
+
     </div>
 
-    <div class="text-2xl text-gray-300 mb-8">
-        <?= $percent ?>%
-    </div>
-
+    <!-- BUTTONS -->
     <div class="flex justify-center gap-4">
 
-        <a href="/game.php?quiz=<?= $game["quiz_id"] ?>"
-           class="bg-cyan-500 px-5 py-3 rounded-lg text-black font-bold">
+        <?php if (!$guestMode): ?>
+            <a href="/game.php?quiz=<?= $game["quiz_id"] ?>"
+               style="background: var(--color-primary);"
+               class="px-5 py-3 rounded-lg text-black font-bold">
+                Replay
+            </a>
+        <?php else: ?>
+            <a id="guestReplay"
+               href="#"
+               style="background: var(--color-primary);"
+               class="px-5 py-3 rounded-lg text-black font-bold">
+                Replay
+            </a>
+        <?php endif; ?>
 
-            Replay
-
-        </a>
-
-        <a href="/history.php"
-           class="bg-gray-700 px-5 py-3 rounded-lg">
-
-            History
-
-        </a>
+        <?php if (!$guestMode): ?>
+            <a href="/history.php"
+               style="background: #1f2937;"
+               class="px-5 py-3 rounded-lg text-white">
+                History
+            </a>
+        <?php endif; ?>
 
         <a href="/index.php"
-           class="bg-green-500 px-5 py-3 rounded-lg text-black font-bold">
-
+           style="background: var(--color-warning);"
+           class="px-5 py-3 rounded-lg text-black font-bold">
             Home
-
         </a>
 
     </div>
 
+    <?php if ($guestMode): ?>
+        <div class="text-center mt-4"
+             style="color: rgba(255,255,255,0.6);">
+            Guest mode - score is not saved
+        </div>
+
+        <script>
+            const data = JSON.parse(localStorage.getItem("guest_result"));
+
+            if (data) {
+                document.querySelector(".text-5xl").innerText =
+                   data.score + " / " + data.total;
+
+                const replayBtn = document.getElementById("guestReplay");
+
+                if (replayBtn) {
+                    const params = new URLSearchParams(window.location.search);
+                    replayBtn.href = "/game.php?quiz=" + params.get("quiz");
+                }
+            }
+        </script>
+    <?php endif; ?>
 </div>
 
-<?php include __DIR__."/components/footer.php"; ?>
+<?php require_once __DIR__ . "/components/footer.php"; ?>

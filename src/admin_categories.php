@@ -31,17 +31,19 @@ $page_title = "brainSKwiz - Admin Categories";
 require_once __DIR__ . '/components/header.php';
 ?>
 
-        <div class="titleBox">
+        <div class="titleBoxAdmin">
             <div>
-                <h1 class="titleText">Question category management</h1>
-                <button id="open-modal-btn" class="btn">
+                <h1 class="bigTitle">Question category management</h1>
+                <div class="modal-btn">
+                    <button id="open-modal-btn" class="btn">
                     + Add New Category
-                </button>
+                    </button>
+                </div>
             </div>
         </div>
 
-        <div class="table">
-            <table>
+        <div class="table-wrapper">
+            <table class="whitespace-normal">
                 <thead class="tableTitle">
                     <tr>
                         <th>ID</th>
@@ -55,17 +57,14 @@ require_once __DIR__ . '/components/header.php';
                         <tr id="category-row-<?php echo $cat['id']; ?>">
                             <td>#<?php echo $cat['id']; ?></td>
                             <td>
-                                <span>
-                                    <?php echo htmlspecialchars($cat['label'], ENT_QUOTES, 'UTF-8'); ?>
-                                </span>
+                                <?php echo htmlspecialchars($cat['label'], ENT_QUOTES, 'UTF-8'); ?>
                             </td>
                             <td>
-                                <span>
-                                    <?php echo $cat['total_questions'] . ' ' . ($cat['total_questions'] > 1 ? 'questions' : 'question'); ?>
-                                </span>
+                                <?php echo $cat['total_questions'] . ' ' . ($cat['total_questions'] > 1 ? 'questions' : 'question'); ?>
                             </td>
-                            <td>
-                                <div>
+
+                            <td class="align-middle">
+                                <div class="flex items-center gap-2 justify-start h-full">
                                     <button 
                                         data-id="<?php echo $cat['id']; ?>"
                                         data-label="<?php echo htmlspecialchars($cat['label'], ENT_QUOTES, 'UTF-8'); ?>"
@@ -100,7 +99,7 @@ require_once __DIR__ . '/components/header.php';
         <div class="modal-content">
             <div class="titleText modal-header">
                 <h3>Add a New Category</h3>
-                <button id="close-modal-btn" class="closeBtn">&times;</button>
+                <button id="close-modal-btn" class="closeBtn font-large text-secondary">&times;</button>
             </div>
             <form id="add-category-form">
                 <div>
@@ -119,7 +118,7 @@ require_once __DIR__ . '/components/header.php';
         <div class="modal-content">
             <div class="titleText modal-header">
                 <h3>Edit Category Detail</h3>
-                <button id="close-edit-modal-btn" class="closeBtn">&times;</button>
+                <button id="close-edit-modal-btn" class="closeBtn font-large text-secondary">&times;</button>
             </div>
             <form id="edit-category-form">
                 <input type="hidden" id="edit-category-id">
@@ -135,17 +134,17 @@ require_once __DIR__ . '/components/header.php';
         </div>
     </div>
 
-    <div id="manage-questions-modal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-        <div class="bg-gray-800 max-w-lg w-full rounded-2xl border border-gray-700 p-6 shadow-2xl flex flex-col max-h-[85vh]">
-            <div class="flex justify-between items-center mb-4 flex-shrink-0">
-                <div>
-                    <h3 class="text-xl font-bold text-teal-400">Add Questions to Category</h3>
-                    <p id="manage-modal-subtitle" class="text-xs text-gray-400 mt-1">Target category: <span id="target-category-name" class="text-white font-medium"></span></p>
+    <div id="manage-questions-modal" class="modal hidden">
+        <div class="modal-content max-w-lg flex flex-col max-h-[85vh]">
+            <div class="titleText modal-header flex justify-between items-center flex-shrink-0">
+                <div class="text-left">
+                    <h3 class="text-xl font-bold text-secondary">Add Questions to Category</h3>
+                    <p id="manage-modal-subtitle" class="text-xs text-gray-400 mt-1 ml-0">Target category : <span id="target-category-name" class="text-white font-medium"></span></p>
                 </div>
-                <button id="close-manage-modal-btn" class="text-gray-400 hover:text-white text-2xl font-bold">&times;</button>
+                <button id="close-manage-modal-btn" class="closeBtn font-large text-secondary">&times;</button>
             </div>
             
-            <form id="manage-questions-form" class="flex flex-col flex-grow overflow-hidden">
+            <form id="manage-questions-form" class="flex flex-col flex-grow overflow-hidden mt-2">
                 <input type="hidden" id="manage-category-id">
                 
                 <div id="questions-list-container" class="overflow-y-auto pr-1 my-4 space-y-2 flex-grow max-h-[50vh] border border-gray-700/50 rounded-xl p-3 bg-gray-900/40">
@@ -154,12 +153,12 @@ require_once __DIR__ . '/components/header.php';
                     <?php else: ?>
                         <?php foreach($orphan_questions as $orphan): ?>
                             <label data-current-cat-id="<?php echo $orphan['category_id'] ?? 0; ?>" class="question-item flex items-start gap-3 p-2.5 bg-gray-700/30 hover:bg-gray-700/60 rounded-lg cursor-pointer transition border border-gray-700/40 select-none">
-                                <input type="checkbox" name="questions_ids[]" value="<?php echo $orphan['id']; ?>" class="mt-1 accent-teal-500 rounded h-4 w-4 bg-gray-800 border-gray-600">
+                                <input type="checkbox" name="questions_ids[]" value="<?php echo $orphan['id']; ?>" class="mt-1 accent-secondary rounded h-4 w-4 bg-gray-800 border-gray-600">
                                 <div class="text-sm w-full">
                                     <div class="flex flex-wrap items-center gap-1.5 mb-1">
-                                        <span class="text-xs font-mono px-1.5 py-0.5 rounded bg-gray-800 text-cyan-400">#<?php echo $orphan['id']; ?></span>
-                                        <span class="text-xs uppercase px-1 rounded bg-gray-900 text-gray-400 border border-gray-800"><?php echo $orphan['difficulty']; ?></span>
-                                        <span class="text-[11px] px-1.5 py-0.5 rounded <?php echo $orphan['category_id'] ? 'bg-blue-950 text-blue-400 border border-blue-900' : 'bg-amber-950 text-amber-400 border border-amber-900'; ?> border">
+                                        <span class="text-xs font-mono px-1.5 py-0.5 rounded bg-gray-800 text-secondary">#<?php echo $orphan['id']; ?></span>
+                                        <span class="<?php echo $orphan['difficulty']?>"><?php echo $orphan['difficulty']; ?></span>
+                                        <span class="text-[11px] px-1.5 py-0.5 rounded <?php echo $orphan['category_id'] ? 'bg-secondary text-white border border-secondary' : 'bg-amber-950 text-amber-400 border border-secondary'; ?> border">
                                             Current : <?php echo htmlspecialchars($orphan['current_category_label'] ?? 'No category', ENT_QUOTES, 'UTF-8'); ?>
                                         </span>
                                     </div>
@@ -171,8 +170,8 @@ require_once __DIR__ . '/components/header.php';
                 </div>
 
                 <div class="flex justify-end gap-3 pt-2 border-t border-gray-700/50 flex-shrink-0">
-                    <button type="button" id="cancel-manage-modal-btn" class="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-lg font-medium transition text-sm">Cancel</button>
-                    <button type="submit" id="submit-manage-btn" class="bg-teal-500 hover:bg-teal-600 disabled:opacity-40 disabled:hover:bg-teal-500 text-gray-950 font-bold px-4 py-2 rounded-lg transition text-sm">Link Selected Questions</button>
+                    <button type="button" id="cancel-manage-modal-btn" class="inputField">Cancel</button>
+                    <button type="submit" id="submit-manage-btn" class="btn bg-accent hover:bg-accent-hover text-white">Link Selected Questions</button>
                 </div>
             </form>
         </div>
