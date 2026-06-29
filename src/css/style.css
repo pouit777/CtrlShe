@@ -1243,6 +1243,7 @@ td .flex {
 
 .page-index .quizCard .subTitle {
   color: rgba(255, 255, 255, 0.75);
+  text-align: center;
 }
 
 .page-index .quizCard:hover {
@@ -1296,6 +1297,18 @@ td .flex {
 /* =========================
    QUIZ / CATEGORIES
 ========================= */
+
+#questionText{
+  max-width: 35rem;
+}
+
+@media (min-width: 768px) {
+
+  #questionText{
+    width: 35rem;
+  }
+
+}
 
 .answer-row {
   display: flex;
