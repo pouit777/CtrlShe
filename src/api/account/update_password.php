@@ -1,19 +1,21 @@
 <?php
+// src/api/account/update_password.php
 session_start();
 header('Content-Type: application/json');
 
 require_once __DIR__ . '/../../config/db.php';
 
-// 1. Vérification de la session active
+// 1. Enforce active authentication state verification
 if (!isset($_SESSION['user_id'])) {
     echo json_encode(['status' => 'error', 'message' => 'Not logged in']);
     exit;
 }
 
+// Fetch structural input stream parameters
 $data = json_decode(file_get_contents('php://input'), true);
 $password = $data['password'] ?? '';
 
-// 2. Validation de la force du mot de passe côte serveur
+// 2. Server-side password entropy verification strategy
 if (strlen($password) < 8 || !preg_match('#[0-9]#', $password) || !preg_match('#[^a-zA-Z0-9]#', $password)) {
     echo json_encode([
         'status' => 'error',
@@ -23,6 +25,7 @@ if (strlen($password) < 8 || !preg_match('#[0-9]#', $password) || !preg_match('#
 }
 
 try {
+    // Re-encrypt updated parameters safely
     $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
     $stmt = $pdo->prepare("UPDATE users SET password = ? WHERE id = ?");
